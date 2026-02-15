@@ -7,7 +7,6 @@ import { ArrowDownIcon } from "@heroicons/react/24/outline";
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Matrix cyber violet
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -29,12 +28,18 @@ export default function Home() {
       "01∆ΛΞΣΠΦΨΩ≡≠</>[]{}$#*@ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     const draw = () => {
-      ctx.fillStyle = "rgba(2, 6, 23, 0.15)";
+      ctx.fillStyle = "rgba(15, 23, 42, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      gradient.addColorStop(0, "#7c3aed");
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+      gradient.addColorStop(0, "#6366f1");
       gradient.addColorStop(1, "#38bdf8");
+
       ctx.fillStyle = gradient;
       ctx.font = "14px monospace";
 
@@ -50,47 +55,71 @@ export default function Home() {
       });
     };
 
-    const interval = setInterval(draw, 40);
+    let animationId: number;
+
+    const loop = () => {
+      draw();
+      animationId = requestAnimationFrame(loop);
+    };
+
+    loop();
 
     return () => {
-      clearInterval(interval);
+      cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
     };
   }, []);
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
-      {/* Matrix global, fixe */}
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 z-0 pointer-events-none"
-      />
+      {/* FOND IT PRO BLEU-GRIS */}
+      <div className="fixed inset-0 -z-10">
+        {/* base */}
+        <div className="absolute inset-0 bg-slate-900" />
 
-      {/* Overlay sombre pour lisibilité */}
-      <div className="fixed inset-0 z-10 bg-gradient-to-br from-slate-900/80 via-slate-950/90 to-black/95" />
+        {/* dégradé très doux */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-90" />
 
-      {/* Tout le contenu qui scroll */}
+        {/* grid technique */}
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: `
+              linear-gradient(90deg, rgba(148,163,184,0.6) 1px, transparent 1px),
+              linear-gradient(180deg, rgba(148,163,184,0.6) 1px, transparent 1px)
+            `,
+            backgroundSize: "60px 60px",
+          }}
+        />
+
+        {/* matrix light */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 opacity-25 mix-blend-screen pointer-events-none will-change-transform"
+        />
+      </div>
+
       <div className="relative z-20">
         {/* HERO */}
         <section className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
           <motion.h1
-            className="cyber-title text-[2.5rem] md:text-[4rem] lg:text-[4.5rem] font-extrabold bg-clip-text text-transparent mb-4"
+            className="text-[2.2rem] sm:text-[3rem] md:text-[4rem] lg:text-[4.5rem] font-extrabold bg-clip-text text-transparent mb-4"
             style={{
               backgroundImage:
-                "linear-gradient(to right, #00209F, #D21034)", // Haïti
+                "linear-gradient(to right, #00209F, #D21034)",
             }}
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.9 }}
           >
             CHARLES&nbsp;GARLENS
           </motion.h1>
 
           <motion.p
-            className="cyber-subtitle text-sm md:text-base tracking-[0.25em] text-slate-300 uppercase mb-8"
+            className="text-sm md:text-base tracking-[0.28em] text-slate-300 uppercase mb-8"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
+            transition={{ delay: 0.4, duration: 0.7 }}
           >
             APPRENTI DEVSECOPS · TECHNICIEN SUPPORT INFORMATIQUE
           </motion.p>
@@ -99,7 +128,7 @@ export default function Home() {
             className="text-sm md:text-base text-slate-300 max-w-xl mb-10"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
+            transition={{ delay: 0.7, duration: 0.7 }}
           >
             Je conçois et sécurise des environnements systèmes et réseaux en
             combinant pratiques DevOps, cybersécurité et support.
@@ -107,81 +136,81 @@ export default function Home() {
 
           <motion.a
             href="#projects"
-            className="btn-cyber inline-flex items-center space-x-3 px-8 py-3 rounded-full border border-slate-500/70 bg-slate-900/70 text-slate-100 font-semibold hover:border-violet-400 hover:text-violet-200 transition-all"
+            className="inline-flex items-center space-x-3 px-8 py-3 rounded-full border border-slate-500/40 bg-slate-800/60 text-slate-200 font-semibold hover:border-blue-400 hover:text-blue-300 transition-all shadow-sm backdrop-blur"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.8 }}
+            transition={{ delay: 1, duration: 0.7 }}
           >
             <span>Découvrir mes projets</span>
             <ArrowDownIcon className="w-5 h-5" />
           </motion.a>
         </section>
 
-        {/* À PROPOS */}
-        <section className="relative z-20 mt-24 px-4 pb-8">
-          <div className="max-w-3xl mx-auto text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-100 mb-4">
-              À propos de moi
-            </h2>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-              Je suis étudiant en <span className="font-semibold">BTS SIO option SISR</span>,
-              passionné par l&apos;administration systèmes et réseaux, la
-              cybersécurité et les labs virtualisés.
-            </p>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed mt-3">
-              Mon objectif est de devenir <span className="font-semibold">DevSecOps</span> :
-              automatiser, sécuriser et superviser les systèmes tout en restant
-              proche des utilisateurs.
-            </p>
-          </div>
-        </section>
+        {/* A PROPOS + COMPETENCES */}
+        <section className="relative mt-16 px-4 pb-12">
+          <div className="max-w-6xl mx-auto grid gap-10 md:grid-cols-[1.1fr_1.4fr]">
+            <div className="bg-slate-800/60 rounded-2xl border border-slate-700/60 p-6 md:p-7 backdrop-blur">
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-100 mb-3">
+                À propos de moi
+              </h2>
 
-        {/* COMPÉTENCES */}
-        <section className="relative z-20 mt-12 px-4 pb-8">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-100 text-center mb-8">
-              Compétences
-            </h2>
+              <p className="text-sm md:text-[0.95rem] text-slate-300 leading-relaxed">
+                Étudiant en <span className="font-semibold">BTS SIO option SISR</span>,
+                je me spécialise dans l’administration systèmes et réseaux, la
+                cybersécurité et les environnements virtualisés.
+              </p>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Systèmes */}
-              <div className="border border-slate-700/60 bg-slate-900/60 rounded-xl p-4">
-                <h3 className="text-sm font-semibold text-slate-100 mb-2 uppercase tracking-[0.18em]">
-                  Systèmes
-                </h3>
-                <ul className="text-sm text-slate-300 space-y-1">
-                  <li>Windows Server (AD, DNS, DHCP, GPO)</li>
-                  <li>Windows 10 / 11</li>
-                  <li>Linux (Debian, Ubuntu, Kali)</li>
-                  <li>Installation, maintenance, sauvegardes</li>
-                </ul>
-              </div>
+              <p className="text-sm md:text-[0.95rem] text-slate-300 leading-relaxed mt-3">
+                Mon objectif est de devenir <span className="font-semibold">DevSecOps</span> en intégrant la sécurité dès la conception et le déploiement des
+                environnements techniques, en combinant pratiques <span className="font-semibold">DevOps</span>,
+                automatisation et bonnes pratiques de sécurité.
+              </p>
+            </div>
 
-              {/* Réseau & Virtualisation */}
-              <div className="border border-slate-700/60 bg-slate-900/60 rounded-xl p-4">
-                <h3 className="text-sm font-semibold text-slate-100 mb-2 uppercase tracking-[0.18em]">
-                  Réseau & Virtualisation
-                </h3>
-                <ul className="text-sm text-slate-300 space-y-1">
-                  <li>VLAN, adressage IP, DHCP, DNS</li>
-                  <li>Proxmox, VMware Workstation</li>
-                  <li>Labs virtualisés multi-VM</li>
-                  <li>Supervision et journaux de base</li>
-                </ul>
-              </div>
-
-              {/* Sécurité & Automation */}
-              <div className="border border-slate-700/60 bg-slate-900/60 rounded-xl p-4">
-                <h3 className="text-sm font-semibold text-slate-100 mb-2 uppercase tracking-[0.18em]">
-                  Sécurité & Automation
-                </h3>
-                <ul className="text-sm text-slate-300 space-y-1">
-                  <li>Bonnes pratiques de durcissement</li>
-                  <li>Scripts PowerShell & Bash</li>
-                  <li>Gestion des comptes & droits</li>
-                  <li>Veille cybersécurité</li>
-                </ul>
-              </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  title: "Systèmes",
+                  items: [
+                    "Windows Server (AD, DNS, DHCP, GPO)",
+                    "Windows 10 / 11",
+                    "Linux (Debian, Ubuntu, Kali)",
+                    "Installation & maintenance",
+                  ],
+                },
+                {
+                  title: "Réseau & Virtualisation",
+                  items: [
+                    "VLAN, adressage IP, DNS, DHCP",
+                    "Proxmox, VMware Workstation",
+                    "Labs multi-VM",
+                    "Supervision & journaux",
+                  ],
+                },
+                {
+                  title: "Sécurité & Automation",
+                  items: [
+                    "Hardening, pare-feu, GPO",
+                    "Logs, alertes",
+                    "Scripts d’automatisation",
+                    "Bonnes pratiques SecOps",
+                  ],
+                },
+              ].map((block) => (
+                <div
+                  key={block.title}
+                  className="border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 backdrop-blur"
+                >
+                  <h3 className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-[0.16em]">
+                    {block.title}
+                  </h3>
+                  <ul className="text-[0.85rem] text-slate-300 space-y-1.5">
+                    {block.items.map((i) => (
+                      <li key={i}>{i}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -189,50 +218,77 @@ export default function Home() {
         {/* PROJETS */}
         <section
           id="projects"
-          className="min-h-[60vh] w-full relative z-20 mt-24 px-4 pb-16"
+          className="relative mt-20 px-4 pb-16"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-100 text-center mb-10">
-            Mes projets
-          </h2>
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-100 text-center mb-3">
+              Mes projets
+            </h2>
+            <p className="text-sm md:text-[0.95rem] text-slate-400 text-center mb-8 max-w-2xl mx-auto">
+              Labs et projets illustrant mes compétences en systèmes, réseaux,
+              automatisation et sécurité.
+            </p>
 
-          <div className="max-w-5xl mx-auto grid gap-6 md:grid-cols-2">
-            {/* Projet 1 */}
-            <div className="border border-slate-700/60 bg-slate-900/60 rounded-xl p-5 shadow-lg shadow-black/40 hover:border-violet-400/80 transition-all">
-              <h3 className="text-lg font-semibold text-slate-50 mb-2">
-                Lab Active Directory sous Proxmox
-              </h3>
-              <p className="text-sm text-slate-300 mb-3">
-                Mise en place d&apos;un domaine Active Directory complet dans un
-                environnement virtualisé pour m&apos;entraîner à
-                l&apos;administration systèmes et réseau.
-              </p>
-              <p className="text-xs text-slate-400 mb-3">
-                Windows Server, Proxmox, DNS, DHCP, GPO, OU, comptes utilisateurs.
-              </p>
-            </div>
-
-            {/* Projet 2 */}
-            <div className="border border-slate-700/60 bg-slate-900/60 rounded-xl p-5 shadow-lg shadow-black/40 hover:border-violet-400/80 transition-all">
-              <h3 className="text-lg font-semibold text-slate-50 mb-2">
-                Scripts d&apos;automatisation systèmes
-              </h3>
-              <p className="text-sm text-slate-300 mb-3">
-                Scripts PowerShell et Bash pour automatiser des tâches de
-                déploiement, de création d&apos;utilisateurs et de collecte d&apos;infos.
-              </p>
-              <p className="text-xs text-slate-400 mb-3">
-                PowerShell, Bash, gestion utilisateurs, inventaire, maintenance.
-              </p>
+            <div className="grid gap-6 md:grid-cols-3">
+              {[
+                {
+                  tag: "INFRA · ACTIVE DIRECTORY",
+                  title: "Lab Active Directory sous Proxmox",
+                  desc:
+                    "Domaine Active Directory complet avec utilisateurs, GPO et services réseau.",
+                  stack: "Windows Server · Proxmox · DNS · DHCP · GPO",
+                },
+                {
+                  tag: "AUTOMATISATION · SCRIPTS",
+                  title: "Scripts d’automatisation systèmes",
+                  desc:
+                    "Scripts PowerShell et Bash pour tâches d’administration récurrentes.",
+                  stack: "PowerShell · Bash · Inventaire · Comptes",
+                },
+                {
+                  tag: "SÉCURITÉ · RESEAUX",
+                  title: "Simulation WAN avec supervision et redondance de routeurs (CISCO)",
+                  desc:
+                    "Mise en place d'un réseau d'entreprise orienté disponibilité, observabilité réseau et continuité de service.",
+                  stack: "Logs · Routing · Reseau Entreprise · Supervision",
+                },
+                {
+                  tag: "DEV · GESTION DE PROJETS (en cours)",
+                  title: "App Track Muscu - application de suivi d'entraînement et de performance.",
+                  desc:
+                    "Création d'une application de suivi d'entraînement et de performance avec React. Le projet sert de support pour l'expérimentation, sécurisation des accès et deploiement automatisé",
+                  stack: "Base données · API · Authentification · Déploiement",
+                }
+              ].map((p) => (
+                <article
+                  key={p.title}
+                  className="border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 hover:shadow-lg hover:-translate-y-0.5 transition-all backdrop-blur"
+                >
+                  <p className="text-[0.7rem] font-medium text-slate-400 uppercase tracking-[0.18em] mb-2">
+                    {p.tag}
+                  </p>
+                  <h3 className="text-base font-semibold text-slate-100 mb-2">
+                    {p.title}
+                  </h3>
+                  <p className="text-[0.85rem] text-slate-300 mb-3">
+                    {p.desc}
+                  </p>
+                  <p className="text-[0.75rem] text-slate-400">
+                    {p.stack}
+                  </p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
         {/* CONTACT */}
-        <section className="relative z-20 mt-24 px-4 pb-16">
-          <div className="max-w-3xl mx-auto text-center">
+        <section className="relative mt-24 px-4 pb-16">
+          <div className="max-w-3xl mx-auto text-center bg-slate-800/60 rounded-2xl border border-slate-700/60 p-6 backdrop-blur">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-100 mb-4">
               Me contacter
             </h2>
+
             <p className="text-sm md:text-base text-slate-300 mb-6">
               Ouvert aux opportunités de stage, alternance et projets en systèmes,
               réseaux et cybersécurité.
@@ -240,24 +296,26 @@ export default function Home() {
 
             <div className="flex flex-col items-center gap-3 text-sm md:text-base text-slate-200">
               <a
-                href="mailto:ton.email@exemple.com"
-                className="hover:text-violet-300 transition-colors"
+                href="mailto:garlenscharles10@gmail.com"
+                className="hover:text-blue-300 transition-colors"
               >
-                ton.email@exemple.com
+                garlenscharles10@gmail.com
               </a>
+
               <a
-                href="https://github.com/ton-github"
+                href="https://github.com/DinoGLS"
                 target="_blank"
-                className="hover:text-violet-300 transition-colors"
+                className="hover:text-blue-300 transition-colors"
               >
-                GitHub · ton-github
+                GitHub
               </a>
+
               <a
-                href="https://www.linkedin.com/in/ton-linkedin"
+                href="https://www.linkedin.com/in/garlens-charles-29a6b3351/"
                 target="_blank"
-                className="hover:text-violet-300 transition-colors"
+                className="hover:text-blue-300 transition-colors"
               >
-                LinkedIn · ton-linkedin
+                LinkedIn
               </a>
             </div>
           </div>
