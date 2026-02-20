@@ -284,7 +284,7 @@ export default function Home() {
                     "Création d'une application de suivi d'entraînement et de performance avec React. Le projet sert de support pour l'expérimentation, sécurisation des accès et deploiement automatisé",
                   stack: "Base données · API · Authentification · Déploiement",
                   href: "/projects/app-track-muscu",
-                  preview: "/projects/app-track-muscu/preview.png",
+                  preview: "public/projects/app-track-muscu/preview.png",
                   ready : false,
                 }, ]
 
