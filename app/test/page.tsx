@@ -4,6 +4,8 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Image from "next/image";
+
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -245,7 +247,7 @@ export default function Home() {
 
             <div className="grid gap-6 md:grid-cols-3">
               {[
-                {
+                /*{
                   tag: "INFRA · ACTIVE DIRECTORY",
                   title: "Lab Active Directory sous Proxmox",
                   desc:
@@ -253,8 +255,9 @@ export default function Home() {
                   stack: "Windows Server · Proxmox · DNS · DHCP · GPO",
                   href: "/projects/ad-proxmox",
                   preview: "/projects/ad-proxmox/preview.png",
-                },
-                {
+                  ready: false,
+                },*/
+                /*{
                   tag: "AUTOMATISATION · SCRIPTS",
                   title: "Scripts d’automatisation systèmes",
                   desc:
@@ -262,7 +265,8 @@ export default function Home() {
                   stack: "PowerShell · Bash · Inventaire · Comptes",
                   href: "/projects/automation-scripts",
                   preview: "/projects/automation-scripts/preview.png",
-                },
+                  ready: false,
+                },*/
                 {
                   tag: "SÉCURITÉ · RESEAUX",
                   title: "Simulation WAN avec supervision et redondance de routeurs (CISCO)",
@@ -271,6 +275,7 @@ export default function Home() {
                   stack: "Logs · Routing · Reseau Entreprise · Supervision",
                   href: "/projects/wan-simulation",
                   preview: "/projects/wan-simulation/configurationwan.png",
+                  ready : true,
                 },
                 {
                   tag: "DEV · GESTION DE PROJETS (en cours)",
@@ -280,18 +285,16 @@ export default function Home() {
                   stack: "Base données · API · Authentification · Déploiement",
                   href: "/projects/app-track-muscu",
                   preview: "/projects/app-track-muscu/preview.png",
-                }
-              ].map((p) => (
-                <Link
-                  key={p.title}
-                  href={p.href}
-                  className="group relative block"
-                >
-                <article
-                  className="relative border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 hover:shadow-lg hover:shadow-lg hover:translate-y-0.5 transition-all backdrop-blur overflow-hidden"
+                  ready : false,
+                }, ]
+
+              .map((p) => {
+                const Card = (
+                <article 
+                    className={`relative border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 ${p.ready === false ? "opacity-60 cursor-not-allowed" : "hover:shadow-lg hover:translate-y-0.5 transition-all"}`}
                 >
                 {/* Aperçu intégré */}
-<div className="relative mb-3 overflow-hidden rounded-lg border border-slate-700/60 bg-slate-900/70
+                <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-700/60 bg-slate-900/70
                 max-h-0 group-hover:max-h-40 transition-all duration-300">
 
   <img
@@ -302,7 +305,7 @@ export default function Home() {
 
   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
   <span className="absolute bottom-2 left-2 text-xs text-slate-300 font-harded uppercase tracking-[0.12em] opacity-0 group-hover:opacity-100 transition-opacity">
-    Cliquez pour voir le projet
+    {p.ready === false ? "Bientôt disponible" : "Cliquez pour voir le projet"}
   </span>
 </div>
 
@@ -323,8 +326,19 @@ export default function Home() {
                       </p>
 
                 </article>
+                );
+                if(p.ready === false) {
+                  return (
+                    <div key={p.title} className="group relative block">
+                      {Card}
+                      </div>
+                  );
+                }
+                return (
+                  <Link key={p.title} href={p.href} className="group relative block">
+                    {Card}
                 </Link>
-              ))}
+              );              })}
           </div>
           </div>
         </section>
