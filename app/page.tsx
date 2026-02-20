@@ -274,7 +274,7 @@ export default function Home() {
                     "Mise en place d'un réseau d'entreprise orienté disponibilité, observabilité réseau et continuité de service.",
                   stack: "Logs · Routing · Reseau Entreprise · Supervision",
                   href: "/projects/wan-simulation",
-                  preview: "public/projects/wan-simulation/configurationwan.png",
+                  preview: "projects/wan-simulation/configurationwan.png",
                   ready : true,
                 },
                 {
@@ -284,7 +284,7 @@ export default function Home() {
                     "Création d'une application de suivi d'entraînement et de performance avec React. Le projet sert de support pour l'expérimentation, sécurisation des accès et deploiement automatisé",
                   stack: "Base données · API · Authentification · Déploiement",
                   href: "/projects/app-track-muscu",
-                  preview: "public/projects/app-track-muscu/preview.png",
+                  preview: "projects/app-track-muscu/preview.png",
                   ready : false,
                 }, ]
 
@@ -296,7 +296,6 @@ export default function Home() {
                 {/* Aperçu intégré */}
                 <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-700/60 bg-slate-900/70
                 max-h-0 group-hover:max-h-40 transition-all duration-300">
-
   <img
     src={p.preview}
     alt={`${p.title} preview`}
