@@ -274,7 +274,7 @@ export default function Home() {
                     "Mise en place d'un réseau d'entreprise orienté disponibilité, observabilité réseau et continuité de service.",
                   stack: "Logs · Routing · Reseau Entreprise · Supervision",
                   href: "/projects/wan-simulation",
-                  preview: "/projects/wan-simulation/configurationwan.png",
+                  preview: "public/projects/wan-simulation/configurationwan.png",
                   ready : true,
                 },
                 {
