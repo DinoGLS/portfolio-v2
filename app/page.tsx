@@ -137,7 +137,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7 }}
           >
-            APPRENTI DEVSECOPS · TECHNICIEN SUPPORT INFORMATIQUE
+            FUTUR DEVSECOPS · APPRENTI TECHNICIEN SUPPORT INFORMATIQUE 
           </motion.p>
 
           <motion.p
@@ -146,8 +146,8 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.7 }}
           >
-            Je conçois et sécurise des environnements systèmes et réseaux en
-            combinant pratiques DevOps, cybersécurité et support.
+            Je construis mes compétences en administration systèmes et réseaux, cybersécurité et environnements virtualisés, en
+            combinant théorie et pratique à travers des projets personnels et académiques.
           </motion.p>
 
           <motion.a

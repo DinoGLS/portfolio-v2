@@ -247,7 +247,7 @@ export default function Home() {
 
             <div className="grid gap-6 md:grid-cols-3">
               {[
-                /*{
+                {
                   tag: "INFRA · ACTIVE DIRECTORY",
                   title: "Lab Active Directory sous Proxmox",
                   desc:
@@ -256,8 +256,8 @@ export default function Home() {
                   href: "/projects/ad-proxmox",
                   preview: "/projects/ad-proxmox/preview.png",
                   ready: false,
-                },*/
-                /*{
+                },
+                {
                   tag: "AUTOMATISATION · SCRIPTS",
                   title: "Scripts d’automatisation systèmes",
                   desc:
@@ -266,7 +266,7 @@ export default function Home() {
                   href: "/projects/automation-scripts",
                   preview: "/projects/automation-scripts/preview.png",
                   ready: false,
-                },*/
+                },
                 {
                   tag: "SÉCURITÉ · RESEAUX",
                   title: "Simulation WAN avec supervision et redondance de routeurs (CISCO)",
