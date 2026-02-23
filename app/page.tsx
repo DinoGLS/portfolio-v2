@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowDownIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -8,6 +8,13 @@ import Image from "next/image";
 
 
 export default function Home() {
+  const [openImage, setOpenImage] = useState<string | null>(null);
+  
+  const documents = [
+    { label: "Curriculum Vitae", 
+      file: "/documents/CV GarlensCharles-Apprenti Technicien réseau.pdf" },
+  ];
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -116,6 +123,7 @@ export default function Home() {
       </div>
 
       <div className="relative z-20">
+        
         {/* HERO */}
         <section className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
           <motion.h1
@@ -128,7 +136,7 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9 }}
           >
-            CHARLES&nbsp;GARLENS
+            GARLENS&nbsp;CHARLES
           </motion.h1>
 
           <motion.p
@@ -137,7 +145,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7 }}
           >
-            FUTUR DEVSECOPS · APPRENTI TECHNICIEN SUPPORT INFORMATIQUE 
+            Administration Systèmes & Réseaux · Cybersécurité · DevSecOps en formation
           </motion.p>
 
           <motion.p
@@ -157,9 +165,30 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.7 }}
           >
-            <span>Découvrir mes projets</span>
+            <span>Decouvrir mes projets</span>
             <ArrowDownIcon className="w-5 h-5" />
           </motion.a>
+
+
+          <motion.section
+            className="mt-5 flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+          >
+            {documents.map((doc) => (
+              <a
+                key={doc.label}
+                href={doc.file}
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-3 px-8 py-3 rounded-full border border-slate-500/40 bg-slate-800/60 text-slate-200 font-semibold hover:border-blue-400 hover:text-blue-300 transition-all backdrop-blur"
+              >
+                {doc.label}
+              </a>
+            ))}
+          </motion.section>
+        
         </section>
 
         {/* A PROPOS + COMPETENCES */}
@@ -230,6 +259,50 @@ export default function Home() {
             </div>
           </div>
         </section>
+<section className="relative mt-24 px-4 pb-16">
+  <div className="max-w-4xl mx-auto">
+    <h2 className="text-2xl md:text-3xl font-semibold text-slate-100 text-center mb-10">
+      Mon parcours
+    </h2>
+
+    <div className="relative border-l border-slate-700/60 ml-4 space-y-10">
+
+      {/* Événement */}
+      {[
+        {
+          year: "2024 - Aujourd’hui",
+          title: "BTS SIO option SISR",
+          desc: "Spécialisation en systèmes, réseaux, cybersécurité et environnements virtualisés. Construction de labs techniques (AD, Proxmox, Cisco, supervision, automatisation).",
+        },
+        {
+          year: "2023 - 2024",
+          title: "Cycle préparatoire international (école d’ingénieur)",
+          desc: "Renforcement des bases scientifiques, ouverture internationale, méthodologie d’ingénieur.",
+        },
+        {
+          year: "2021 - 2023",
+          title: "Sûreté aéroportuaire — Securitas",
+          desc: "Diplôme interne, responsabilités opérationnelles, gestion d’équipe, prise de décision en environnement critique.",
+        },
+        {
+          year: "2021",
+          title: "Bac Général",
+          desc: "Spécialités scientifiques, orientation vers l’informatique et les systèmes.",
+        },
+      ].map((item, i) => (
+        <div key={i} className="relative pl-8">
+          {/* Point */}
+          <div className="absolute -left-[9px] top-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-slate-900"></div>
+
+          <h3 className="text-lg font-semibold text-slate-100">{item.year}</h3>
+          <p className="text-slate-300 font-medium">{item.title}</p>
+          <p className="text-slate-400 text-sm mt-1 leading-relaxed">{item.desc}</p>
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
 
         {/* PROJETS */}
         <section
@@ -247,7 +320,7 @@ export default function Home() {
 
             <div className="grid gap-6 md:grid-cols-3">
               {[
-                /*{
+                {
                   tag: "INFRA · ACTIVE DIRECTORY",
                   title: "Lab Active Directory sous Proxmox",
                   desc:
@@ -256,8 +329,8 @@ export default function Home() {
                   href: "/projects/ad-proxmox",
                   preview: "/projects/ad-proxmox/preview.png",
                   ready: false,
-                },*/
-                /*{
+                },
+                {
                   tag: "AUTOMATISATION · SCRIPTS",
                   title: "Scripts d’automatisation systèmes",
                   desc:
@@ -266,7 +339,7 @@ export default function Home() {
                   href: "/projects/automation-scripts",
                   preview: "/projects/automation-scripts/preview.png",
                   ready: false,
-                },*/
+                },
                 {
                   tag: "SÉCURITÉ · RESEAUX",
                   title: "Simulation WAN avec supervision et redondance de routeurs (CISCO)",
@@ -274,7 +347,7 @@ export default function Home() {
                     "Mise en place d'un réseau d'entreprise orienté disponibilité, observabilité réseau et continuité de service.",
                   stack: "Logs · Routing · Reseau Entreprise · Supervision",
                   href: "/projects/wan-simulation",
-                  preview: "projects/wan-simulation/Configurationwan.png",
+                  preview: "/projects/wan-simulation/Configurationwan.png",
                   ready : true,
                 },
                 {
@@ -284,29 +357,34 @@ export default function Home() {
                     "Création d'une application de suivi d'entraînement et de performance avec React. Le projet sert de support pour l'expérimentation, sécurisation des accès et deploiement automatisé",
                   stack: "Base données · API · Authentification · Déploiement",
                   href: "/projects/app-track-muscu",
-                  preview: "projects/app-track-muscu/preview.png",
+                  preview: "/projects/app-track-muscu/preview.png",
                   ready : false,
                 }, ]
 
               .map((p) => {
                 const Card = (
                 <article 
-                    className={`relative border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 ${p.ready === false ? "opacity-60 cursor-not-allowed" : "hover:shadow-lg hover:translate-y-0.5 transition-all"}`}
+                    className={`group relative border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 ${p.ready === false ? "opacity-60 cursor-not-allowed" : "hover:shadow-lg hover:translate-y-0.5 transition-all"}`}
                 >
+                
                 {/* Aperçu intégré */}
-                <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-700/60 bg-slate-900/70
-                max-h-0 group-hover:max-h-40 transition-all duration-300">
-  <img
-    src={p.preview}
-    alt={`${p.title} preview`}
-    className="w-full h-full object-cover object-[50%_20%]"
-  />
+                <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-700/60 bg-slate-900/70 max-h-0 group-hover:max-h-40 transition-all duration-300">
+  <div className="relative w-full h-40">
+    <Image
+      src={p.preview}
+      alt={`${p.title} preview`}
+      fill
+      className={`object-cover object-[50%_20%] ${p.ready ? "":"grayscale opacity-70"}`}
+      sizes="(max-width: 768px) 100vw, 33vw"
+    />
+  </div>
 
   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
   <span className="absolute bottom-2 left-2 text-xs text-slate-300 font-harded uppercase tracking-[0.12em] opacity-0 group-hover:opacity-100 transition-opacity">
     {p.ready === false ? "Bientôt disponible" : "Cliquez pour voir le projet"}
   </span>
 </div>
+
 
 
 
@@ -328,13 +406,13 @@ export default function Home() {
                 );
                 if(p.ready === false) {
                   return (
-                    <div key={p.title} className="group relative block">
+                    <div key={p.title} className="relative block">
                       {Card}
                       </div>
                   );
                 }
                 return (
-                  <Link key={p.title} href={p.href} className="group relative block">
+                  <Link key={p.title} href={p.href} className="relative block">
                     {Card}
                 </Link>
               );              })}

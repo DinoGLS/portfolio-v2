@@ -233,7 +233,7 @@ export default function Home() {
                   ],
                 },
                 {
-                  title: "Sécurité & Automation",
+                  title: "Sécurité & Automatisation",
                   items: [
                     "Hardening, pare-feu, GPO",
                     "Logs, alertes",
