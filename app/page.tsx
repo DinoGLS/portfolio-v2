@@ -270,24 +270,24 @@ export default function Home() {
       {/* Événement */}
       {[
         {
-          year: "2024 - Aujourd’hui",
+          year: "2025 - Aujourd’hui",
           title: "BTS SIO option SISR",
           desc: "Spécialisation en systèmes, réseaux, cybersécurité et environnements virtualisés. Construction de labs techniques (AD, Proxmox, Cisco, supervision, automatisation).",
         },
         {
-          year: "2023 - 2024",
+          year: "2021 - 2022",
           title: "Cycle préparatoire international (école d’ingénieur)",
           desc: "Renforcement des bases scientifiques, ouverture internationale, méthodologie d’ingénieur.",
         },
         {
-          year: "2021 - 2023",
+          year: "2022 - 2024",
           title: "Sûreté aéroportuaire — Securitas",
           desc: "Diplôme interne, responsabilités opérationnelles, gestion d’équipe, prise de décision en environnement critique.",
         },
         {
           year: "2021",
           title: "Bac Général",
-          desc: "Spécialités scientifiques, orientation vers l’informatique et les systèmes.",
+          desc: "Spécialités scientifiques (Mathématiques, Physique-Chimie, option Math Expert).",
         },
       ].map((item, i) => (
         <div key={i} className="relative pl-8">
