@@ -444,6 +444,7 @@ export default function Home() {
                 href="https://github.com/DinoGLS"
                 target="_blank"
                 className="hover:text-blue-300 transition-colors"
+                rel="noopener noreferrer"
               >
                 GitHub
               </a>
@@ -452,6 +453,7 @@ export default function Home() {
                 href="https://www.linkedin.com/in/garlens-charles-29a6b3351/"
                 target="_blank"
                 className="hover:text-blue-300 transition-colors"
+                rel="noopener noreferrer"
               >
                 LinkedIn
               </a>

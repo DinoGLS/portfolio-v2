@@ -182,6 +182,7 @@ export default function Home() {
                 key={doc.label}
                 href={doc.file}
                 rel="noopener noreferrer"
+                  target="_blank"
                 className="inline-flex items-center space-x-3 px-8 py-3 rounded-full border border-slate-500/40 bg-slate-800/60 text-slate-200 font-semibold hover:border-blue-400 hover:text-blue-300 transition-all backdrop-blur"
               >
                 {doc.label}
@@ -443,6 +444,7 @@ export default function Home() {
               <a
                 href="https://github.com/DinoGLS"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-blue-300 transition-colors"
               >
                 GitHub
@@ -451,6 +453,7 @@ export default function Home() {
               <a
                 href="https://www.linkedin.com/in/garlens-charles-29a6b3351/"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="hover:text-blue-300 transition-colors"
               >
                 LinkedIn
