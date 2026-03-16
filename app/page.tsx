@@ -12,7 +12,7 @@ export default function Home() {
   
   const documents = [
     { label: "Curriculum Vitae", 
-      file: "/documents/CV GarlensCharles-Apprenti Technicien réseau.pdf" },
+      file: "/documents/cv_portfolio.pdf" },
   ];
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
