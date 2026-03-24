@@ -439,7 +439,7 @@ export default function Home() {
                   desc: "Domaine Active Directory complet avec utilisateurs, GPO et services réseau.",
                   stack: "Windows Server · Proxmox · DNS · DHCP · GPO",
                   href: "/projects/ad-proxmox",
-                  preview: "/projects/ad-proxmox/preview.png",
+                  preview: "/projects/ad-proxmox/ad_proxmox.png",
                   ready: false,
                 },
                 {
