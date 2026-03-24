@@ -448,8 +448,8 @@ export default function Home() {
                   desc: "Scripts PowerShell et Bash pour tâches d'administration récurrentes.",
                   stack: "PowerShell · Bash · Inventaire · Comptes",
                   href: "/projects/automation-scripts",
-                  preview: "/projects/automation-scripts/preview.png",
-                  ready: false,
+                  preview: "/projects/usb-toolkit/automat.png",
+                  ready: true,
                 },
                 {
                   tag: "SÉCURITÉ · RESEAUX",
