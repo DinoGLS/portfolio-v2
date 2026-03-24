@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Garlens Charles — Portfolio",
     description: "Administration Systèmes & Réseaux · Cybersécurité · DevSecOps en formation",
-    url: "https://ton-domaine.com",  // ← remplace par ton vrai domaine
+    url: "https://portfolio-charles-garlens.vercel.app/",  // ← remplace par ton vrai domaine
     siteName: "Portfolio Garlens Charles",
     locale: "fr_FR",
     type: "website",
