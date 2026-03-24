@@ -281,6 +281,7 @@ export default function Home() {
           <motion.a
             href={documents[0].file}
             rel="noopener noreferrer"
+            target="blank"
             className="inline-flex items-center space-x-3 px-8 py-3 rounded-full border border-slate-500/40 bg-slate-800/60 text-slate-200 font-semibold hover:border-blue-400 hover:text-blue-300 transition-all backdrop-blur"
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
