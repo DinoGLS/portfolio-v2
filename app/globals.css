@@ -1,21 +1,44 @@
 @import "tailwindcss";
 
-/* Thème cyber violet / gris métal */
+/* Tailwind v4 : on active le mode sombre par CLASSE (.dark sur <html>)
+   au lieu du défaut prefers-color-scheme, pour pouvoir le basculer. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Thème cyber violet / cyan — décliné en clair et sombre.
+   Par défaut (.dark présent sur <html> via le layout) = identité d'origine.
+   ────────────────────────────────────────────────────────────────────────── */
 :root {
-  --background: #05050a;       /* nuit profonde */
-  --foreground: #f5f5f5;       /* texte clair */
-  --primary: #7c3aed;          /* violet néon */
-  --secondary: #a855f7;        /* violet clair */
-  --accent: #38bdf8;           /* cyan néon léger */
-  --metal: #1f2933;            /* gris métal */
+  /* MODE CLAIR (valeurs par défaut) */
+  --background: #f4f5fb;
+  --foreground: #0b0b14;
+  --primary: #7c3aed;        /* violet néon (lisible aussi sur clair) */
+  --secondary: #9333ea;
+  --accent: #0891b2;         /* cyan assombri pour le contraste sur clair */
+  --metal: #e2e8f0;
+  --page-bg: radial-gradient(circle at top, #ffffff 0%, #eef1f8 55%, #e6e9f3 100%);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+.dark {
+  /* MODE SOMBRE (tes valeurs d'origine) */
+  --background: #05050a;
+  --foreground: #f5f5f5;
+  --primary: #7c3aed;
+  --secondary: #a855f7;
+  --accent: #38bdf8;
+  --metal: #1f2933;
+  --page-bg: radial-gradient(circle at top, #1f2933 0%, #020617 60%, #000000 100%);
+}
+
 body {
-  background: radial-gradient(circle at top, #1f2933 0%, #020617 60%, #000000 100%);
+  background: var(--page-bg);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans);
+  /* transition douce lors du changement de thème */
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Glow violet néon */
@@ -27,8 +50,6 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-
-
 
 /* Légère distorsion / glitch simple */
 @keyframes glitch {
@@ -55,29 +76,26 @@ body {
   left: -120%;
   width: 120%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(148, 163, 253, 0.5),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 253, 0.5), transparent);
   transition: 0.5s;
 }
 .btn-cyber:hover::before {
   left: 120%;
 }
 
+
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #020617;
-}
-::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Accessibilité : couper les animations si l'utilisateur les refuse. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
