@@ -45,6 +45,49 @@ body {
   0%, 100% { text-shadow: 0 0 4px var(--primary), 0 0 12px var(--primary); }
   50% { text-shadow: 0 0 10px var(--secondary), 0 0 25px var(--secondary); }
 }
+
+/* Animation d'entrée du hero — fond qui se déploie */
+@keyframes heroBackdropExpand {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    clip-path: circle(0% at 50% 50%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.03;
+    transform: scale(1);
+    clip-path: circle(100% at 50% 50%);
+  }
+}
+
+/* Reveal progressif du texte ligne par ligne */
+@keyframes textReveal {
+  0% {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Glow subtil qui augmente */
+@keyframes heroGlow {
+  0% {
+    filter: blur(0px) brightness(1);
+  }
+  50% {
+    filter: blur(0.5px) brightness(1.05);
+  }
+  100% {
+    filter: blur(0px) brightness(1);
+  }
+}
+
 .cyber-title {
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -83,13 +126,13 @@ body {
 }
 
 
-/* Scrollbar — scopée sur body uniquement pour eviter double barre */
-html { overflow-x: hidden; }
-body { overflow-x: hidden; overflow-y: scroll; scrollbar-gutter: stable; }
-body::-webkit-scrollbar { width: 8px; }
-body::-webkit-scrollbar-track { background: var(--background); }
-body::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-body::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+/* Scrollbar — ciblée uniquement sur html pour éviter toute double barre */
+html { overflow-x: hidden; scrollbar-gutter: stable; }
+body { overflow-x: hidden; }
+html::-webkit-scrollbar { width: 8px; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+html::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
 /* Accessibilité : couper les animations si l'utilisateur les refuse. */
 @media (prefers-reduced-motion: reduce) {

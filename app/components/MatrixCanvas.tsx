@@ -1,14 +1,20 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useTheme } from "@/app/providers/ThemeProvider";
 
 export default function MatrixCanvas() {
+  const pathname = usePathname();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const ref = useRef<HTMLCanvasElement>(null);
 
+  // Désactivé sur les pages projet (canvas distrait du contenu)
+  const active = !pathname?.startsWith("/projects");
+
   useEffect(() => {
+    if (!active) return;
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -17,6 +23,7 @@ export default function MatrixCanvas() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const isMobile = window.innerWidth < 768;
+    if (isMobile) return; // Désactivé sur mobile — trop gourmand, nuit au scroll
     const COL_W   = isMobile ? 26 : 18;
     const TRAIL   = isMobile ? 2  : 4;
     const FONT_SZ = isMobile ? 11 : 13;
@@ -116,6 +123,8 @@ export default function MatrixCanvas() {
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDark]);
+
+  if (!active) return null;
 
   return (
     <canvas
