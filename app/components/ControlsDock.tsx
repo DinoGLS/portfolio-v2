@@ -5,16 +5,27 @@ import { motion } from "framer-motion";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useLanguage, LANGS } from "@/app/providers/LanguageProvider";
 
-// Dock flottant en haut à droite : bascule de thème + bascule de langue.
-// Volontairement compact pour ne pas gêner la navbar existante.
+import { usePathname } from "next/navigation";
+
+// Sur l'accueil : contrôles dans la barre en DESKTOP, donc le dock ne s'affiche
+// que sur MOBILE (md:hidden). Sur les autres pages : toujours visible.
 export default function ControlsDock() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  // Accueil : dock visible sur MOBILE uniquement (desktop = contrôles dans la barre),
+  // placé en BAS À GAUCHE pour ne chevaucher ni la barre du haut ni la flèche (bas-droite).
+  // Autres pages : en haut à droite.
+  const pos = isHome ? "md:hidden bottom-6 left-6" : "top-3 right-3";
+  return <DockInner posClass={pos} />;
+}
+
+function DockInner({ posClass }: { posClass: string }) {
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, t } = useLanguage();
   const isDark = theme === "dark";
 
   return (
-    <div className="fixed top-3 right-3 z-[60] flex items-center gap-2">
-      {/* Sélecteur de langue : segmenté FR / EN */}
+    <div className={`fixed z-[60] flex items-center gap-2 ${posClass}`}>
       <div
         role="group"
         aria-label={t("common.langLabel")}
@@ -30,12 +41,15 @@ export default function ControlsDock() {
               onClick={() => setLang(l)}
               aria-pressed={active}
               className={`relative rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider transition-colors
-                ${active ? "text-slate-950 dark:text-slate-950" : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"}`}
+                ${active
+                  ? "text-slate-950 dark:text-slate-950"
+                  : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
+                }`}
             >
               {active && (
                 <motion.span
-                  layoutId="lang-pill"
-                  className="absolute inset-0 -z-10 rounded-full bg-emerald-400 dark:bg-emerald-400"
+                  layoutId="dock-lang-pill"
+                  className="absolute inset-0 -z-10 rounded-full bg-emerald-400"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
@@ -45,12 +59,10 @@ export default function ControlsDock() {
         })}
       </div>
 
-      {/* Bascule de thème */}
       <button
         type="button"
         onClick={toggleTheme}
         aria-label={isDark ? t("common.themeToLight") : t("common.themeToDark")}
-        title={isDark ? t("common.themeToLight") : t("common.themeToDark")}
         className="grid h-8 w-8 place-items-center rounded-full border border-slate-300/70 bg-white/80 text-slate-700 backdrop-blur
                    transition-colors hover:border-emerald-400 hover:text-emerald-500
                    dark:border-slate-700/70 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:border-emerald-400 dark:hover:text-emerald-300"

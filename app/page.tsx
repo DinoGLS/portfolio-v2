@@ -1,74 +1,210 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowUpIcon } from "@heroicons/react/24/outline";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { SunIcon, MoonIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Image from "next/image";
+import ContactForm from "@/app/components/ContactForm";
+import { useLanguage, LANGS } from "@/app/providers/LanguageProvider";
+import { homeStrings } from "@/app/lib/i18n";
+import { useTheme } from "@/app/providers/ThemeProvider";
 
-// ─── Navbar links ────────────────────────────────────────────────────────────
-const NAV_LINKS = [
-  { label: "Accueil",   href: "#top"       },
-  { label: "À propos",  href: "#about"    },
-  { label: "Parcours",  href: "#parcours"  },
-  { label: "Projets",   href: "#projects"  },
-  { label: "Contact",   href: "#contact"   },
+// ─── Données projets ─────────────────────────────────────────────────────────
+const THEMES_DATA = [
+  {
+    id: "infra",
+    labelFr: "Infrastructure & Réseaux",
+    labelEn: "Infrastructure & Networks",
+    color: "#3b82f6",
+    projects: [
+      {
+        tag: "INFRA · ACTIVE DIRECTORY",
+        tagEn: "INFRA · ACTIVE DIRECTORY",
+        title: "Lab Active Directory sous Proxmox",
+        titleEn: "Active Directory lab on Proxmox",
+        desc: "Domaine AD complet — utilisateurs, GPO, DNS/DHCP sous Proxmox VE.",
+        descEn: "Full AD domain — users, GPOs, DNS/DHCP on Proxmox VE.",
+        stack: "Windows Server · Proxmox · DNS · DHCP · GPO",
+        href: "/projects/ad-proxmox",
+        preview: "/projects/ad-proxmox/ad_proxmox.png",
+        badge: "Terminé",       badgeEn: "Done",        badgeColor: "emerald",
+      },
+      {
+        tag: "SÉCURITÉ · RÉSEAUX · CISCO",
+        tagEn: "SECURITY · NETWORKS · CISCO",
+        title: "Simulation WAN — supervision & redondance Cisco",
+        titleEn: "WAN Simulation — Cisco monitoring & redundancy",
+        desc: "Réseau d'entreprise avec OSPF, HSRP, SNMP, VLANs et ACLs.",
+        descEn: "Enterprise network with OSPF, HSRP, SNMP, VLANs and ACLs.",
+        stack: "OSPF · HSRP · SNMP · VLAN · ACL · Cisco",
+        href: "/projects/wan-simulation",
+        preview: "/projects/wan-simulation/configwan.png",
+        badge: "Terminé",       badgeEn: "Done",        badgeColor: "emerald",
+      },
+    ],
+  },
+  {
+    id: "auto",
+    labelFr: "Automatisation & Outils",
+    labelEn: "Automation & Tools",
+    color: "#10b981",
+    projects: [
+      {
+        tag: "AUTOMATISATION · SCRIPTS",
+        tagEn: "AUTOMATION · SCRIPTS",
+        title: "USB Toolkit — Boîte à outils portable",
+        titleEn: "USB Toolkit — Portable admin tools",
+        desc: "Suite PowerShell/Python avec interface WPF sur clef USB.",
+        descEn: "PowerShell/Python suite with WPF GUI on a USB key.",
+        stack: "PowerShell · Python · Flask · Pandoc · Playwright",
+        href: "/projects/automation-scripts",
+        preview: "/projects/usb-toolkit/automat.png",
+        badge: "Terminé",       badgeEn: "Done",        badgeColor: "emerald",
+      },
+    ],
+  },
+  {
+    id: "ia",
+    labelFr: "IA & DevOps",
+    labelEn: "AI & DevOps",
+    color: "#a855f7",
+    projects: [
+      {
+        tag: "IA · DEVOPS · BTS SISR",
+        tagEn: "AI · DEVOPS · BTS SISR",
+        title: "DocForge — Générateur de livrables",
+        titleEn: "DocForge — Document generator",
+        desc: "Flask + Groq/Gemini + Pandoc + WeasyPrint déployé sur HP Server.",
+        descEn: "Flask + Groq/Gemini + Pandoc + WeasyPrint on HP Server.",
+        stack: "Python · Flask · Groq · Gemini · Docker · Linux",
+        href: "/projects/docforge",
+        preview: "/projects/wan-simulation/configwan.png",
+        badge: "En production",  badgeEn: "Live",        badgeColor: "violet",
+      },
+    ],
+  },
+  {
+    id: "dev",
+    labelFr: "Dev & DevSecOps",
+    labelEn: "Dev & DevSecOps",
+    color: "#f59e0b",
+    projects: [
+      {
+        tag: "DEV · DEVSECOPS",
+        tagEn: "DEV · DEVSECOPS",
+        title: "App Track Muscu — Suivi d'entraînement",
+        titleEn: "Track Muscu App — Training tracker",
+        desc: "Full-stack React/API REST. Support DevSecOps : auth JWT, Docker, CI/CD.",
+        descEn: "Full-stack React/REST API. DevSecOps: JWT auth, Docker, CI/CD.",
+        stack: "React · TypeScript · PostgreSQL · Docker · CI/CD",
+        href: "/projects/app-track-muscu",
+        preview: "/projects/usb-toolkit/automat.png",
+        badge: "En cours",       badgeEn: "In progress", badgeColor: "amber",
+      },
+    ],
+  },
 ];
 
+const BADGE_STYLES: Record<string, string> = {
+  emerald: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30 dark:text-emerald-300",
+  violet:  "bg-violet-500/15 text-violet-600 border-violet-500/30 dark:text-violet-300",
+  amber:   "bg-amber-500/15 text-amber-600 border-amber-500/30 dark:text-amber-300",
+};
+
+interface CyberItem {
+  title: string; link: string; pubDate: string;
+  source: string; sourceColor: string; tag: string;
+}
+
+function timeAgo(dateStr: string): string {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 3600) return `${Math.floor(diff / 60)} min`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} h`;
+  return `${Math.floor(diff / 86400)} j`;
+}
+
+// ─── Composant principal ─────────────────────────────────────────────────────
 export default function Home() {
-  const [openImage, setOpenImage] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState<string>("");
-  const [showTop, setShowTop] = useState(false);
-  const isScrolling = useRef(false);
+  const { lang, setLang } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
+  const h = homeStrings[lang];
 
+  const [activeSection, setActiveSection]   = useState<string>("");
+  const [activeTheme, setActiveTheme]       = useState<string | null>(null);
+  const [cyberItems, setCyberItems]         = useState<CyberItem[]>([]);
+  const [cyberLoading, setCyberLoading]     = useState(true);
+  const [showTop, setShowTop]               = useState(false);
+  const isScrolling                         = useRef(false);
+
+  const NAV_LINKS = [
+    { label: h.nav.home,     href: "#top" },
+    { label: h.nav.about,    href: "#about" },
+    { label: h.nav.parcours, href: "#parcours" },
+    { label: h.nav.projects, href: "#projects" },
+    { label: lang === "fr" ? "Veille" : "News", href: "#veille" },
+    { label: h.nav.contact,  href: "#contact" },
+  ];
+
+  // ── Cyber news ────────────────────────────────────────────────────────────
+  const fetchCyber = useCallback(async () => {
+    try {
+      const res = await fetch("/api/cyber-watch");
+      if (!res.ok) return;
+      const data = await res.json();
+      setCyberItems((data.items as CyberItem[]).slice(0, 6));
+    } catch { /* silencieux */ } finally { setCyberLoading(false); }
+  }, []);
+
+  useEffect(() => { fetchCyber(); }, [fetchCyber]);
+
+  // ── Scroll actif — throttlé RAF (1 update / frame, pas 60+ setState/sec) ──
   useEffect(() => {
+    let rafId: number | null = null;
+
     const handleScroll = () => {
-      setShowTop(window.scrollY > 300);
-
-
-      // Ne pas mettre a jour la section active pendant un scroll programme (clic navbar)
-      if (isScrolling.current) return;
-
-      // Si on est en bas de page => contact actif quoi qu'il arrive
-      const atBottom =
-        window.innerHeight + window.scrollY >= document.body.scrollHeight - 10;
-      if (atBottom) {
-        setActiveSection("contact");
-        return;
-      }
-
-      // Sinon : section dont le top est la plus proche du haut du viewport
-      const ids = NAV_LINKS.map((l) => l.href.replace("#", ""));
-      let current = "";
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= 100) {
-          current = id;
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const scrollY = window.scrollY;
+        setShowTop(scrollY > 100);
+        if (isScrolling.current) return;
+        const atBottom = window.innerHeight + scrollY >= document.body.scrollHeight - 10;
+        if (atBottom) { setActiveSection("contact"); return; }
+        const ids = NAV_LINKS.map((l) => l.href.replace("#", ""));
+        let current = "";
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (el && el.getBoundingClientRect().top <= 100) current = id;
         }
-      }
-      if (current) setActiveSection(current);
+        if (current) setActiveSection(current);
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // appel immediat pour initialiser l etat au chargement
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const id = href.replace("#", "");
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    // Forcer immediatement la section cible comme active et bloquer la detection
     setActiveSection(id);
     isScrolling.current = true;
 
     const navbarHeight = id === "top" ? 0 : 72;
-    const start    = window.scrollY;
-    const target   = id === "top" ? 0 : el.getBoundingClientRect().top + window.scrollY - navbarHeight;
-    const delta    = target - start;
+    const start  = window.scrollY;
+    const el     = id === "top" ? null : document.getElementById(id);
+    const target = id === "top" ? 0 : (el ? el.getBoundingClientRect().top + window.scrollY - navbarHeight : start);
+    const delta  = target - start;
     const duration = 700;
     let startTime: number | null = null;
 
@@ -83,113 +219,24 @@ export default function Home() {
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
-        // Scroll termine : on relache la detection
         isScrolling.current = false;
       }
     };
-
     requestAnimationFrame(step);
   };
 
-  const documents = [
-    { label: "Curriculum Vitae",
-      file: "/documents/CV_GarlensCharles-Apprenti.pdf" },
-  ];
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // ── Projets filtrés ───────────────────────────────────────────────────────
+  const visibleProjects = activeTheme
+    ? THEMES_DATA.find((t) => t.id === activeTheme)?.projects ?? []
+    : THEMES_DATA.flatMap((t) => t.projects);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resize = () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const cols  = Math.floor(canvas.width / 18) + 1;
-    const drops = Array(cols).fill(1);
-    const speeds = Array(cols).fill(0).map(() => Math.random() * 1.5 + 0.5);
-    const chars =
-      "01∆ΛΞΣΠΦΨΩ≡≠</>[]{}$#*@GARLENSCHARLESBIENVENUEDANSMONPORTFOLIO";
-
-    const draw = () => {
-      ctx.fillStyle = "rgba(15, 23, 42, 0.15)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, "#94a3b8");
-      gradient.addColorStop(1, "#334155");
-
-      ctx.fillStyle = gradient;
-      ctx.font = "14px monospace";
-
-      drops.forEach((y, i) => {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.shadowColor = "#2c334b";
-        ctx.shadowBlur  = 6;
-        const x    = i * 18;
-        const yPos = y * 18;
-        ctx.fillStyle = "#e2e8f03b";
-        ctx.fillText(text, x, yPos);
-        ctx.fillStyle = gradient;
-        ctx.shadowBlur = 0;
-
-        if (y * 18 > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        } else {
-          drops[i] += speeds[i];
-        }
-      });
-    };
-
-    let animationId: number;
-    const loop = () => {
-      draw();
-      ctx.fillStyle = "rgba(10, 15, 25, 0.15)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      animationId = requestAnimationFrame(loop);
-    };
-    loop();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
+  // ── Rendu ─────────────────────────────────────────────────────────────────
   return (
-    <main id="top" className="relative min-h-screen overflow-x-hidden">
-
-      {/* ── FIXED BACKGROUND ──────────────────────────────────────────────── */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-slate-900" />
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 opacity-90" />
-        <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage: `
-              linear-gradient(90deg, rgba(39,36,36,0.6) 1px, transparent 1px),
-              linear-gradient(180deg, rgba(58,58,58,0.6) 1px, transparent 1px)
-            `,
-            backgroundSize: "60px 60px",
-          }}
-        />
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 opacity-25 mix-blend-screen pointer-events-none will-change-transform"
-        />
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          STICKY NAVBAR  (AJOUT)
-      ══════════════════════════════════════════════════════════════════════ */}
+    <>
+      {/* ── NAV TOP (hors <main>, comme le dock qui reste fixe) ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4">
-        <div className="flex items-center gap-1 px-4 py-2 rounded-full border border-slate-700/60 bg-slate-900/70 backdrop-blur-md shadow-lg">
+        <div className="flex items-center gap-0.5 md:gap-1 px-3 md:px-4 py-2 max-w-full overflow-x-auto no-scrollbar rounded-full border backdrop-blur-md shadow-lg border-slate-300/60 bg-white/70 dark:border-slate-700/60 dark:bg-slate-900/70">
           {NAV_LINKS.map((link) => {
             const id = link.href.replace("#", "");
             const isActive = activeSection === id;
@@ -198,167 +245,137 @@ export default function Home() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => scrollToSection(e, link.href)}
-                className={`relative px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200
+                className={`relative px-3 md:px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200
+                  ${(link.href === "#veille" || link.href === "#top") ? "hidden md:inline-flex" : ""}
                   ${isActive
-                    ? "text-blue-300 bg-slate-700/60"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                    ? "text-blue-600 bg-slate-200/70 dark:text-blue-300 dark:bg-slate-700/60"
+                    : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60"
                   }`}
               >
                 {link.label}
-                {/* Active indicator dot */}
                 {isActive && (
-                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400" />
+                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-500 dark:bg-blue-400" />
                 )}
               </a>
             );
           })}
+
+          {/* Langue + thème : DESKTOP uniquement (mobile = dans le coin) */}
+          <div className="hidden md:flex items-center gap-1">
+            <div className="w-px h-4 bg-slate-300/60 dark:bg-slate-700/60 mx-1" />
+
+            {LANGS.map((l) => {
+              const active = l === lang;
+              return (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setLang(l)}
+                  className={`text-xs font-black uppercase px-2.5 py-1.5 rounded-full transition-colors
+                    ${active
+                      ? "bg-slate-200/70 text-blue-600 dark:bg-slate-700/60 dark:text-blue-300"
+                      : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-slate-800/60"
+                    }`}
+                >
+                  {l}
+                </button>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={isDark ? "Mode clair" : "Mode sombre"}
+              className="p-1.5 rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60 transition-colors"
+            >
+              {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          BACK TO TOP BUTTON  (AJOUT)
-      ══════════════════════════════════════════════════════════════════════ */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="Retour en haut"
-        className={`fixed bottom-6 right-6 z-50 p-3 rounded-full border border-slate-700/60 bg-slate-800/80 text-slate-300
-          hover:text-blue-300 hover:border-blue-400 backdrop-blur shadow-lg
-          transition-all duration-300
-          ${showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}
-      >
-        <ArrowUpIcon className="w-5 h-5" />
-      </button>
+      <main id="top" className="relative">
+      {/* ── CONTENU ── */}
+      <div className="relative z-10">
 
-      {/* ── PAGE CONTENT ──────────────────────────────────────────────────── */}
-      <div className="relative z-20">
-
-        {/* HERO */}
-        <section className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-          {/* Indicateur Open to Work */}
+        {/* ── HERO ── */}
+        <section className="min-h-dvh flex flex-col items-center justify-center px-4 text-center">
           <motion.div
-            className="flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-medium tracking-wide"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            className="flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 text-xs font-medium tracking-wide dark:text-emerald-400 backdrop-blur-sm"
+            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            Disponible — Stage / Alternance
+            {h.hero.available}
           </motion.div>
 
           <motion.h1
             className="text-[2.2rem] sm:text-[3rem] md:text-[4rem] lg:text-[4.5rem] font-extrabold bg-clip-text text-transparent mb-4"
-            style={{ backgroundImage: "linear-gradient(to right, #00209F, #525563)" }}
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9 }}
+            style={{ backgroundImage: isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #1d4ed8, #4338ca)" }}
+            initial={{ opacity: 0, scale: 0.93 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9 }}
           >
             GARLENS&nbsp;CHARLES
           </motion.h1>
 
           <motion.p
-            className="text-sm md:text-base tracking-[0.28em] text-slate-300 uppercase mb-8"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.7 }}
+            className="text-sm md:text-base tracking-[0.22em] text-slate-500 uppercase mb-8 dark:text-slate-300"
+            initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.7 }}
           >
-            Administration Systèmes & Réseaux · Cybersécurité · DevSecOps en formation
+            {h.hero.subtitle}
           </motion.p>
 
           <motion.p
-            className="text-sm md:text-base text-slate-300 max-w-xl mb-10"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.7 }}
+            className="text-sm md:text-base text-slate-600 max-w-xl mb-10 dark:text-slate-300"
+            initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.7 }}
           >
-            Je construis mes compétences en administration systèmes et réseaux, cybersécurité
-            et environnements virtualisés, en combinant théorie et pratique à travers des
-            projets personnels et académiques.
+            {h.hero.intro}
           </motion.p>
 
-          <motion.a
-            href={documents[0].file}
-            rel="noopener noreferrer"
-            target="blank"
-            className="inline-flex items-center space-x-3 px-8 py-3 rounded-full border border-slate-500/40 bg-slate-800/60 text-slate-200 font-semibold hover:border-blue-400 hover:text-blue-300 transition-all backdrop-blur"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.7 }}
+          <motion.div
+            className="flex flex-wrap items-center justify-center gap-3"
+            initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1, duration: 0.7 }}
           >
-            <span>Curriculum Vitae</span>
-          </motion.a>
+            <a
+              href="/documents/CV_GarlensCharles-Apprenti.pdf"
+              rel="noopener noreferrer" target="_blank"
+              className="inline-flex items-center px-8 py-3 rounded-full border border-slate-300/70 bg-white/60 text-slate-700 font-semibold hover:border-blue-400 hover:text-blue-700 transition-all backdrop-blur-sm shadow-sm dark:border-slate-600/40 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:text-blue-300"
+            >
+              {h.hero.cv}
+            </a>
+            <Link
+              href="/veille-cyber"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-red-400/30 bg-red-50/60 text-red-600 font-semibold hover:border-red-400 hover:bg-red-50 transition-all backdrop-blur-sm text-sm dark:text-red-300 dark:border-red-500/30 dark:bg-red-950/20"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+              </span>
+              {lang === "fr" ? "Veille Cyber" : "Cyber News"}
+            </Link>
+          </motion.div>
         </section>
 
-        {/* A PROPOS + COMPETENCES — id ajouté */}
+        {/* ── À PROPOS ── */}
         <motion.section
           id="about"
-          className="relative mt-16 px-4 pb-12"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="px-4 pb-16 mt-6"
+          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.6 }}
         >
-          <div className="max-w-6xl mx-auto grid gap-10 md:grid-cols-[1.1fr_1.4fr]">
-            <div className="bg-slate-800/60 rounded-2xl border border-slate-700/60 p-6 md:p-7 backdrop-blur">
-              <h2 className="text-xl md:text-2xl font-semibold text-slate-100 mb-3">
-                À propos de moi
-              </h2>
-              <p className="text-sm md:text-[0.95rem] text-slate-300 leading-relaxed">
-                Étudiant en <span className="font-semibold">BTS SIO option SISR</span>,
-                je me spécialise dans l'administration systèmes et réseaux, la
-                cybersécurité et les environnements virtualisés.
-              </p>
-              <p className="text-sm md:text-[0.95rem] text-slate-300 leading-relaxed mt-3">
-                Mon objectif est de devenir <span className="font-semibold">DevSecOps</span> en
-                intégrant la sécurité dès la conception et le déploiement des environnements
-                techniques, en combinant pratiques <span className="font-semibold">DevOps</span>,
-                automatisation et bonnes pratiques de sécurité.
-              </p>
+          <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-[1.1fr_1.4fr]">
+            <div className="rounded-2xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-6 md:p-7 backdrop-blur-md shadow-sm">
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{h.about.heading}</h2>
+              <p className="text-sm md:text-[0.95rem] text-slate-700 dark:text-slate-300 leading-relaxed">{h.about.p1}</p>
+              <p className="text-sm md:text-[0.95rem] text-slate-700 dark:text-slate-300 leading-relaxed mt-3">{h.about.p2}</p>
             </div>
-
             <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  title: "Systèmes",
-                  items: [
-                    "Windows Server (AD, DNS, DHCP, GPO)",
-                    "Windows 10 / 11",
-                    "Linux (Debian, Ubuntu, Kali)",
-                    "Installation & maintenance",
-                  ],
-                },
-                {
-                  title: "Réseau & Virtualisation",
-                  items: [
-                    "VLAN, adressage IP, DNS, DHCP",
-                    "Proxmox, VMware Workstation",
-                    "Labs multi-VM",
-                    "Supervision & journaux",
-                  ],
-                },
-                {
-                  title: "Sécurité & Automatisation",
-                  items: [
-                    "Hardening, pare-feu, GPO",
-                    "Logs, alertes",
-                    "Scripts d'automatisation",
-                    "Bonnes pratiques SecOps",
-                  ],
-                },
-              ].map((block) => (
-                <div
-                  key={block.title}
-                  className="border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 backdrop-blur"
-                >
-                  <h3 className="text-xs font-semibold text-slate-400 mb-2 uppercase tracking-[0.16em]">
-                    {block.title}
-                  </h3>
-                  <ul className="text-[0.85rem] text-slate-300 space-y-1.5">
-                    {block.items.map((i) => (
-                      <li key={i}>{i}</li>
-                    ))}
+              {h.about.skills.map((block) => (
+                <div key={block.title} className="border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 rounded-xl p-4 backdrop-blur-md shadow-sm">
+                  <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-2 uppercase tracking-[0.16em]">{block.title}</h3>
+                  <ul className="text-[0.85rem] text-slate-700 dark:text-slate-300 space-y-1.5">
+                    {block.items.map((i) => <li key={i}>{i}</li>)}
                   </ul>
                 </div>
               ))}
@@ -366,192 +383,238 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* PARCOURS — id ajouté */}
+        {/* ── PARCOURS ── */}
         <motion.section
           id="parcours"
-          className="relative mt-24 px-4 pb-16"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="px-4 pb-16 mt-16"
+          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.6 }}
         >
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-semibold text-slate-100 text-center mb-10">
-              Mon parcours
-            </h2>
-            <div className="relative border-l border-slate-700/60 ml-4 space-y-10">
-              {[
-                {
-                  year: "2024 - Aujourd'hui",
-                  title: "BTS SIO option SISR",
-                  desc: "Spécialisation en systèmes, réseaux, cybersécurité et environnements virtualisés. Construction de labs techniques (AD, Proxmox, Cisco, supervision, automatisation).",
-                },
-                {
-                  year: "2023 - 2024",
-                  title: "Cycle préparatoire international (école d'ingénieur)",
-                  desc: "Renforcement des bases scientifiques, ouverture internationale, méthodologie d'ingénieur.",
-                },
-                {
-                  year: "2021 - 2023",
-                  title: "Sûreté aéroportuaire — Securitas",
-                  desc: "Diplôme interne, responsabilités opérationnelles, gestion d'équipe, prise de décision en environnement critique.",
-                },
-                {
-                  year: "2021",
-                  title: "Bac Général",
-                  desc: "Spécialités scientifiques, orientation vers l'informatique et les systèmes.",
-                },
-              ].map((item, i) => (
-                <div key={i} className="relative pl-8">
-                  <div className="absolute -left-[9px] top-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-slate-900" />
-                  <h3 className="text-lg font-semibold text-slate-100">{item.year}</h3>
-                  <p className="text-slate-300 font-medium">{item.title}</p>
-                  <p className="text-slate-400 text-sm mt-1 leading-relaxed">{item.desc}</p>
-                </div>
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-10">{h.parcours.heading}</h2>
+            <div className="relative border-l border-slate-300/50 dark:border-slate-700/50 ml-4 space-y-10">
+              {h.parcours.items.map((item, i) => (
+                <motion.div
+                  key={i} className="relative pl-8"
+                  initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}
+                >
+                  <div className="absolute -left-[9px] top-1 w-4 h-4 bg-blue-500 rounded-full border-2 border-[#edf1fc] dark:border-slate-950" />
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{item.year}</h3>
+                  <p className="text-slate-700 dark:text-slate-300 font-medium">{item.title}</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 leading-relaxed">{item.desc}</p>
+                </motion.div>
               ))}
             </div>
           </div>
         </motion.section>
 
-        {/* PROJETS — id existait déjà */}
+        {/* ── PROJETS PAR THÈME ── */}
         <motion.section
           id="projects"
-          className="relative mt-20 px-4 pb-16"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="px-4 pb-16 mt-16"
+          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.04 }} transition={{ duration: 0.6 }}
         >
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-semibold text-slate-100 text-center mb-3">
-              Mes projets
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-2">
+              {lang === "fr" ? "Mes projets" : "My projects"}
             </h2>
-            <p className="text-sm md:text-[0.95rem] text-slate-400 text-center mb-8 max-w-2xl mx-auto">
-              Labs et projets illustrant mes compétences en systèmes, réseaux,
-              automatisation et sécurité.
+            <p className="text-sm text-slate-500 dark:text-slate-400 text-center mb-8 max-w-xl mx-auto">
+              {lang === "fr" ? "Sélectionne un thème pour filtrer, ou parcours tous les projets."
+                             : "Select a theme to filter, or browse all projects."}
             </p>
 
-            <div className="grid gap-6 md:grid-cols-3">
-              {[
-                {
-                  tag: "INFRA · ACTIVE DIRECTORY",
-                  title: "Lab Active Directory sous Proxmox",
-                  desc: "Domaine Active Directory complet avec utilisateurs, GPO et services réseau.",
-                  stack: "Windows Server · Proxmox · DNS · DHCP · GPO",
-                  href: "/projects/ad-proxmox",
-                  preview: "/projects/ad-proxmox/ad_proxmox.png",
-                  ready: false,
-                },
-                {
-                  tag: "AUTOMATISATION · SCRIPTS",
-                  title: "Scripts d'automatisation systèmes",
-                  desc: "Scripts PowerShell et Bash pour tâches d'administration récurrentes.",
-                  stack: "PowerShell · Bash · Inventaire · Comptes",
-                  href: "/projects/automation-scripts",
-                  preview: "/projects/usb-toolkit/automat.png",
-                  ready: true,
-                },
-                {
-                  tag: "SÉCURITÉ · RESEAUX",
-                  title: "Simulation WAN avec supervision et redondance de routeurs (CISCO)",
-                  desc: "Mise en place d'un réseau d'entreprise orienté disponibilité, observabilité réseau et continuité de service.",
-                  stack: "Logs · Routing · Reseau Entreprise · Supervision",
-                  href: "/projects/wan-simulation",
-                  preview: "/projects/wan-simulation/Configurationwan.png",
-                  ready: true,
-                },
-                {
-                  tag: "DEV · GESTION DE PROJETS (en cours)",
-                  title: "App Track Muscu - application de suivi d'entraînement et de performance.",
-                  desc: "Création d'une application de suivi d'entraînement et de performance avec React. Le projet sert de support pour l'expérimentation, sécurisation des accès et deploiement automatisé",
-                  stack: "Base données · API · Authentification · Déploiement",
-                  href: "/projects/app-track-muscu",
-                  preview: "/projects/app-track-muscu/preview.png",
-                  ready: false,
-                },
-              ].map((p) => {
-                const Card = (
-                  <article
-                    className={`group relative border border-slate-700/60 bg-slate-800/60 rounded-xl p-4 ${
-                      p.ready === false
-                        ? "opacity-60 cursor-not-allowed"
-                        : "hover:shadow-lg hover:translate-y-0.5 transition-all"
-                    }`}
-                  >
-                    <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-700/60 bg-slate-900/70 max-h-0 group-hover:max-h-40 transition-all duration-300">
-                      <div className="relative w-full h-40">
-                        <Image
-                          src={p.preview}
-                          alt={`${p.title} preview`}
-                          fill
-                          className={`object-cover object-[50%_20%] ${p.ready ? "" : "grayscale opacity-70"}`}
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                      </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
-                      <span className="absolute bottom-2 left-2 text-xs text-slate-300 font-harded uppercase tracking-[0.12em] opacity-0 group-hover:opacity-100 transition-opacity">
-                        {p.ready === false ? "Bientôt disponible" : "Cliquez pour voir le projet"}
-                      </span>
-                    </div>
-
-                    <p className="text-[0.7rem] font-medium text-slate-400 uppercase tracking-[0.18em] mb-2">
-                      {p.tag}
-                    </p>
-                    <h3 className="text-base font-semibold text-slate-100 mb-2">{p.title}</h3>
-                    <p className="text-[0.85rem] text-slate-300 mb-3">{p.desc}</p>
-                    <p className="text-[0.75rem] text-slate-400">{p.stack}</p>
-                  </article>
-                );
-
-                if (p.ready === false) {
-                  return (
-                    <div key={p.title} className="relative block">
-                      {Card}
-                    </div>
-                  );
-                }
-                return (
-                  <Link key={p.title} href={p.href} className="relative block">
-                    {Card}
-                  </Link>
-                );
-              })}
+            {/* Thème pills */}
+            <div className="flex flex-wrap justify-center gap-2.5 mb-8">
+              <button
+                onClick={() => setActiveTheme(null)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all backdrop-blur-sm ${
+                  activeTheme === null
+                    ? "bg-slate-800 text-white border-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:border-slate-200"
+                    : "text-slate-600 border-slate-300/60 hover:border-slate-400 bg-white/50 dark:text-slate-400 dark:border-slate-700/60 dark:bg-slate-900/40"
+                }`}
+              >
+                {lang === "fr" ? "Tous" : "All"} ({THEMES_DATA.reduce((s, t) => s + t.projects.length, 0)})
+              </button>
+              {THEMES_DATA.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setActiveTheme(activeTheme === theme.id ? null : theme.id)}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all backdrop-blur-sm ${
+                    activeTheme === theme.id
+                      ? "text-white border-transparent"
+                      : "text-slate-600 border-slate-300/60 bg-white/50 hover:border-slate-400 dark:text-slate-400 dark:border-slate-700/60 dark:bg-slate-900/40"
+                  }`}
+                  style={activeTheme === theme.id ? { background: theme.color, borderColor: theme.color } : {}}
+                >
+                  <span className="w-2 h-2 rounded-sm flex-shrink-0 inline-block" style={{ background: theme.color }} />
+                  {lang === "fr" ? theme.labelFr : theme.labelEn}
+                  <span className={`text-[0.68rem] rounded-full px-1.5 py-0.5 ${
+                    activeTheme === theme.id ? "bg-white/25 text-white" : "bg-white/70 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                  }`}>
+                    {theme.projects.length}
+                  </span>
+                </button>
+              ))}
             </div>
+
+            {/* Grille projets */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTheme ?? "all"}
+                className="grid gap-5 md:grid-cols-3"
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.28 }}
+              >
+                {visibleProjects.map((p, idx) => (
+                  <motion.div
+                    key={p.href}
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: idx * 0.07 }}
+                  >
+                    <Link href={p.href} className="block h-full">
+                      <article className="group relative border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 rounded-xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 h-full backdrop-blur-md">
+                        <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-200/50 dark:border-slate-700/40 bg-slate-100/50 dark:bg-slate-900/60 max-h-0 group-hover:max-h-40 transition-all duration-300">
+                          <div className="relative w-full h-40">
+                            <Image src={p.preview} alt={lang === "fr" ? p.title : p.titleEn} fill className="object-cover object-[50%_20%]" sizes="(max-width: 768px) 100vw, 33vw" />
+                          </div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <span className="absolute bottom-2 left-2 text-xs text-white">{lang === "fr" ? "Voir le projet" : "View project"}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-2">
+                          <p className="text-[0.67rem] font-medium text-slate-400 uppercase tracking-[0.14em]">{lang === "fr" ? p.tag : p.tagEn}</p>
+                          <span className={`ml-auto px-2 py-0.5 text-[0.6rem] rounded-full border font-medium flex-shrink-0 ${BADGE_STYLES[p.badgeColor]}`}>
+                            {lang === "fr" ? p.badge : p.badgeEn}
+                          </span>
+                        </div>
+                        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                          {lang === "fr" ? p.title : p.titleEn}
+                        </h3>
+                        <p className="text-[0.85rem] text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">{lang === "fr" ? p.desc : p.descEn}</p>
+                        <p className="text-[0.72rem] text-slate-400 dark:text-slate-500">{p.stack}</p>
+                      </article>
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </motion.section>
 
-        {/* CONTACT — id ajouté */}
+        {/* ── VEILLE CYBER ── */}
+        <motion.section
+          id="veille"
+          className="px-4 pb-16 mt-16"
+          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.6 }}
+        >
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                  {lang === "fr" ? "Veille Cyber & IT" : "Cyber & IT News"}
+                </h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                  {lang === "fr" ? "CERT-FR · The Hacker News · BleepingComputer — mis à jour toutes les 30 min"
+                                 : "CERT-FR · The Hacker News · BleepingComputer — updated every 30 min"}
+                </p>
+              </div>
+              <Link href="/veille-cyber" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-400/30 bg-red-50/50 text-red-600 text-sm hover:bg-red-50 transition-all dark:text-red-300 dark:border-red-500/30 dark:bg-red-950/20 backdrop-blur-sm">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                </span>
+                {lang === "fr" ? "Voir tout" : "See all"}
+              </Link>
+            </div>
+
+            {cyberLoading ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {Array(6).fill(0).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-white/50 bg-white/35 dark:bg-slate-900/35 dark:border-slate-700/40 p-4 animate-pulse backdrop-blur-md">
+                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16 mb-3" />
+                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-full mb-1" />
+                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
+                  </div>
+                ))}
+              </div>
+            ) : cyberItems.length === 0 ? (
+              <div className="text-center py-10 text-slate-400 text-sm border border-white/50 dark:border-slate-700/40 rounded-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm">
+                {lang === "fr" ? "Actualités indisponibles." : "News unavailable."}{" "}
+                <Link href="/veille-cyber" className="text-blue-500 hover:underline">Rafraîchir</Link>
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {cyberItems.map((item, i) => (
+                  <motion.a
+                    key={`${item.link}-${i}`} href={item.link} target="_blank" rel="noopener noreferrer"
+                    className="block rounded-xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-4 hover:border-slate-300/80 hover:shadow-sm transition-all group backdrop-blur-md"
+                    initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ duration: 0.3, delay: i * 0.05 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full border" style={{ color: item.sourceColor, borderColor: item.sourceColor + "40", background: item.sourceColor + "15" }}>
+                        {item.tag}
+                      </span>
+                      {item.pubDate && <span className="text-xs text-slate-400 ml-auto">{timeAgo(item.pubDate)}</span>}
+                    </div>
+                    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors leading-snug line-clamp-2">
+                      {item.title}
+                    </h3>
+                  </motion.a>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.section>
+
+        {/* ── CONTACT ── */}
         <motion.section
           id="contact"
-          className="relative mt-24 px-4 pb-16"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="px-4 pb-24 mt-20"
+          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.6 }}
         >
-          <div className="max-w-3xl mx-auto text-center bg-slate-800/60 rounded-2xl border border-slate-700/60 p-6 backdrop-blur">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-100 mb-4">
-              Me contacter
-            </h2>
-            <p className="text-sm md:text-base text-slate-300 mb-6">
-              Ouvert aux opportunités de stage, alternance et projets en systèmes,
-              réseaux et cybersécurité.
-            </p>
-            <div className="flex flex-col items-center gap-3 text-sm md:text-base text-slate-200">
-              <a href="mailto:garlenscharles10@gmail.com" className="hover:text-blue-300 transition-colors">
-                garlenscharles10@gmail.com
-              </a>
-              <a href="https://github.com/DinoGLS" target="_blank" className="hover:text-blue-300 transition-colors" rel="noopener noreferrer">
-                GitHub
-              </a>
-              <a href="https://www.linkedin.com/in/garlens-charles-29a6b3351/" target="_blank" className="hover:text-blue-300 transition-colors" rel="noopener noreferrer">
-                LinkedIn
-              </a>
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 mb-2">Contact</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">
+                {lang === "fr" ? "Me contacter" : "Get in touch"}
+              </h2>
+              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400">
+                {lang === "fr"
+                  ? "Ouvert aux opportunités de stage, alternance et projets en systèmes, réseaux et cybersécurité."
+                  : "Open to internship, apprenticeship and project opportunities in systems, networks and cybersecurity."}
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-sm text-slate-500 dark:text-slate-400">
+                <a href="mailto:garlenscharles10@gmail.com" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">garlenscharles10@gmail.com</a>
+                <span className="text-slate-300 dark:text-slate-700">·</span>
+                <a href="https://github.com/DinoGLS" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">GitHub</a>
+                <span className="text-slate-300 dark:text-slate-700">·</span>
+                <a href="https://www.linkedin.com/in/garlens-charles-29a6b3351/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">LinkedIn</a>
+              </div>
             </div>
+            <ContactForm />
           </div>
         </motion.section>
 
       </div>
-    </main>
+      </main>
+
+      {/* ── BOUTON RETOUR HAUT (hors <main> aussi) ── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Retour en haut"
+        className={`fixed bottom-6 right-6 z-50 p-3 rounded-full border backdrop-blur shadow-lg
+          border-slate-300/60 bg-white/80 text-slate-600 hover:text-blue-600 hover:border-blue-400
+          dark:border-slate-700/60 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:text-blue-300
+          transition-all duration-300
+          ${showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}
+      >
+        <ArrowUpIcon className="w-5 h-5" />
+      </button>
+    </>
   );
 }

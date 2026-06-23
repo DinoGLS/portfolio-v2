@@ -163,7 +163,7 @@ export default function UsbToolkitPage() {
   };
 
   return (
-    <main className="min-h-screen px-4 py-16 text-slate-200">
+    <main className="min-h-screen bg-white dark:bg-slate-950 px-4 py-16 text-slate-800 dark:text-slate-200 transition-colors duration-300">
       <div className="max-w-5xl mx-auto">
 
         {/* Retour */}
@@ -193,12 +193,12 @@ export default function UsbToolkitPage() {
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4 leading-tight">
             USB Toolkit — Boîte à outils<br />
             d'administration Windows portable
           </h1>
 
-          <p className="text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
             Une suite d'outils d'administration système regroupés sur clef USB,
             accessibles via une interface graphique WPF sans installation. Conçue
             pour l'intervention terrain et la documentation technique.
@@ -225,11 +225,11 @@ export default function UsbToolkitPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <h2 className="text-xl font-semibold text-slate-100 mb-5">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-5">
             Architecture de la clef USB
           </h2>
 
-          <div className="bg-slate-900/60 border border-slate-700/60 rounded-xl p-6 font-mono text-sm">
+          <div className="bg-slate-900/90 dark:bg-slate-900/60 border border-slate-700/60 rounded-xl p-6 font-mono text-sm">
             <div className="text-slate-400 mb-1">
               <span className="text-blue-400">USB:/</span>
             </div>
@@ -265,7 +265,7 @@ export default function UsbToolkitPage() {
 
         {/* Modules */}
         <section className="mb-14">
-          <h2 className="text-xl font-semibold text-slate-100 mb-6">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
             Les 5 modules
           </h2>
 
@@ -282,7 +282,7 @@ export default function UsbToolkitPage() {
                   className="rounded-xl border overflow-hidden"
                   style={{
                     borderColor: activeModule === mod.id ? mod.accent + "60" : "rgba(51,65,85,0.6)",
-                    background: activeModule === mod.id ? mod.bg : "rgba(15,23,42,0.5)",
+                    background: "rgba(15,23,42,0.88)",
                     transition: "all 0.2s ease",
                   }}
                 >
@@ -374,10 +374,10 @@ export default function UsbToolkitPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <h2 className="text-xl font-semibold text-slate-100 mb-2">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
             Thèmes PDF disponibles
           </h2>
-          <p className="text-sm text-slate-400 mb-5">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-5">
             10 thèmes CSS pour adapter le rendu PDF au contexte de la documentation.
           </p>
 
@@ -398,7 +398,7 @@ export default function UsbToolkitPage() {
                     {theme.name}
                   </span>
                 </div>
-                <div className="px-3 py-2 bg-slate-900/60">
+                <div className="px-3 py-2 bg-slate-900/90 dark:bg-slate-900/60">
                   <div className="flex items-center gap-1.5">
                     <div
                       className="w-2.5 h-2.5 rounded-full"
@@ -420,7 +420,7 @@ export default function UsbToolkitPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <h2 className="text-xl font-semibold text-slate-100 mb-5">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-5">
             Points techniques notables
           </h2>
 
@@ -444,7 +444,7 @@ export default function UsbToolkitPage() {
             ].map((point) => (
               <div
                 key={point.title}
-                className="rounded-xl border border-slate-700/60 bg-slate-800/40 p-5"
+                className="rounded-xl border border-slate-700/60 bg-slate-800/80 dark:bg-slate-800/40 p-5"
               >
                 <div
                   className="w-1 h-5 rounded-full mb-3"
@@ -469,7 +469,7 @@ export default function UsbToolkitPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <h2 className="text-xl font-semibold text-slate-100 mb-5">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-5">
             Compétences mobilisées
           </h2>
 
@@ -484,7 +484,7 @@ export default function UsbToolkitPage() {
             ].map((item) => (
               <div
                 key={item.domain}
-                className="flex gap-3 p-4 rounded-lg border border-slate-700/60 bg-slate-800/40"
+                className="flex gap-3 p-4 rounded-lg border border-slate-700/60 bg-slate-800/80 dark:bg-slate-800/40"
               >
                 <span className="text-blue-400 mt-0.5 flex-shrink-0 text-sm">▸</span>
                 <div>
@@ -504,7 +504,7 @@ export default function UsbToolkitPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          <h2 className="text-xl font-semibold text-slate-100 mb-5">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-5">
             Documentation
           </h2>
 
@@ -520,7 +520,7 @@ export default function UsbToolkitPage() {
                 href={doc.file}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-4 py-3 rounded-lg border border-slate-700/60 bg-slate-800/40 hover:border-blue-400/60 hover:text-blue-300 transition-all text-sm w-fit"
+                className="inline-flex items-center gap-3 px-4 py-3 rounded-lg border border-slate-700/60 bg-slate-800/80 dark:bg-slate-800/40 hover:border-blue-400/60 hover:text-blue-300 transition-all text-sm w-fit"
               >
                 <span className="text-blue-400">↓</span>
                 {doc.label}

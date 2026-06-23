@@ -16,7 +16,7 @@
   --secondary: #9333ea;
   --accent: #0891b2;         /* cyan assombri pour le contraste sur clair */
   --metal: #e2e8f0;
-  --page-bg: radial-gradient(circle at top, #ffffff 0%, #eef1f8 55%, #e6e9f3 100%);
+  --page-bg: #edf1fc;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -29,12 +29,11 @@
   --secondary: #a855f7;
   --accent: #38bdf8;
   --metal: #1f2933;
-  --page-bg: radial-gradient(circle at top, #1f2933 0%, #020617 60%, #000000 100%);
+  --page-bg: #020617;
 }
 
 body {
-  background: var(--page-bg);
-  background-attachment: fixed;
+  background-color: var(--page-bg);
   color: var(--foreground);
   font-family: var(--font-sans);
   /* transition douce lors du changement de thème */
@@ -84,11 +83,13 @@ body {
 }
 
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--background); }
-::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+/* Scrollbar — scopée sur body uniquement pour eviter double barre */
+html { overflow-x: hidden; }
+body { overflow-x: hidden; overflow-y: scroll; scrollbar-gutter: stable; }
+body::-webkit-scrollbar { width: 8px; }
+body::-webkit-scrollbar-track { background: var(--background); }
+body::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+body::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
 /* Accessibilité : couper les animations si l'utilisateur les refuse. */
 @media (prefers-reduced-motion: reduce) {
@@ -99,3 +100,55 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Utilitaire : masque la scrollbar (navbar horizontale sur petit écran) */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Scroll fluide natif */
+html { scroll-behavior: smooth; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   COMPATIBILITÉ MULTIPLATEFORME — iOS Safari, Chrome Android, PWA
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Webkit backdrop-filter (iOS < 15, Chrome Android < 76) */
+/* Tailwind v4 ne génère pas les préfixes -webkit- automatiquement */
+.backdrop-blur-sm  { -webkit-backdrop-filter: blur(4px);  }
+.backdrop-blur     { -webkit-backdrop-filter: blur(8px);  }
+.backdrop-blur-md  { -webkit-backdrop-filter: blur(12px); }
+.backdrop-blur-lg  { -webkit-backdrop-filter: blur(16px); }
+.backdrop-blur-xl  { -webkit-backdrop-filter: blur(24px); }
+
+/* Supprimer le halo bleu au tap (iOS / Android) */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Accélération tactile — évite le délai 300ms sur les liens/boutons */
+a, button, [role="button"], label {
+  touch-action: manipulation;
+}
+
+/* Empêcher le zoom iOS sur focus des champs (font-size < 16px) */
+input, textarea, select {
+  font-size: max(16px, 1em);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Support safe-area-inset sur iPhone avec encoche ou Dynamic Island */
+@supports (padding: env(safe-area-inset-top)) {
+  html {
+    /* Permet à l'app de s'étendre derrière la barre de statut */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+             env(safe-area-inset-bottom) env(safe-area-inset-left);
+    padding: 0; /* reset — géré inline avec max() */
+  }
+}
+
+/* iOS: texte lisible sans double-tap zoom */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Overscroll: laisser le scroll natif iOS intact */
+
+/* Controles responsive — definis ici pour garantir leur presence dans le bundle CSS */
+/* Equivalent de hidden sm:flex et sm:hidden (Tailwind ne les generait pas) */
+/* nav-desktop-only/nav-mobile-only supprimees (sidebar verticale) */
