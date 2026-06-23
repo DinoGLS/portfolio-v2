@@ -147,7 +147,16 @@ export default function Home() {
     offset: ["start 85%", "end 30%"],
   });
   const [showContact, setShowContact]       = useState(false);
+  const [isMobile, setIsMobile]             = useState(false);
   const contactTimer                        = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const NAV_LINKS = [
     { label: lang === "fr" ? "Accueil"  : "Home",     href: "#top" },
@@ -206,31 +215,58 @@ export default function Home() {
     const id = href.replace("#", "");
     setActiveSection(id);
     isScrolling.current = true;
-
     const navbarHeight = id === "top" ? 0 : 72;
-    const start  = window.scrollY;
-    const el     = id === "top" ? null : document.getElementById(id);
-    const target = id === "top" ? 0 : (el ? el.getBoundingClientRect().top + window.scrollY - navbarHeight : start);
-    const delta  = target - start;
-    const duration = 380;
-    let startTime: number | null = null;
+    const el = id === "top" ? null : document.getElementById(id);
+    const target = id === "top" ? 0 : (el ? el.getBoundingClientRect().top + window.scrollY - navbarHeight : window.scrollY);
+    window.scrollTo(0, target);
+    requestAnimationFrame(() => { isScrolling.current = false; });
+  };
 
-    const easeInOutQuart = (t: number) =>
-      t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+  // Empêche le scroll de la page lorsque la popup Contact est ouverte.
+  // On verrouille aussi `html` et on compense la largeur de la scrollbar
+  // pour éviter le 'layout shift' quand elle disparaît.
+  const contactScrollSave = useRef<{ bodyOverflow: string; htmlOverflow: string; bodyPaddingRight: string } | null>(null);
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const html = document.documentElement;
+    const body = document.body;
 
-    const step = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed  = timestamp - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      window.scrollTo(0, start + delta * easeInOutQuart(progress));
-      if (progress < 1) {
-        requestAnimationFrame(step);
+    if (showContact) {
+      // sauvegarde
+      contactScrollSave.current = {
+        bodyOverflow: body.style.overflow,
+        htmlOverflow: html.style.overflow,
+        bodyPaddingRight: body.style.paddingRight || "",
+      };
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+      body.style.overflow = "hidden";
+      html.style.overflow = "hidden";
+      if (scrollBarWidth > 0) body.style.paddingRight = `${scrollBarWidth}px`;
+    } else {
+      if (contactScrollSave.current) {
+        body.style.overflow = contactScrollSave.current.bodyOverflow || "";
+        html.style.overflow = contactScrollSave.current.htmlOverflow || "";
+        body.style.paddingRight = contactScrollSave.current.bodyPaddingRight || "";
+        contactScrollSave.current = null;
       } else {
-        isScrolling.current = false;
+        body.style.overflow = "";
+        html.style.overflow = "";
+        body.style.paddingRight = "";
+      }
+    }
+    return () => {
+      if (contactScrollSave.current) {
+        body.style.overflow = contactScrollSave.current.bodyOverflow || "";
+        html.style.overflow = contactScrollSave.current.htmlOverflow || "";
+        body.style.paddingRight = contactScrollSave.current.bodyPaddingRight || "";
+        contactScrollSave.current = null;
+      } else {
+        body.style.overflow = "";
+        html.style.overflow = "";
+        body.style.paddingRight = "";
       }
     };
-    requestAnimationFrame(step);
-  };
+  }, [showContact]);
 
 
   // ── Projets filtrés ───────────────────────────────────────────────────────
@@ -243,14 +279,14 @@ export default function Home() {
     <>
       {/* ── NAVBAR — haut de page, style matrix, mobile + desktop ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 flex justify-center">
-        <div className="flex items-center justify-center md:justify-between w-full max-w-4xl px-3 md:px-5 py-2 rounded-full border border-blue-500/25 bg-slate-900/90 backdrop-blur-md shadow-lg">
+        <div className="flex items-center justify-center md:justify-between w-full max-w-4xl px-3 md:px-5 py-2 rounded-full border backdrop-blur-md shadow-lg border-slate-200/70 bg-white/90 dark:border-blue-500/25 dark:bg-slate-900/90">
           {/* Brand */}
           <a
             href="#"
             onClick={(e) => scrollToSection(e, "#top")}
-            className="hidden md:inline-flex font-mono text-sm font-bold text-blue-400 hover:text-blue-300 transition-colors duration-200 select-none whitespace-nowrap"
+            className="hidden md:inline-flex font-mono text-sm font-bold text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 select-none whitespace-nowrap"
           >
-            <span className="text-blue-500/50 text-xs">{"<"}</span>Dino<span className="text-blue-500/50 text-xs">{"/>"}</span>
+            <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"<"}</span>Dino<span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"/>"}</span>
           </a>
           <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar">
             {NAV_LINKS.map((link) => {
@@ -273,16 +309,14 @@ export default function Home() {
                     }
                   }}
                   onClick={(e) => {
-                    if (!isContact) scrollToSection(e, link.href);
-                    else e.preventDefault();
+                    scrollToSection(e, link.href);
                   }}
                   className={`relative px-2 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-mono tracking-wide transition-all duration-200 whitespace-nowrap
                     ${isActive || (isContact && showContact)
-                      ? "text-blue-300 bg-blue-500/10 border border-blue-500/30"
-                      : "text-blue-600 hover:text-blue-300 hover:bg-blue-500/10 border border-transparent"
+                      ? "text-blue-700 bg-blue-500/10 border border-blue-500/30 dark:text-blue-300"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 border border-transparent dark:text-slate-300 dark:hover:text-blue-300 dark:hover:bg-blue-500/10"
                     }`}
                 >
-                  <span className="text-blue-500/40 mr-0.5 md:mr-1 text-xs select-none">{"?"}</span>
                   {link.label}
                   {(isActive || (isContact && showContact)) && (
                     <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400"
@@ -430,12 +464,7 @@ export default function Home() {
         </section>
 
         {/* ── À PROPOS ── */}
-        <motion.section
-          id="about"
-          className="px-4 pb-16 mt-6"
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.6 }}
-        >
+        <section id="about" className="px-4 pb-16 mt-6">
           <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-[1.1fr_1.4fr]">
             <div className="rounded-2xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-6 md:p-7 backdrop-blur-md shadow-sm">
               <h2 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{h.about.heading}</h2>
@@ -453,15 +482,10 @@ export default function Home() {
               ))}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── PARCOURS ── */}
-        <motion.section
-          id="parcours"
-          className="px-4 pb-16 mt-16"
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.6 }}
-        >
+        <section id="parcours" className="px-4 pb-16 mt-16">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-10">{h.parcours.heading}</h2>
             <div ref={parcoursRef} className="relative">
@@ -482,9 +506,9 @@ export default function Home() {
                   <motion.div
                     key={i}
                     className="relative grid grid-cols-2 gap-x-10 pb-10"
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.45 }}
+                    initial={isMobile ? false : { opacity: 0, y: 30 }}
+                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                    viewport={isMobile ? undefined : { once: true, amount: 0.45 }}
                     transition={{ duration: 0.55, ease: "easeOut" }}
                   >
                     <div
@@ -514,15 +538,10 @@ export default function Home() {
               })}
             </div>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── PROJETS PAR THÈME ── */}
-        <motion.section
-          id="projects"
-          className="px-4 pb-16 mt-16"
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.04 }} transition={{ duration: 0.6 }}
-        >
+        <section id="projects" className="px-4 pb-16 mt-16">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-2">
               {lang === "fr" ? "Mes projets" : "My projects"}
@@ -577,9 +596,9 @@ export default function Home() {
                 {visibleProjects.map((p, idx) => (
                   <motion.div
                     key={p.href}
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.15 }}
+                    initial={isMobile ? false : { opacity: 0, y: 24 }}
+                    whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                    viewport={isMobile ? undefined : { once: true, amount: 0.15 }}
                     transition={{ duration: 0.45, delay: idx * 0.06 }}
                   >
                     <Link href={p.href} className="block h-full">
@@ -610,15 +629,10 @@ export default function Home() {
               </motion.div>
             </AnimatePresence>
           </div>
-        </motion.section>
+        </section>
 
         {/* ── VEILLE CYBER ── */}
-        <motion.section
-          id="veille"
-          className="px-4 pb-16 mt-16"
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.6 }}
-        >
+        <section id="veille" className="px-4 pb-16 mt-16">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div>
@@ -660,8 +674,8 @@ export default function Home() {
                   <motion.a
                     key={`${item.link}-${i}`} href={item.link} target="_blank" rel="noopener noreferrer"
                     className="block rounded-xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-4 hover:border-slate-300/80 hover:shadow-sm transition-all group backdrop-blur-md"
-                    initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.25 }} transition={{ duration: 0.4, delay: i * 0.07 }}
+                    initial={isMobile ? false : { opacity: 0, y: 16 }} whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                    viewport={isMobile ? undefined : { once: true, amount: 0.25 }} transition={{ duration: 0.4, delay: isMobile ? 0 : i * 0.07 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="px-2 py-0.5 text-xs font-medium rounded-full border" style={{ color: item.sourceColor, borderColor: item.sourceColor + "40", background: item.sourceColor + "15" }}>
@@ -677,17 +691,12 @@ export default function Home() {
               </div>
             )}
           </div>
-        </motion.section>
+        </section>
 
 
 
         {/* ── CONTACT ── */}
-        <motion.section
-          id="contact"
-          className="px-4 pb-24 mt-20"
-          initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.08 }} transition={{ duration: 0.6 }}
-        >
+        <section id="contact" className="px-4 pb-24 mt-20">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-8">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 mb-2">Contact</p>
@@ -709,7 +718,7 @@ export default function Home() {
             </div>
             <ContactForm />
           </div>
-        </motion.section>
+        </section>
       </div>
       </main>
 

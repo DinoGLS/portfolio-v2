@@ -126,12 +126,12 @@ body {
 }
 
 
-/* Scrollbar — ciblée uniquement sur html pour éviter toute double barre */
-html { overflow-x: hidden; scrollbar-gutter: stable; }
+/* Scrollbar — une seule barre, slim, sans gutter visible */
+html { overflow-x: hidden; overflow-y: scroll; scrollbar-width: thin; scrollbar-color: #4b5563 transparent; }
 body { overflow-x: hidden; }
-html::-webkit-scrollbar { width: 8px; }
+html::-webkit-scrollbar { width: 6px; }
 html::-webkit-scrollbar-track { background: transparent; }
-html::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+html::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
 html::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
 /* Accessibilité : couper les animations si l'utilisateur les refuse. */
@@ -148,8 +148,6 @@ html::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
-/* Scroll fluide natif */
-html { scroll-behavior: smooth; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPATIBILITÉ MULTIPLATEFORME — iOS Safari, Chrome Android, PWA
