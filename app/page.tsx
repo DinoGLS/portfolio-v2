@@ -506,10 +506,11 @@ export default function Home() {
                   <motion.div
                     key={i}
                     className="relative grid grid-cols-2 gap-x-10 pb-10"
-                    initial={isMobile ? false : { opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={isMobile ? { opacity: 1, y: 0 } : undefined}
                     whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                     viewport={isMobile ? undefined : { once: true, amount: 0.45 }}
-                    transition={{ duration: 0.55, ease: "easeOut" }}
+                    transition={{ duration: isMobile ? 0 : 0.55, ease: "easeOut" }}
                   >
                     <div
                       className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-blue-400 border-2 border-[#edf1fc] dark:border-[#020617] z-10"
@@ -596,10 +597,11 @@ export default function Home() {
                 {visibleProjects.map((p, idx) => (
                   <motion.div
                     key={p.href}
-                    initial={isMobile ? false : { opacity: 0, y: 24 }}
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={isMobile ? { opacity: 1, y: 0 } : undefined}
                     whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                     viewport={isMobile ? undefined : { once: true, amount: 0.15 }}
-                    transition={{ duration: 0.45, delay: idx * 0.06 }}
+                    transition={{ duration: isMobile ? 0 : 0.45, delay: isMobile ? 0 : idx * 0.06 }}
                   >
                     <Link href={p.href} className="block h-full">
                       <article className="group relative border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 rounded-xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 h-full backdrop-blur-md">
@@ -674,8 +676,8 @@ export default function Home() {
                   <motion.a
                     key={`${item.link}-${i}`} href={item.link} target="_blank" rel="noopener noreferrer"
                     className="block rounded-xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-4 hover:border-slate-300/80 hover:shadow-sm transition-all group backdrop-blur-md"
-                    initial={isMobile ? false : { opacity: 0, y: 16 }} whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
-                    viewport={isMobile ? undefined : { once: true, amount: 0.25 }} transition={{ duration: 0.4, delay: isMobile ? 0 : i * 0.07 }}
+                    initial={{ opacity: 0, y: 16 }} animate={isMobile ? { opacity: 1, y: 0 } : undefined} whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
+                    viewport={isMobile ? undefined : { once: true, amount: 0.25 }} transition={{ duration: isMobile ? 0 : 0.4, delay: isMobile ? 0 : i * 0.07 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="px-2 py-0.5 text-xs font-medium rounded-full border" style={{ color: item.sourceColor, borderColor: item.sourceColor + "40", background: item.sourceColor + "15" }}>
