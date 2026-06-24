@@ -9,9 +9,9 @@ import type { ReactNode } from "react";
 // reflow) pour que ce soit fluide sur mobile comme sur desktop.
 export default function Template({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
-  if (reduce) {
-    // Accessibilité : aucune animation si l'utilisateur la refuse.
+  if (reduce || isMobile) {
     return <>{children}</>;
   }
 
