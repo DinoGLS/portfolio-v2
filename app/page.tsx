@@ -274,6 +274,28 @@ export default function Home() {
     ? THEMES_DATA.find((t) => t.id === activeTheme)?.projects ?? []
     : THEMES_DATA.flatMap((t) => t.projects);
 
+  // ── Palette « blueprint » de la section projets (clair = plan papier, sombre = plan cyanotype) ──
+  const bp = isDark
+    ? {
+        // Bleu indigo profond aligné sur la palette sombre du site (#020617, accents #60a5fa/#818cf8)
+        pageBg: "radial-gradient(120% 95% at 50% 0%, #17306e 0%, #0d1d4a 50%, #050b22 100%)",
+        gridLine: "rgba(96,165,250,0.13)",
+        text: "#e8efff", sub: "#a5bdf0", faint: "#5f7cc0",
+        accent: "#60a5fa",
+        titleGrad: "linear-gradient(90deg,#60a5fa,#818cf8)",
+        cardBg: "rgba(13,25,58,0.45)", cardBorder: "rgba(129,140,248,0.30)",
+        chipBg: "rgba(96,165,250,0.10)", chipText: "#c7d8fa", chipBorder: "rgba(96,165,250,0.28)",
+      }
+    : {
+        pageBg: "radial-gradient(120% 95% at 50% 0%, #eef5ff 0%, #ddebfc 55%, #cfe1f7 100%)",
+        gridLine: "rgba(29,78,216,0.11)",
+        text: "#0f2b4a", sub: "#46628a", faint: "#8fadd2",
+        accent: "#1d4ed8",
+        titleGrad: "linear-gradient(90deg,#1e3a8a,#2563eb)",
+        cardBg: "rgba(255,255,255,0.62)", cardBorder: "rgba(29,78,216,0.22)",
+        chipBg: "rgba(29,78,216,0.07)", chipText: "#33517d", chipBorder: "rgba(29,78,216,0.20)",
+      };
+
   // ── Rendu ─────────────────────────────────────────────────────────────────
   return (
     <>
@@ -541,52 +563,87 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── PROJETS PAR THÈME ── */}
-        <section id="projects" className="px-4 pb-16 mt-16">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-2">
-              {lang === "fr" ? "Mes projets" : "My projects"}
-            </h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 text-center mb-8 max-w-xl mx-auto">
-              {lang === "fr" ? "Sélectionne un thème pour filtrer, ou parcours tous les projets."
-                             : "Select a theme to filter, or browse all projects."}
-            </p>
+        {/* ── ZONE BLUEPRINT : Projets + Veille cyber ──
+            Le fond plan technique apparaît en fondu par-dessus le canvas matrix,
+            couvre les deux sections, puis le canvas reprend avant le contact. */}
+        <div className="relative">
+          {/* Fond dégradé blueprint, fondu d'entrée/sortie (px fixes : indépendant de la hauteur) */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: bp.pageBg,
+              // Entrée adoucie (courbe ease sur ~380px) pour un fondu progressif depuis le canvas
+              maskImage: "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.12) 90px, rgba(0,0,0,0.45) 190px, rgba(0,0,0,0.8) 290px, black 380px, black calc(100% - 190px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, transparent 0, rgba(0,0,0,0.12) 90px, rgba(0,0,0,0.45) 190px, rgba(0,0,0,0.8) 290px, black 380px, black calc(100% - 190px), transparent 100%)",
+            }}
+          />
+          {/* Grille technique 30px, fondue un peu plus court que le dégradé */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`,
+              backgroundSize: "30px 30px",
+              // La grille se dessine en second, après le dégradé — effet plan qui « s'imprime »
+              maskImage: "linear-gradient(to bottom, transparent 140px, rgba(0,0,0,0.35) 320px, black 470px, black calc(100% - 260px), transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to bottom, transparent 140px, rgba(0,0,0,0.35) 320px, black 470px, black calc(100% - 260px), transparent 100%)",
+            }}
+          />
 
-            {/* Thème pills */}
+        <section id="projects" className="relative mt-16 pt-20 md:pt-24 px-4">
+          <div className="relative max-w-6xl mx-auto">
+            {/* Cartouche d'en-tête façon plan */}
+            <div className="text-center max-w-xl mx-auto mb-7">
+              <p className="font-mono text-[11px] tracking-[0.2em] font-medium mb-3" style={{ color: bp.accent }}>
+                {lang === "fr" ? "// PROJETS — 04" : "// PROJECTS — 04"}
+              </p>
+              <h2
+                className="text-3xl md:text-[2.5rem] font-bold tracking-tight inline-block bg-clip-text text-transparent mb-2.5"
+                style={{ backgroundImage: bp.titleGrad }}
+              >
+                {lang === "fr" ? "Mes projets" : "My projects"}
+              </h2>
+              <p className="text-sm leading-relaxed" style={{ color: bp.sub }}>
+                {lang === "fr" ? "Sélectionne un thème pour filtrer, ou parcours l'ensemble des réalisations."
+                               : "Select a theme to filter, or browse all projects."}
+              </p>
+            </div>
+
+            {/* Chips de filtre — style blueprint (angles techniques, mono) */}
             <div className="flex flex-wrap justify-center gap-2.5 mb-8">
               <button
                 onClick={() => setActiveTheme(null)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all backdrop-blur-sm ${
-                  activeTheme === null
-                    ? "bg-slate-800 text-white border-slate-800 dark:bg-slate-200 dark:text-slate-900 dark:border-slate-200"
-                    : "text-slate-600 border-slate-300/60 hover:border-slate-400 bg-white/50 dark:text-slate-400 dark:border-slate-700/60 dark:bg-slate-900/40"
-                }`}
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] font-mono text-xs font-semibold border transition-all backdrop-blur-sm"
+                style={activeTheme === null
+                  ? { background: `${bp.accent}22`, color: bp.accent, borderColor: bp.accent }
+                  : { background: bp.chipBg, color: bp.sub, borderColor: bp.chipBorder }}
               >
-                {lang === "fr" ? "Tous" : "All"} ({THEMES_DATA.reduce((s, t) => s + t.projects.length, 0)})
+                <span className="w-2 h-2 rounded-[2px] flex-shrink-0 inline-block" style={{ background: bp.accent }} />
+                {lang === "fr" ? "Tous" : "All"}
+                <span className="text-[0.68rem] rounded-[4px] px-1.5 py-0.5" style={{ background: bp.chipBg, color: bp.sub }}>
+                  {THEMES_DATA.reduce((s, t) => s + t.projects.length, 0)}
+                </span>
               </button>
               {THEMES_DATA.map((theme) => (
                 <button
                   key={theme.id}
                   onClick={() => setActiveTheme(activeTheme === theme.id ? null : theme.id)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all backdrop-blur-sm ${
-                    activeTheme === theme.id
-                      ? "text-white border-transparent"
-                      : "text-slate-600 border-slate-300/60 bg-white/50 hover:border-slate-400 dark:text-slate-400 dark:border-slate-700/60 dark:bg-slate-900/40"
-                  }`}
-                  style={activeTheme === theme.id ? { background: theme.color, borderColor: theme.color } : {}}
+                  className="flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] font-mono text-xs font-semibold border transition-all backdrop-blur-sm"
+                  style={activeTheme === theme.id
+                    ? { background: `${theme.color}22`, color: isDark ? "#e8f4ff" : theme.color, borderColor: theme.color }
+                    : { background: bp.chipBg, color: bp.sub, borderColor: bp.chipBorder }}
                 >
-                  <span className="w-2 h-2 rounded-sm flex-shrink-0 inline-block" style={{ background: theme.color }} />
+                  <span className="w-2 h-2 rounded-[2px] flex-shrink-0 inline-block" style={{ background: theme.color }} />
                   {lang === "fr" ? theme.labelFr : theme.labelEn}
-                  <span className={`text-[0.68rem] rounded-full px-1.5 py-0.5 ${
-                    activeTheme === theme.id ? "bg-white/25 text-white" : "bg-white/70 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
-                  }`}>
+                  <span className="text-[0.68rem] rounded-[4px] px-1.5 py-0.5" style={{ background: bp.chipBg, color: bp.sub }}>
                     {theme.projects.length}
                   </span>
                 </button>
               ))}
             </div>
 
-            {/* Grille projets */}
+            {/* Grille projets — cartes numérotées façon plan technique */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTheme ?? "all"}
@@ -604,26 +661,53 @@ export default function Home() {
                     transition={{ duration: isMobile ? 0 : 0.45, delay: isMobile ? 0 : idx * 0.06 }}
                   >
                     <Link href={p.href} className="block h-full">
-                      <article className="group relative border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 rounded-xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 h-full backdrop-blur-md">
-                        <div className="relative mb-3 overflow-hidden rounded-lg border border-slate-200/50 dark:border-slate-700/40 bg-slate-100/50 dark:bg-slate-900/60 max-h-0 group-hover:max-h-40 transition-all duration-300">
+                      <article
+                        className="group relative flex flex-col h-full overflow-hidden rounded-[5px] border backdrop-blur-[8px] transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                        style={{ background: bp.cardBg, borderColor: bp.cardBorder }}
+                      >
+                        {/* Numéro de plan */}
+                        <span
+                          className="absolute top-2 right-4 font-mono text-[40px] font-extrabold leading-none z-[2] pointer-events-none select-none"
+                          style={{ color: bp.faint, opacity: 0.3 }}
+                        >
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+
+                        <div className="relative overflow-hidden max-h-0 group-hover:max-h-40 transition-all duration-300" style={{ borderColor: bp.cardBorder }}>
                           <div className="relative w-full h-40">
-                            <Image src={p.preview} alt={lang === "fr" ? p.title : p.titleEn} fill className="object-cover object-[50%_20%]" sizes="(max-width: 768px) 100vw, 33vw" />
+                            <Image src={p.preview} alt={lang === "fr" ? p.title : p.titleEn} fill className="object-cover object-[50%_20%] transition-transform duration-500 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 33vw" style={{ filter: "saturate(0.92) hue-rotate(-6deg)" }} />
                           </div>
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <span className="absolute bottom-2 left-2 text-xs text-white">{lang === "fr" ? "Voir le projet" : "View project"}</span>
                         </div>
 
-                        <div className="flex items-center gap-2 mb-2">
-                          <p className="text-[0.67rem] font-medium text-slate-400 uppercase tracking-[0.14em]">{lang === "fr" ? p.tag : p.tagEn}</p>
-                          <span className={`ml-auto px-2 py-0.5 text-[0.6rem] rounded-full border font-medium flex-shrink-0 ${BADGE_STYLES[p.badgeColor]}`}>
-                            {lang === "fr" ? p.badge : p.badgeEn}
-                          </span>
+                        <div className="flex flex-col gap-2.5 p-4 pt-4 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-mono text-[0.65rem] font-medium tracking-[0.14em]" style={{ color: bp.accent }}>
+                              {lang === "fr" ? p.tag : p.tagEn}
+                            </p>
+                            <span className={`ml-auto mr-7 px-2 py-0.5 text-[0.6rem] rounded-[4px] border font-medium flex-shrink-0 ${BADGE_STYLES[p.badgeColor]}`}>
+                              {lang === "fr" ? p.badge : p.badgeEn}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-semibold leading-snug transition-colors" style={{ color: bp.text }}>
+                            {lang === "fr" ? p.title : p.titleEn}
+                          </h3>
+                          <p className="text-[0.85rem] leading-relaxed" style={{ color: bp.sub }}>
+                            {lang === "fr" ? p.desc : p.descEn}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mt-auto pt-1.5">
+                            {p.stack.split(" · ").map((s) => (
+                              <span
+                                key={s}
+                                className="font-mono text-[0.65rem] px-2 py-0.5 rounded-[3px] border"
+                                style={{ background: bp.chipBg, color: bp.chipText, borderColor: bp.chipBorder }}
+                              >
+                                {s}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-1.5 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-                          {lang === "fr" ? p.title : p.titleEn}
-                        </h3>
-                        <p className="text-[0.85rem] text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">{lang === "fr" ? p.desc : p.descEn}</p>
-                        <p className="text-[0.72rem] text-slate-400 dark:text-slate-500">{p.stack}</p>
                       </article>
                     </Link>
                   </motion.div>
@@ -633,23 +717,29 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── VEILLE CYBER ── */}
-        <section id="veille" className="px-4 pb-16 mt-16">
+        {/* ── VEILLE CYBER — toujours dans la zone blueprint ── */}
+        <section id="veille" className="relative px-4 pb-24 mt-16">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
               <div>
-                <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100">
+                <p className="font-mono text-[11px] tracking-[0.2em] font-medium mb-2" style={{ color: bp.accent }}>
+                  {lang === "fr" ? "// VEILLE — 05" : "// NEWS — 05"}
+                </p>
+                <h2
+                  className="text-2xl md:text-3xl font-bold tracking-tight inline-block bg-clip-text text-transparent"
+                  style={{ backgroundImage: bp.titleGrad }}
+                >
                   {lang === "fr" ? "Veille Cyber & IT" : "Cyber & IT News"}
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-sm mt-1" style={{ color: bp.sub }}>
                   {lang === "fr" ? "CERT-FR · The Hacker News · BleepingComputer — mis à jour toutes les 30 min"
                                  : "CERT-FR · The Hacker News · BleepingComputer — updated every 30 min"}
                 </p>
               </div>
-              <Link href="/veille-cyber" className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-red-400/30 bg-red-50/50 text-red-600 text-sm hover:bg-red-50 transition-all dark:text-red-300 dark:border-red-500/30 dark:bg-red-950/20 backdrop-blur-sm">
+              <Link href="/veille-cyber" className="inline-flex items-center gap-2 px-4 py-2 rounded-[4px] border font-mono text-sm text-red-500 border-red-400/40 bg-red-500/10 hover:bg-red-500/15 transition-all dark:text-red-300 backdrop-blur-sm">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-[2px] bg-red-400 opacity-75" />
+                  <span className="relative inline-flex rounded-[2px] h-1.5 w-1.5 bg-red-500" />
                 </span>
                 {lang === "fr" ? "Voir tout" : "See all"}
               </Link>
@@ -658,34 +748,35 @@ export default function Home() {
             {cyberLoading ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {Array(6).fill(0).map((_, i) => (
-                  <div key={i} className="rounded-xl border border-white/50 bg-white/35 dark:bg-slate-900/35 dark:border-slate-700/40 p-4 animate-pulse backdrop-blur-md">
-                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-16 mb-3" />
-                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-full mb-1" />
-                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4" />
+                  <div key={i} className="rounded-[5px] border p-4 animate-pulse backdrop-blur-[8px]" style={{ background: bp.cardBg, borderColor: bp.cardBorder }}>
+                    <div className="h-3 rounded-[3px] w-16 mb-3" style={{ background: bp.chipBg }} />
+                    <div className="h-4 rounded-[3px] w-full mb-1" style={{ background: bp.chipBg }} />
+                    <div className="h-4 rounded-[3px] w-3/4" style={{ background: bp.chipBg }} />
                   </div>
                 ))}
               </div>
             ) : cyberItems.length === 0 ? (
-              <div className="text-center py-10 text-slate-400 text-sm border border-white/50 dark:border-slate-700/40 rounded-xl bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm">
+              <div className="text-center py-10 text-sm border rounded-[5px] backdrop-blur-sm" style={{ background: bp.cardBg, borderColor: bp.cardBorder, color: bp.sub }}>
                 {lang === "fr" ? "Actualités indisponibles." : "News unavailable."}{" "}
-                <Link href="/veille-cyber" className="text-blue-500 hover:underline">Rafraîchir</Link>
+                <Link href="/veille-cyber" className="hover:underline" style={{ color: bp.accent }}>Rafraîchir</Link>
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {cyberItems.map((item, i) => (
                   <motion.a
                     key={`${item.link}-${i}`} href={item.link} target="_blank" rel="noopener noreferrer"
-                    className="block rounded-xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-4 hover:border-slate-300/80 hover:shadow-sm transition-all group backdrop-blur-md"
+                    className="block rounded-[5px] border p-4 transition-all group backdrop-blur-[8px] hover:-translate-y-0.5 hover:shadow-md border-[color:var(--bp-border)] hover:border-[color:var(--bp-accent)]"
+                    style={{ background: bp.cardBg, "--bp-border": bp.cardBorder, "--bp-accent": bp.accent, "--bp-text": bp.text } as React.CSSProperties}
                     initial={{ opacity: 0, y: 16 }} animate={isMobile ? { opacity: 1, y: 0 } : undefined} whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                     viewport={isMobile ? undefined : { once: true, amount: 0.25 }} transition={{ duration: isMobile ? 0 : 0.4, delay: isMobile ? 0 : i * 0.07 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="px-2 py-0.5 text-xs font-medium rounded-full border" style={{ color: item.sourceColor, borderColor: item.sourceColor + "40", background: item.sourceColor + "15" }}>
+                      <span className="px-2 py-0.5 font-mono text-xs font-medium rounded-[4px] border" style={{ color: item.sourceColor, borderColor: item.sourceColor + "40", background: item.sourceColor + "15" }}>
                         {item.tag}
                       </span>
-                      {item.pubDate && <span className="text-xs text-slate-400 ml-auto">{timeAgo(item.pubDate)}</span>}
+                      {item.pubDate && <span className="font-mono text-xs ml-auto" style={{ color: bp.faint }}>{timeAgo(item.pubDate)}</span>}
                     </div>
-                    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors leading-snug line-clamp-2">
+                    <h3 className="text-sm font-semibold transition-colors leading-snug line-clamp-2 text-[color:var(--bp-text)] group-hover:text-[color:var(--bp-accent)]">
                       {item.title}
                     </h3>
                   </motion.a>
@@ -694,6 +785,7 @@ export default function Home() {
             )}
           </div>
         </section>
+        </div>{/* ── fin zone blueprint ── */}
 
 
 
