@@ -69,7 +69,7 @@ const SERVERS: Server[] = [
   },
   {
     id: "dino",
-    name: "Proxmox VE 9.2",
+    name: "HP 705 G5",
     codename: "dino",
     role: "Nouveau serveur — hyperviseur & lab réseau",
     roleEn: "New server — hypervisor & network lab",
