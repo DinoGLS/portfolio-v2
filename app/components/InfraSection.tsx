@@ -41,7 +41,7 @@ interface Server {
 const SERVERS: Server[] = [
   {
     id: "hp",
-    name: "HP 705 G5",
+    name: "Serveur HP (gls)",
     codename: "gls",
     role: "Serveur legacy — production & CI/CD",
     roleEn: "Legacy server — production & CI/CD",
@@ -78,7 +78,7 @@ const SERVERS: Server[] = [
     status: "Migration en cours",
     statusEn: "Migration in progress",
     specs: [
-      { label: "CPU", value: "AMD (multi-core)" },
+      { label: "CPU", value: "AMD Ryzen 7 PRO (8c/16t)" },
       { label: "RAM", value: "16 Go" },
       { label: "Stockage", value: "500 Go NVMe" },
       { label: "OS", value: "Proxmox VE 9.2" },
@@ -118,7 +118,7 @@ function useTerminalLines(server: Server, lang: "fr" | "en") {
     setDone(false);
 
     const allLines = [
-      `$ ssh ${server.codename}@${server.id === "hp" ? "100.121.13.37" : "192.168.1.50"}`,
+      `$ ssh ${server.codename}@${server.id === "hp" ? "10.0.0.10" : "10.0.0.1"}`,
       `Welcome to ${server.name}`,
       ``,
       `$ neofetch --short`,
