@@ -12,6 +12,7 @@ import ParcoursSection from "@/app/components/ParcoursSection";
 import ProjectsSection from "@/app/components/ProjectsSection";
 import CyberWatchSection from "@/app/components/CyberWatchSection";
 import BlueprintZone from "@/app/components/BlueprintZone";
+import InfraSection from "@/app/components/InfraSection";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
 // ─── Composant principal ─────────────────────────────────────────────────────
@@ -38,6 +39,7 @@ export default function Home() {
     { label: lang === "fr" ? "À propos" : "About", href: "#about" },
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "Veille" : "News", href: "#veille" },
+    { label: "Infra", href: "#infra" },
     { label: "Contact", href: "#contact" },
   ];
 
@@ -282,6 +284,7 @@ export default function Home() {
           <BlueprintZone>
             <ProjectsSection isMobile={isMobile} />
             <CyberWatchSection isMobile={isMobile} />
+            <InfraSection isMobile={isMobile} />
           </BlueprintZone>
 
           {/* ── CONTACT ── */}
