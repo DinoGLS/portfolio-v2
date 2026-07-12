@@ -93,7 +93,7 @@ const SERVERS: Server[] = [
       { name: "Git (Gitea)", desc: "Migration de la forge Git", descEn: "Git forge migration", port: "LXC 112", status: "planned", icon: "📦", stack: "Gitea" },
       { name: "DB (PostgreSQL)", desc: "Base de données centralisée", descEn: "Centralized database", port: "LXC 113", status: "planned", icon: "🗄️", stack: "PostgreSQL 16" },
       { name: "Apps (Docker)", desc: "Tous les services HP migrés", descEn: "All HP services migrated", port: "VM 120", status: "planned", icon: "🐳", stack: "Docker · Compose" },
-      { name: "IA (Ollama)", desc: "LLM local pour automatisations", descEn: "Local LLM for automations", port: "VM 130", status: "planned", icon: "🧠", stack: "Ollama · Open WebUI" },
+      { name: "IA (Ollama)", desc: "LLM local pour automatisations", descEn: "Local LLM for automations", port: "LXC 130", status: "planned", icon: "🧠", stack: "Ollama · Open WebUI" },
       { name: "Lab AD (Windows)", desc: "Domaine Active Directory isolé", descEn: "Isolated Active Directory domain", port: "vmbr2", status: "planned", icon: "🪟", stack: "Windows Server 2022" },
       { name: "DMZ", desc: "Réseau isolé — cibles exposées", descEn: "Isolated network — exposed targets", port: "vmbr3", status: "planned", icon: "🎯", stack: "Réseau isolé" },
     ],
