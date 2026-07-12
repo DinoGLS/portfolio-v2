@@ -78,11 +78,12 @@ const SERVERS: Server[] = [
     status: "Migration en cours",
     statusEn: "Migration in progress",
     specs: [
-      { label: "CPU", value: "AMD Ryzen 7 PRO (8c/16t)" },
+      { label: "CPU", value: "AMD Ryzen 7 PRO 3700 (8c/16t)" },
+      { label: "GPU", value: "AMD Radeon 540/550 (4 Go VRAM)" },
       { label: "RAM", value: "16 Go" },
       { label: "Stockage", value: "500 Go NVMe" },
       { label: "OS", value: "Proxmox VE 9.2" },
-      { label: "Réseau", value: "Tailscale + lab 192.168.2.0/24" },
+      { label: "Réseau", value: "Tailscale + lab segmenté (LAN/AD/DMZ)" },
     ],
     services: [
       { name: "OPNsense", desc: "Firewall/routeur du lab Draken", descEn: "Draken lab firewall/router", port: "VM 101", status: "up", icon: "🛡️", stack: "FreeBSD · OPNsense" },
@@ -92,7 +93,9 @@ const SERVERS: Server[] = [
       { name: "Git (Gitea)", desc: "Migration de la forge Git", descEn: "Git forge migration", port: "LXC 112", status: "planned", icon: "📦", stack: "Gitea" },
       { name: "DB (PostgreSQL)", desc: "Base de données centralisée", descEn: "Centralized database", port: "LXC 113", status: "planned", icon: "🗄️", stack: "PostgreSQL 16" },
       { name: "Apps (Docker)", desc: "Tous les services HP migrés", descEn: "All HP services migrated", port: "VM 120", status: "planned", icon: "🐳", stack: "Docker · Compose" },
-      { name: "IA (Ollama)", desc: "LLM local pour automatisations", descEn: "Local LLM for automations", port: "LXC 130", status: "planned", icon: "🧠", stack: "Ollama · Open WebUI" },
+      { name: "IA (Ollama)", desc: "LLM local pour automatisations", descEn: "Local LLM for automations", port: "VM 130", status: "planned", icon: "🧠", stack: "Ollama · Open WebUI" },
+      { name: "Lab AD (Windows)", desc: "Domaine Active Directory isolé", descEn: "Isolated Active Directory domain", port: "vmbr2", status: "planned", icon: "🪟", stack: "Windows Server 2022" },
+      { name: "DMZ", desc: "Réseau isolé — cibles exposées", descEn: "Isolated network — exposed targets", port: "vmbr3", status: "planned", icon: "🎯", stack: "Réseau isolé" },
     ],
   },
 ];
