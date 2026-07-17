@@ -19,7 +19,7 @@ interface Service {
   desc: string;
   descEn: string;
   port: string;
-  status: "up" | "migrating" | "planned";
+  status: "up" | "migrating" | "planned" | "migrated";
   icon: string;
   stack: string;
 }
@@ -40,46 +40,18 @@ interface Server {
 
 const SERVERS: Server[] = [
   {
-    id: "hp",
-    name: "Serveur HP (gls)",
-    codename: "gls",
-    role: "Serveur legacy — production & CI/CD",
-    roleEn: "Legacy server — production & CI/CD",
-    color: "#3b82f6",
+    id: "dino",
+    name: "HP 705 G5",
+    codename: "dino",
+    role: "Serveur principal — hyperviseur & lab Draken",
+    roleEn: "Main server — hypervisor & Draken lab",
+    color: "#a855f7",
     statusColor: "#10b981",
     status: "En ligne",
     statusEn: "Online",
     specs: [
-      { label: "CPU", value: "Intel i3-7020U @ 2.30GHz" },
-      { label: "RAM", value: "3.7 Go DDR4" },
-      { label: "Stockage", value: "453 Go SSD" },
-      { label: "OS", value: "Debian 13 (Trixie)" },
-      { label: "Réseau", value: "Tailscale + LAN" },
-    ],
-    services: [
-      { name: "Portfolio", desc: "Ce site — Next.js 16 / Turbopack", descEn: "This site — Next.js 16 / Turbopack", port: "3001", status: "up", icon: "🌐", stack: "Next.js · Docker" },
-      { name: "Gitea", desc: "Forge Git auto-hébergée + CI runner", descEn: "Self-hosted Git forge + CI runner", port: "3000", status: "up", icon: "📦", stack: "Gitea · act_runner" },
-      { name: "DocForge", desc: "Générateur de livrables BTS via IA", descEn: "BTS deliverables generator with AI", port: "5000", status: "up", icon: "📄", stack: "Flask · Groq · Pandoc" },
-      { name: "Générateur CV", desc: "Création de CV assistée par IA", descEn: "AI-assisted CV builder", port: "8080", status: "up", icon: "📝", stack: "Node.js · Groq API" },
-      { name: "Nginx Proxy Manager", desc: "Reverse proxy + certificats SSL", descEn: "Reverse proxy + SSL certificates", port: "80/443", status: "up", icon: "🔀", stack: "NPM · Let's Encrypt" },
-      { name: "Portainer", desc: "Dashboard de gestion Docker", descEn: "Docker management dashboard", port: "9000", status: "up", icon: "🐳", stack: "Portainer CE" },
-      { name: "Hub Dashboard", desc: "Tableau de bord de monitoring", descEn: "Monitoring dashboard", port: "7777", status: "up", icon: "📊", stack: "Node.js" },
-      { name: "HP Bot", desc: "Bot Telegram de supervision serveur", descEn: "Server monitoring Telegram bot", port: "—", status: "up", icon: "🤖", stack: "Python · Telegram" },
-    ],
-  },
-  {
-    id: "dino",
-    name: "HP 705 G5",
-    codename: "dino",
-    role: "Nouveau serveur — hyperviseur & lab réseau",
-    roleEn: "New server — hypervisor & network lab",
-    color: "#a855f7",
-    statusColor: "#f59e0b",
-    status: "Migration en cours",
-    statusEn: "Migration in progress",
-    specs: [
-      { label: "CPU", value: "AMD Ryzen 7 PRO 3700 (8c/16t)" },
-      { label: "GPU", value: "AMD Radeon 540/550 (4 Go VRAM)" },
+      { label: "CPU", value: "AMD Ryzen 7 PRO (8c/16t)" },
+      { label: "GPU", value: "AMD Radeon (4 Go VRAM)" },
       { label: "RAM", value: "16 Go" },
       { label: "Stockage", value: "500 Go NVMe" },
       { label: "OS", value: "Proxmox VE 9.2" },
@@ -88,14 +60,41 @@ const SERVERS: Server[] = [
     services: [
       { name: "OPNsense", desc: "Firewall/routeur du lab Draken", descEn: "Draken lab firewall/router", port: "VM 101", status: "up", icon: "🛡️", stack: "FreeBSD · OPNsense" },
       { name: "draken-admin", desc: "Bastion IaC — Terraform & Ansible", descEn: "IaC bastion — Terraform & Ansible", port: "CT 102", status: "up", icon: "⚙️", stack: "Terraform · Ansible" },
-      { name: "Edge (reverse proxy)", desc: "Reverse proxy + tunnel Cloudflare", descEn: "Reverse proxy + Cloudflare tunnel", port: "LXC 110", status: "planned", icon: "🌍", stack: "Caddy · cloudflared" },
-      { name: "DNS (Pi-hole)", desc: "Résolution DNS locale *.gls / *.home", descEn: "Local DNS *.gls / *.home", port: "LXC 111", status: "planned", icon: "🔎", stack: "Pi-hole" },
-      { name: "Git (Gitea)", desc: "Migration de la forge Git", descEn: "Git forge migration", port: "LXC 112", status: "planned", icon: "📦", stack: "Gitea" },
-      { name: "DB (PostgreSQL)", desc: "Base de données centralisée", descEn: "Centralized database", port: "LXC 113", status: "planned", icon: "🗄️", stack: "PostgreSQL 16" },
-      { name: "Apps (Docker)", desc: "Tous les services HP migrés", descEn: "All HP services migrated", port: "VM 120", status: "planned", icon: "🐳", stack: "Docker · Compose" },
+      { name: "Edge (reverse proxy)", desc: "Reverse proxy + TLS local (mkcert)", descEn: "Reverse proxy + local TLS (mkcert)", port: "LXC 110", status: "up", icon: "🌍", stack: "Traefik · mkcert" },
+      { name: "Git (Gitea)", desc: "Forge Git auto-hébergée + CI runner", descEn: "Self-hosted Git forge + CI runner", port: "LXC 112", status: "up", icon: "📦", stack: "Gitea · act_runner" },
+      { name: "DB (PostgreSQL)", desc: "Base de données centralisée", descEn: "Centralized database", port: "LXC 113", status: "up", icon: "🗄️", stack: "PostgreSQL 16" },
+      { name: "Apps (Docker)", desc: "Services migrés — portfolio, DocForge, CV, Vaultwarden…", descEn: "Migrated services — portfolio, DocForge, CV, Vaultwarden…", port: "VM 120", status: "up", icon: "🐳", stack: "Docker · Compose" },
+      { name: "DNS (Pi-hole)", desc: "Résolution DNS locale du lab (*.gls / *.home)", descEn: "Local lab DNS resolver (*.gls / *.home)", port: "LXC 111", status: "up", icon: "🔎", stack: "Pi-hole" },
       { name: "IA (Ollama)", desc: "LLM local pour automatisations", descEn: "Local LLM for automations", port: "LXC 130", status: "planned", icon: "🧠", stack: "Ollama · Open WebUI" },
       { name: "Lab AD (Windows)", desc: "Domaine Active Directory isolé", descEn: "Isolated Active Directory domain", port: "vmbr2", status: "planned", icon: "🪟", stack: "Windows Server 2022" },
       { name: "DMZ", desc: "Réseau isolé — cibles exposées", descEn: "Isolated network — exposed targets", port: "vmbr3", status: "planned", icon: "🎯", stack: "Réseau isolé" },
+    ],
+  },
+  {
+    id: "hp",
+    name: "Serveur HP (gls)",
+    codename: "gls",
+    role: "Ancien serveur — services migrés vers Draken",
+    roleEn: "Legacy server — services migrated to Draken",
+    color: "#3b82f6",
+    statusColor: "#64748b",
+    status: "Éteint (migré)",
+    statusEn: "Off (migrated)",
+    specs: [
+      { label: "CPU", value: "Intel i3-7020U @ 2.30GHz" },
+      { label: "RAM", value: "3.7 Go DDR4" },
+      { label: "Stockage", value: "453 Go SSD" },
+      { label: "OS", value: "Debian 13 (Trixie)" },
+      { label: "Réseau", value: "Tailscale + LAN" },
+      { label: "Futur", value: "Cible de sauvegarde PBS" },
+    ],
+    services: [
+      { name: "Portfolio", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "🌐", stack: "Next.js" },
+      { name: "Gitea", desc: "→ migré vers dino (LXC git)", descEn: "→ migrated to dino (git LXC)", port: "—", status: "migrated", icon: "📦", stack: "Gitea" },
+      { name: "DocForge", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "📄", stack: "Flask" },
+      { name: "Générateur CV", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "📝", stack: "Node.js" },
+      { name: "Intelligence Hub", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "📰", stack: "Nginx · RSS" },
+      { name: "Reverse proxy / TLS", desc: "→ remplacé par Traefik sur dino", descEn: "→ replaced by Traefik on dino", port: "—", status: "migrated", icon: "🔀", stack: "NPM → Traefik" },
     ],
   },
 ];
@@ -104,6 +103,7 @@ const STATUS_LABELS = {
   up: { fr: "Actif", en: "Active", color: "#10b981" },
   migrating: { fr: "Migration", en: "Migrating", color: "#f59e0b" },
   planned: { fr: "Planifié", en: "Planned", color: "#6b7280" },
+  migrated: { fr: "Migré", en: "Migrated", color: "#64748b" },
 };
 
 // ─── Hook animation terminal ────────────────────────────────────────────────
@@ -209,8 +209,8 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
           </h2>
           <p className="text-sm leading-relaxed" style={{ color: bp.sub }}>
             {lang === "fr"
-              ? "Deux serveurs, une migration en cours — de l'ancien HP vers Proxmox."
-              : "Two servers, one ongoing migration — from legacy HP to Proxmox."}
+              ? "Un lab Proxmox « Draken » auto-hébergé — virtualisation, IaC (Terraform/Ansible) et réseau segmenté (LAN / AD / DMZ)."
+              : "A self-hosted Proxmox “Draken” lab — virtualization, IaC (Terraform/Ansible) and segmented networking (LAN / AD / DMZ)."}
           </p>
           <div className="mt-4 flex justify-center">
             <RackPopup lang={lang as "fr" | "en"} />
