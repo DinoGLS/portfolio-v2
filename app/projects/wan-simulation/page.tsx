@@ -82,6 +82,11 @@ const data: BPData = {
     { domain: "Résilience", skills: "sauvegarde TFTP, reprise après incident" },
     { domain: "Sécurité réseau", skills: "ACL, filtrage, segmentation" },
   ],
+  documents: [
+    { label: { fr: "Guide réseau WAN", en: "WAN network guide" }, file: "/projects/wan-simulation/Guide reseau wan.pdf" },
+    { label: { fr: "Recommandations", en: "Recommendations" }, file: "/projects/wan-simulation/Recommandation.pdf" },
+    { label: { fr: "Tableau d'adressage", en: "Addressing plan" }, file: "/projects/wan-simulation/Tableau_adressage.pdf" },
+  ],
 };
 
 export default function WanSimulationPage() {

@@ -60,6 +60,16 @@ function buildBP(dark: boolean) {
 }
 type BP = ReturnType<typeof buildBP>;
 
+function getC(c: string | undefined, bp: BP, dark: boolean) {
+  if (!c) return bp.accent;
+  if (dark) return c;
+  const l = c.toLowerCase();
+  if (l === "#bfe3ff") return bp.accent2;
+  if (l === "#4cc4ff") return bp.accent;
+  if (l === "#ff8f6b") return "#d95c34";
+  return c;
+}
+
 // ── Types de données ────────────────────────────────────────────────────────
 export interface BPStep {
   num: string;
@@ -83,6 +93,7 @@ export interface BPData {
   toc?: Loc[];
   steps: BPStep[];
   skills?: { domain: Loc; skills: Loc }[];
+  documents?: { label: Loc; file: string; sub?: Loc }[];
   planned?: Loc[];
   breadcrumb?: string;
   files?: { name: string; icon: string; indent: number; kind?: string }[];
@@ -124,8 +135,9 @@ const STATUS_COLORS: Record<string, string> = {
   "En production": "#8b5cf6", Live: "#8b5cf6",
 };
 
-function StatusChip({ label, color, bp }: { label: string; color?: string; bp: BP }) {
-  const c = color || STATUS_COLORS[label] || bp.accent;
+function StatusChip({ label, color, bp, dark }: { label: string; color?: string; bp: BP; dark: boolean }) {
+  const baseColor = color || STATUS_COLORS[label] || bp.accent;
+  const c = getC(baseColor, bp, dark);
   return (
     <span style={{ fontFamily: bp.mono, fontSize: 11, padding: "4px 10px", borderRadius: 4, background: c + "1f", color: c, border: `1px solid ${c}55` }}>
       ● {label}
@@ -151,18 +163,40 @@ function CodeBlock({ code, lang, bp, terminalDots = false }: { code: string; lan
   );
 }
 
+function Documents({ docs, bp, lang }: { docs: NonNullable<BPData["documents"]>; bp: BP; lang: string }) {
+  const fileName = (f: string) => decodeURIComponent(f.split("/").pop() || f);
+  return (
+    <div style={{ marginTop: 40 }}>
+      <h2 style={{ fontSize: 13, letterSpacing: "0.2em", textTransform: "uppercase", color: bp.sub, margin: "0 0 18px" }}>{lang === "en" ? "Documents & deliverables" : "Documents et livrables"}</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {docs.map((d) => (
+          <a key={d.file} href={d.file} target="_blank" rel="noopener noreferrer"
+            style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 16px", borderRadius: 5, border: `1px solid ${bp.cardBorder}`, background: bp.cardBg, textDecoration: "none", color: bp.text }}>
+            <span style={{ width: 34, height: 34, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: bp.mono, fontSize: 11, fontWeight: 700, background: bp.chipBg, color: bp.accent, border: `1px solid ${bp.chipBorder}`, flexShrink: 0 }}>PDF</span>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{tx(d.label, lang)}</div>
+              <div style={{ fontFamily: bp.mono, fontSize: 11.5, color: bp.faint, marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.sub ? tx(d.sub, lang) : fileName(d.file)}</div>
+            </div>
+            <span style={{ color: bp.accent, fontSize: 16, flexShrink: 0 }}>↓</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── DATASHEET (infra système / réseau) ──────────────────────────────────────
-function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
+function Datasheet({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: string; dark: boolean }) {
   return (
     <div style={{ position: "relative", padding: "38px 20px 60px", minHeight: "100vh", background: bp.pageBg, color: bp.text, fontFamily: bp.sans }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none" }} />
-      <div style={{ position: "relative", maxWidth: 1000, margin: "0 auto" }}>
+      <div style={{ position: "relative", maxWidth: 1000, margin: "0 auto", width: "100%" }}>
         <Link href="/#projects" style={{ fontFamily: bp.mono, fontSize: 13, color: bp.sub, textDecoration: "none" }}>{lang === "en" ? "← back to projects" : "← retour aux projets"}</Link>
 
-        <div style={{ marginTop: 26, display: "grid", gridTemplateColumns: "1fr", gap: 24 }} className="bp-header-grid">
+        <div style={{ marginTop: 26, display: "grid", gridTemplateColumns: "1fr", gap: 24 }} className={data.stats && data.stats.length > 0 ? "bp-header-grid" : ""}>
           <div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 14, alignItems: "center" }}>
-              <StatusChip label={tx(data.status, lang)} color={data.statusColor} bp={bp} />
+              <StatusChip label={tx(data.status, lang)} color={data.statusColor} bp={bp} dark={dark} />
               <span style={{ fontFamily: bp.mono, fontSize: 12, letterSpacing: "0.2em", color: bp.accent }}>{tx(data.tag, lang)} · 2025</span>
             </div>
             <h1 style={{ fontSize: 40, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.05, margin: "0 0 16px", color: bp.text }}>{tx(data.title, lang)}</h1>
@@ -170,7 +204,7 @@ function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 22 }}>
               {data.badges.map((b) => (
                 <span key={b.label} style={{ fontFamily: bp.mono, fontSize: 11.5, padding: "5px 11px", borderRadius: 4, background: bp.chipBg, border: `1px solid ${bp.chipBorder}`, color: bp.chipText }}>
-                  <span style={{ color: b.color || bp.accent }}>●</span> {b.label}
+                  <span style={{ color: getC(b.color, bp, dark) }}>●</span> {b.label}
                 </span>
               ))}
             </div>
@@ -194,7 +228,7 @@ function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
           </div>
         )}
 
-        <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1fr", gap: 24 }} className="bp-body-grid">
+        <div style={{ marginTop: 44, display: "grid", gridTemplateColumns: "1fr", gap: 24 }} className={data.toc && data.toc.length > 0 ? "bp-body-grid" : ""}>
           {data.toc && data.toc.length > 0 && (
             <div className="bp-toc" style={{ position: "sticky", top: 24, alignSelf: "start" }}>
               <div style={{ fontFamily: bp.mono, fontSize: 10.5, letterSpacing: "0.14em", color: bp.faint, textTransform: "uppercase", marginBottom: 14 }}>{lang === "en" ? "Contents" : "Sommaire"}</div>
@@ -205,9 +239,9 @@ function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
               </div>
             </div>
           )}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 0 }}>
             {data.steps.map((s) => {
-              const c = s.color || bp.accent;
+              const c = getC(s.color, bp, dark);
               return (
                 <div key={s.num} style={{ border: `1px solid ${bp.cardBorder}`, borderRadius: 5, background: bp.cardBg, overflow: "hidden" }}>
                   <div style={{ height: 3, background: c }} />
@@ -262,6 +296,8 @@ function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
             </div>
           </div>
         )}
+
+        {data.documents && data.documents.length > 0 && <Documents docs={data.documents} bp={bp} lang={lang} />}
       </div>
 
       <style>{`
@@ -277,17 +313,17 @@ function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
 }
 
 // ── IDE (dev logiciel) ──────────────────────────────────────────────────────
-function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
+function IDE({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: string; dark: boolean }) {
   const [open, setOpen] = useState<Record<number, boolean>>(() => {
     const o: Record<number, boolean> = {};
     data.steps.forEach((_, i) => (o[i] = i < 2));
     return o;
   });
-  const accent = data.statusColor || bp.accent;
+  const accent = getC(data.statusColor, bp, dark);
   return (
     <div style={{ position: "relative", minHeight: "100vh", background: bp.pageBg, padding: "24px 16px 48px", fontFamily: bp.sans }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none" }} />
-      <div style={{ position: "relative", maxWidth: 1040, margin: "0 auto" }}>
+      <div style={{ position: "relative", maxWidth: 1040, margin: "0 auto", width: "100%" }}>
         <Link href="/#projects" style={{ fontFamily: bp.mono, fontSize: 13, color: bp.sub, textDecoration: "none", display: "inline-block", marginBottom: 16 }}>{lang === "en" ? "← back to projects" : "← retour aux projets"}</Link>
         <div style={{ borderRadius: 6, overflow: "hidden", border: `1px solid ${bp.ideBorder}`, boxShadow: "0 18px 44px rgba(2,10,20,0.28)", background: bp.idePage, color: bp.text }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "11px 16px", background: bp.ideBar, borderBottom: `1px solid ${bp.ideBorder}` }}>
@@ -297,7 +333,7 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
             <span style={{ fontFamily: bp.mono, fontSize: 12, color: bp.faint, marginLeft: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{data.breadcrumb || "garlens — portfolio"}</span>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr" }} className="bp-ide-grid">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr" }} className={data.files && data.files.length > 0 ? "bp-ide-grid" : ""}>
             {data.files && (
               <div className="bp-ide-explorer" style={{ background: bp.ideSide, borderRight: `1px solid ${bp.ideBorder}`, padding: "14px 0" }}>
                 <div style={{ fontFamily: bp.mono, fontSize: 10.5, letterSpacing: "0.14em", color: bp.faint, padding: "0 16px 10px" }}>EXPLORER</div>
@@ -323,7 +359,7 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
               )}
               <div style={{ padding: "30px 28px 40px", minWidth: 0, color: bp.text }}>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginBottom: 18 }}>
-                  <StatusChip label={tx(data.status, lang)} color={data.statusColor} bp={bp} />
+                  <StatusChip label={tx(data.status, lang)} color={data.statusColor} bp={bp} dark={dark} />
                   <span style={{ fontFamily: bp.mono, fontSize: 11, padding: "4px 10px", borderRadius: 4, background: bp.chipBg, color: bp.chipText, border: `1px solid ${bp.chipBorder}` }}>{tx(data.tag, lang)}</span>
                 </div>
                 <h1 style={{ fontFamily: bp.mono, fontSize: 28, fontWeight: 600, letterSpacing: "-0.02em", margin: "0 0 6px", lineHeight: 1.15 }}>
@@ -334,7 +370,7 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 18 }}>
                   {data.badges.map((b) => (
                     <span key={b.label} style={{ fontFamily: bp.mono, fontSize: 11, padding: "4px 10px", borderRadius: 4, background: bp.chipBg, border: `1px solid ${bp.chipBorder}`, color: bp.chipText }}>
-                      <span style={{ color: b.color || accent }}>●</span> {b.label}
+                      <span style={{ color: getC(b.color, bp, dark) || accent }}>●</span> {b.label}
                     </span>
                   ))}
                 </div>
@@ -360,7 +396,7 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
                 <div style={{ fontFamily: bp.mono, fontSize: 14, margin: "34px 0 14px", color: bp.text }}><span style={{ color: bp.faint }}>##</span> {lang === "en" ? "What I built" : "Ce que j'ai construit"}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {data.steps.map((s, i) => {
-                    const c = s.color || accent;
+                    const c = getC(s.color, bp, dark) || accent;
                     const isOpen = open[i];
                     return (
                       <div key={s.num} style={{ border: `1px solid ${bp.ideBorder}`, borderRadius: 5, background: bp.ideCard, overflow: "hidden" }}>
@@ -408,6 +444,8 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
                     </div>
                   </>
                 )}
+
+                {data.documents && data.documents.length > 0 && <Documents docs={data.documents} bp={bp} lang={lang} />}
               </div>
             </div>
           </div>
@@ -434,6 +472,7 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
 export default function BlueprintProject({ variant, data }: { variant: "datasheet" | "ide"; data: BPData }) {
   const { theme } = useTheme();
   const { lang } = useLanguage();
-  const bp = buildBP(theme !== "light");
-  return variant === "ide" ? <IDE data={data} bp={bp} lang={lang} /> : <Datasheet data={data} bp={bp} lang={lang} />;
+  const dark = theme !== "light";
+  const bp = buildBP(dark);
+  return variant === "ide" ? <IDE data={data} bp={bp} lang={lang} dark={dark} /> : <Datasheet data={data} bp={bp} lang={lang} dark={dark} />;
 }

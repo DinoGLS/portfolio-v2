@@ -14,7 +14,16 @@ const data: BPData = {
     { label: "Python" },
     { label: "WPF" },
   ],
-  breadcrumb: "garlens — portfolio/projets/automation-scripts",
+  breadcrumb: "garlens — portfolio/projets/usb-toolkit",
+  files: [
+    { name: "usb-toolkit", icon: "▾", indent: 0, kind: "folder" },
+    { name: "README.md", icon: "≡", indent: 1, kind: "active" },
+    { name: "Menu.ps1", icon: "⌘", indent: 1 },
+    { name: "SystemReport.ps1", icon: "⌘", indent: 1 },
+    { name: "buil.ps1", icon: "⌘", indent: 1 },
+    { name: "Menu.xaml", icon: "≡", indent: 1 },
+    { name: "automat.png", icon: "▣", indent: 1 },
+  ],
   tabs: ["Menu.ps1", "SystemReport.ps1"],
   steps: [
     {
