@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a2a49"/>
+      <stop offset="1" stop-color="#061a30"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="560" fill="url(#bg)"/>
+  <g stroke="rgba(140,195,240,0.10)" stroke-width="1">
+    <path d="M0 30 H900 M0 60 H900 M0 90 H900 M0 120 H900 M0 150 H900 M0 180 H900 M0 210 H900 M0 240 H900 M0 270 H900 M0 300 H900 M0 330 H900 M0 360 H900 M0 390 H900 M0 420 H900 M0 450 H900 M0 480 H900 M0 510 H900"/>
+    <path d="M30 0 V560 M60 0 V560 M90 0 V560 M120 0 V560 M150 0 V560 M180 0 V560 M210 0 V560 M240 0 V560 M270 0 V560 M300 0 V560 M330 0 V560 M360 0 V560 M390 0 V560 M420 0 V560 M450 0 V560 M480 0 V560 M510 0 V560 M540 0 V560 M570 0 V560 M600 0 V560 M630 0 V560 M660 0 V560 M690 0 V560 M720 0 V560 M750 0 V560 M780 0 V560 M810 0 V560 M840 0 V560 M870 0 V560"/>
+  </g>
+  <text x="450" y="250" font-family="ui-monospace, monospace" font-size="26" font-weight="700" fill="#8b5cf6" text-anchor="middle">&#35; DocForge</text>
+  <text x="450" y="292" font-family="ui-monospace, monospace" font-size="15" fill="#cfe6fb" text-anchor="middle">Flask &#183; LLM cascade &#183; Pandoc &#183; WeasyPrint</text>
+  <text x="450" y="326" font-family="ui-monospace, monospace" font-size="13" fill="#5d89b6" text-anchor="middle">notes brutes &#8594; Markdown &#8594; PDF (BTS SISR)</text>
+  <g transform="translate(408 150)" fill="none" stroke="#4cc4ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="0" y="0" width="84" height="60" rx="4" fill="rgba(76,196,255,0.08)"/>
+    <path d="M14 16 H70 M14 30 H58 M14 44 H50"/>
+  </g>
+</svg>

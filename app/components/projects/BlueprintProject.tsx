@@ -10,7 +10,7 @@
 // Pas de pop-up "infra map" (retiré volontairement).
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useLanguage } from "@/app/providers/LanguageProvider";
@@ -88,6 +88,33 @@ export interface BPData {
   files?: { name: string; icon: string; indent: number; kind?: string }[];
   tabs?: string[];
   statusBar?: Loc[];
+  gallery?: { src: string; label: Loc }[]; // captures d'écran (optionnel)
+}
+
+// Vignette galerie tolérante aux images manquantes (sonde client, pas de course SSR)
+function Shot({ src, label, bp, lang }: { src: string; label: string; bp: BP; lang: string }) {
+  const [state, setState] = useState<"checking" | "ok" | "broken">("checking");
+  useEffect(() => {
+    const probe = new window.Image();
+    probe.onload = () => setState("ok");
+    probe.onerror = () => setState("broken");
+    probe.src = src;
+    return () => { probe.onload = null; probe.onerror = null; };
+  }, [src]);
+  return (
+    <div style={{ position: "relative", aspectRatio: "9 / 19", borderRadius: 5, overflow: "hidden", border: `1px solid ${bp.ideBorder}`, background: bp.ideCard }}>
+      {state === "ok" ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }} />
+      ) : (
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: 10, textAlign: "center" }}>
+          <span style={{ color: bp.accent, fontSize: 22 }}>▣</span>
+          <span style={{ fontFamily: bp.mono, fontSize: 10, color: bp.faint }}>{lang === "en" ? "screenshot" : "capture"}</span>
+          <span style={{ fontSize: 10.5, color: bp.sub, lineHeight: 1.3 }}>{label}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -316,6 +343,17 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={data.img} alt="Aperçu" style={{ display: "block", width: "100%", maxHeight: 360, objectFit: "cover", objectPosition: "50% 14%" }} />
                   </div>
+                )}
+
+                {data.gallery && data.gallery.length > 0 && (
+                  <>
+                    <div style={{ fontFamily: bp.mono, fontSize: 14, margin: "30px 0 14px", color: bp.text }}><span style={{ color: bp.faint }}>##</span> {lang === "en" ? "App preview" : "Aperçu de l'app"}</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, maxWidth: 680 }}>
+                      {data.gallery.map((g) => (
+                        <Shot key={g.src} src={g.src} label={tx(g.label, lang)} bp={bp} lang={lang} />
+                      ))}
+                    </div>
+                  </>
                 )}
 
                 <div style={{ fontFamily: bp.mono, fontSize: 14, margin: "34px 0 14px", color: bp.text }}><span style={{ color: bp.faint }}>##</span> {lang === "en" ? "What I built" : "Ce que j'ai construit"}</div>
