@@ -13,7 +13,6 @@ import ProjectsSection from "@/app/components/ProjectsSection";
 import CyberWatchSection from "@/app/components/CyberWatchSection";
 import BlueprintZone from "@/app/components/BlueprintZone";
 import InfraSection from "@/app/components/InfraSection";
-import CompetencesSection from "@/app/components/CompetencesSection";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
 // ─── Composant principal ─────────────────────────────────────────────────────
@@ -41,7 +40,7 @@ export default function Home() {
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "Veille" : "News", href: "#veille" },
     { label: "Infra", href: "#infra" },
-    { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
+    { label: lang === "fr" ? "Compétences" : "Skills", href: "/competences" },
     { label: "Contact", href: "#contact" },
   ];
 
@@ -168,7 +167,7 @@ export default function Home() {
               const isActive = activeSection === id;
               const isContact = link.href === "#contact";
               return (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   onMouseEnter={() => {
@@ -183,7 +182,9 @@ export default function Home() {
                     }
                   }}
                   onClick={(e) => {
-                    scrollToSection(e, link.href);
+                    if (!link.href.startsWith("/")) {
+                      scrollToSection(e, link.href);
+                    }
                   }}
                   className={`relative px-2 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-mono tracking-wide transition-all duration-200 whitespace-nowrap
                     ${
@@ -199,7 +200,7 @@ export default function Home() {
                       style={{ boxShadow: "0 0 4px #60a5fa" }}
                     />
                   )}
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -289,7 +290,23 @@ export default function Home() {
             <InfraSection isMobile={isMobile} />
           </BlueprintZone>
 
-          <CompetencesSection />
+          {/* ── CTA COMPÉTENCES ── */}
+          <section className="px-4 py-20 relative">
+            <div className="max-w-4xl mx-auto flex flex-col items-center justify-center text-center p-8 md:p-12 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                {lang === "fr" ? "Compétences" : "Skills"}
+              </h2>
+              <p className="text-base md:text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto">
+                {lang === "fr" ? "Ce que mon homelab m'a appris → métiers visés" : "What my homelab taught me → target roles"}
+              </p>
+              <Link 
+                href="/competences"
+                className="inline-flex items-center justify-center px-8 py-4 rounded-full font-bold text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/25"
+              >
+                {lang === "fr" ? "Voir mes compétences" : "View my skills"}
+              </Link>
+            </div>
+          </section>
 
           {/* ── CONTACT ── */}
           <section id="contact" className="px-4 pb-24 mt-20">
