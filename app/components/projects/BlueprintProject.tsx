@@ -155,7 +155,7 @@ function CodeBlock({ code, lang, bp, terminalDots = false }: { code: string; lan
 function Datasheet({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
   return (
     <div style={{ position: "relative", padding: "38px 20px 60px", minHeight: "100vh", background: bp.pageBg, color: bp.text, fontFamily: bp.sans }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none", WebkitMaskImage: "linear-gradient(to bottom, black, transparent 60%)", maskImage: "linear-gradient(to bottom, black, transparent 60%)" }} />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none" }} />
       <div style={{ position: "relative", maxWidth: 1000, margin: "0 auto" }}>
         <Link href="/#projects" style={{ fontFamily: bp.mono, fontSize: 13, color: bp.sub, textDecoration: "none" }}>{lang === "en" ? "← back to projects" : "← retour aux projets"}</Link>
 
@@ -285,8 +285,9 @@ function IDE({ data, bp, lang }: { data: BPData; bp: BP; lang: string }) {
   });
   const accent = data.statusColor || bp.accent;
   return (
-    <div style={{ minHeight: "100vh", background: bp.pageBg, padding: "24px 16px 48px", fontFamily: bp.sans }}>
-      <div style={{ maxWidth: 1040, margin: "0 auto" }}>
+    <div style={{ position: "relative", minHeight: "100vh", background: bp.pageBg, padding: "24px 16px 48px", fontFamily: bp.sans }}>
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none" }} />
+      <div style={{ position: "relative", maxWidth: 1040, margin: "0 auto" }}>
         <Link href="/#projects" style={{ fontFamily: bp.mono, fontSize: 13, color: bp.sub, textDecoration: "none", display: "inline-block", marginBottom: 16 }}>{lang === "en" ? "← back to projects" : "← retour aux projets"}</Link>
         <div style={{ borderRadius: 6, overflow: "hidden", border: `1px solid ${bp.ideBorder}`, boxShadow: "0 18px 44px rgba(2,10,20,0.28)", background: bp.idePage, color: bp.text }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "11px 16px", background: bp.ideBar, borderBottom: `1px solid ${bp.ideBorder}` }}>
