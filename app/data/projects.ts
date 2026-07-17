@@ -127,7 +127,7 @@ export const THEMES_DATA: ThemeGroup[] = [
         descEn: "React Native mobile app. Health data encrypted with AES-256-GCM, key in the native keychain, on-device AI, no server.",
         stack: "React Native · Expo · TypeScript · AES-256-GCM · Zustand · WebGL",
         href: "/projects/n-core",
-        preview: "/projects/n-core/placeholder.svg",
+        preview: "/projects/n-core/programme.png",
         badge: "En cours",
         badgeEn: "In progress",
         badgeColor: "amber",

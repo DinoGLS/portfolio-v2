@@ -78,9 +78,12 @@ const SKILLS = [
 // Pour ajouter les vrais écrans : déposer les PNG/JPG dans public/projects/n-core/
 // avec ces noms exacts. Tant qu'un fichier manque, le placeholder SVG s'affiche.
 const GALLERY = [
-  { src: "/projects/n-core/anatomie.png", alt: "Onglet Anatomie 3D — heatmap musculaire de la semaine", label: "Anatomie 3D · heatmap semaine" },
-  { src: "/projects/n-core/exercice.png", alt: "Détail d'un exercice — muscles ciblés en 3D", label: "Détail exercice · muscles ciblés" },
-  { src: "/projects/n-core/seance.png", alt: "Séance en direct — le corps se remplit série après série", label: "Séance en direct" },
+  { src: "/projects/n-core/mood.png", alt: "État du système — l'IA calibre l'intensité de la séance", label: "État du système · calibrage IA" },
+  { src: "/projects/n-core/coach-ia.png", alt: "Coach IA — assistant conversationnel local", label: "Coach IA · assistant local" },
+  { src: "/projects/n-core/seance.png", alt: "Séance active — logger des séries en direct", label: "Séance active · logger" },
+  { src: "/projects/n-core/programme.png", alt: "Programme Push Pull Legs — séances et progression", label: "Programme · Push Pull Legs" },
+  { src: "/projects/n-core/progres.png", alt: "Track & Progrès — volume d'entraînement et streak", label: "Track & Progrès · analytics" },
+  { src: "/projects/n-core/perfs.png", alt: "Profil de performance — radar force/endurance/vitesse", label: "Profil de performance" },
 ];
 
 // Vignette galerie : affiche la vraie capture si elle existe, sinon un placeholder
