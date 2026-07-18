@@ -110,7 +110,9 @@ const data: BPData = {
     { domain: { fr: "Reverse proxy", en: "Reverse proxy" }, skills: { fr: "Traefik comme point d'entrée unique du lab", en: "Traefik as the lab's single entry point" } },
   ],
   documents: [
-    { label: { fr: "Livrable — Lab Draken (Proxmox, OPNsense, IaC)", en: "Deliverable — Lab Draken (Proxmox, OPNsense, IaC)" }, file: "/projects/lab-draken/Lab Draken - Proxmox OPNsense IaC.pdf" },
+    { label: { fr: "Services hébergés et leur configuration", en: "Hosted services and their configuration" }, file: "/projects/lab-draken/Services heberges et configuration.pdf" },
+    { label: { fr: "Déploiement et transfert des serveurs", en: "Server deployment and transfer" }, file: "/projects/lab-draken/Deploiement et transfert des serveurs.pdf" },
+    { label: { fr: "OPNsense et architecture réseau", en: "OPNsense and network architecture" }, file: "/projects/lab-draken/OPNsense et architecture reseau.pdf" },
   ],
 };
 
