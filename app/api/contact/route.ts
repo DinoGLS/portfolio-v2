@@ -111,33 +111,12 @@ export async function POST(req: Request) {
   const spam = await isLikelySpam(`${firstName} ${lastName} <${email}>\n${message}`);
   const subject = `${spam ? "[Spam probable] " : ""}Portfolio — message de ${firstName} ${lastName}`;
 
-  // 4. Envoi via Web3Forms.
-  try {
-    const send = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject,
-        from_name: `${firstName} ${lastName}`,
-        replyto: email,
-        // Champs lisibles dans l'e-mail reçu :
-        Prénom: firstName,
-        Nom: lastName,
-        Email: email,
-        Téléphone: phone || "—",
-        Message: message,
-        "Triage IA": spam ? "spam probable" : "légitime",
-      }),
-    });
-    if (!send.ok) {
-      const detail = await send.text().catch(() => "");
-      console.error("Échec Web3Forms:", send.status, detail);
-      return NextResponse.json({ error: "delivery" }, { status: 502 });
-    }
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    console.error("Erreur réseau Web3Forms:", err);
-    return NextResponse.json({ error: "delivery" }, { status: 502 });
-  }
+  // 4. On renvoie au client la clé d'accès et le sujet pour qu'il poste directement
+  // à Web3Forms (qui bloque les requêtes serveur sur le plan gratuit).
+  return NextResponse.json({
+    ok: true,
+    spam,
+    subject,
+    accessKey,
+  });
 }

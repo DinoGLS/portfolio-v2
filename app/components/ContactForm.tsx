@@ -55,6 +55,7 @@ export default function ContactForm() {
 
     setStatus("sending");
     try {
+      // 1. Triage IA serveur et récupération de la clé Web3Forms
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,6 +66,40 @@ export default function ContactForm() {
         setFormError(t("contact.errors.server"));
         return;
       }
+      
+      const data = await res.json();
+      
+      // Honeypot a marché, le serveur a renvoyé {ok: true} sans accessKey.
+      if (!data.accessKey) {
+        setStatus("success");
+        setFields(EMPTY);
+        return;
+      }
+
+      // 2. Envoi direct à Web3Forms depuis le client (évite le blocage IP serveur)
+      const web3res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: data.accessKey,
+          subject: data.subject,
+          from_name: `${fields.firstName} ${fields.lastName}`,
+          replyto: fields.email,
+          Prénom: fields.firstName,
+          Nom: fields.lastName,
+          Email: fields.email,
+          Téléphone: fields.phone || "—",
+          Message: fields.message,
+          "Triage IA": data.spam ? "spam probable" : "légitime",
+        }),
+      });
+
+      if (!web3res.ok) {
+        setStatus("error");
+        setFormError(t("contact.errors.server"));
+        return;
+      }
+
       setStatus("success");
       setFields(EMPTY);
     } catch {

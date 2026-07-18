@@ -11,6 +11,8 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
+      - WEB3FORMS_ACCESS_KEY=${WEB3FORMS_ACCESS_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
     labels:
       - "com.garlens.service=portfolio"
 
