@@ -188,7 +188,7 @@ function Documents({ docs, bp, lang }: { docs: NonNullable<BPData["documents"]>;
 // ── DATASHEET (infra système / réseau) ──────────────────────────────────────
 function Datasheet({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: string; dark: boolean }) {
   return (
-    <div style={{ position: "relative", padding: "38px 20px 60px", minHeight: "100vh", background: bp.pageBg, color: bp.text, fontFamily: bp.sans }}>
+    <div style={{ position: "relative", padding: "38px 20px 60px", minHeight: "100vh", background: bp.pageBg, color: bp.text, fontFamily: bp.sans, maxWidth: "100%", overflowX: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none" }} />
       <div style={{ position: "relative", maxWidth: 1000, margin: "0 auto", width: "100%" }}>
         <Link href="/#projects" style={{ fontFamily: bp.mono, fontSize: 13, color: bp.sub, textDecoration: "none" }}>{lang === "en" ? "← back to projects" : "← retour aux projets"}</Link>
@@ -302,9 +302,9 @@ function Datasheet({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: strin
 
       <style>{`
         @media (min-width: 860px) {
-          .bp-header-grid { grid-template-columns: 1fr 340px !important; gap: 40px !important; align-items: start; }
-          .bp-body-grid { grid-template-columns: 200px 1fr !important; gap: 44px !important; align-items: start; }
-          .bp-skills-grid { grid-template-columns: 1fr 1fr !important; }
+          .bp-header-grid { grid-template-columns: minmax(0, 1fr) 340px !important; gap: 40px !important; align-items: start; }
+          .bp-body-grid { grid-template-columns: 200px minmax(0, 1fr) !important; gap: 44px !important; align-items: start; }
+          .bp-skills-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
         }
         @media (max-width: 859px) { .bp-toc { display: none !important; } }
       `}</style>
@@ -321,7 +321,7 @@ function IDE({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: string; dar
   });
   const accent = getC(data.statusColor, bp, dark);
   return (
-    <div style={{ position: "relative", minHeight: "100vh", background: bp.pageBg, padding: "24px 16px 48px", fontFamily: bp.sans }}>
+    <div style={{ position: "relative", minHeight: "100vh", background: bp.pageBg, padding: "24px 16px 48px", fontFamily: bp.sans, maxWidth: "100%", overflowX: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`, backgroundSize: "30px 30px", pointerEvents: "none" }} />
       <div style={{ position: "relative", maxWidth: 1040, margin: "0 auto", width: "100%" }}>
         <Link href="/#projects" style={{ fontFamily: bp.mono, fontSize: 13, color: bp.sub, textDecoration: "none", display: "inline-block", marginBottom: 16 }}>{lang === "en" ? "← back to projects" : "← retour aux projets"}</Link>
@@ -460,8 +460,8 @@ function IDE({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: string; dar
 
       <style>{`
         @media (min-width: 820px) {
-          .bp-ide-grid { grid-template-columns: 236px 1fr !important; }
-          .bp-skills-grid { grid-template-columns: 1fr 1fr !important; }
+          .bp-ide-grid { grid-template-columns: 236px minmax(0, 1fr) !important; }
+          .bp-skills-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
         }
         @media (max-width: 819px) { .bp-ide-explorer { display: none !important; } }
       `}</style>
