@@ -9,27 +9,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Install Docker CLI
-        run: apt-get update -qq && apt-get install -y -qq docker.io
-
-      - name: Build & Deploy
-        id: deploy
+      # Docker + compose sont deja installes sur l'hote (VM apps) : le runner
+      # tourne en host mode, on ne reinstalle rien.
+      - name: Build & Deploy (docker compose)
         run: |
-          docker stop portfolio 2>/dev/null || true
-          docker rm portfolio 2>/dev/null || true
-          DOCKER_BUILDKIT=0 docker build --pull=false -t portfolio:latest .
-          docker run -d             --name portfolio             --restart unless-stopped             -p 3001:3000             portfolio:latest
-          echo "status=success" >> $GITEA_OUTPUT
+          set -e
+          # -p portfolio-v2 : meme nom de projet que le conteneur deja en place,
+          # compose l'adopte et le recree proprement (pas de conflit de nom).
+          # up --build construit l'image AVANT de remplacer le conteneur : si le
+          # build echoue, le site reste en ligne sur l'ancien conteneur.
+          docker compose -p portfolio-v2 -f docker-compose.portfolio.yml up -d --build
+          docker image prune -f --filter "dangling=true" || true
+
+      - name: Verification (HTTP 200 sur le port local)
+        run: |
+          sleep 5
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://localhost:3001 || echo "000")
+          echo "HTTP $code"
+          test "$code" = "200" || test "$code" = "304"
 
       - name: Notify Telegram (succes)
         if: success()
+        continue-on-error: true
         run: |
-          MSG="Deploiement portfolio reussi%0ACommit : ${{ gitea.sha }}%0AAuteur : ${{ gitea.actor }}"
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage"             -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}"             -d "parse_mode=HTML"             -d "text=portfolio deploye OK - Commit ${{ gitea.sha }}"
+          curl -s --max-time 10 -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "parse_mode=HTML" \
+            -d "text=Portfolio deploye OK (auto) - commit ${{ gitea.sha }} par ${{ gitea.actor }}" || true
 
       - name: Notify Telegram (echec)
         if: failure()
+        continue-on-error: true
         run: |
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage"             -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}"             -d "parse_mode=HTML"             -d "text=ECHEC deploiement portfolio - Commit ${{ gitea.sha }}"
+          curl -s --max-time 10 -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "parse_mode=HTML" \
+            -d "text=ECHEC deploiement portfolio (auto) - commit ${{ gitea.sha }}" || true
