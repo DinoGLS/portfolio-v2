@@ -14,6 +14,9 @@ jobs:
       # Docker + compose sont deja installes sur l'hote (VM apps) : le runner
       # tourne en host mode, on ne reinstalle rien.
       - name: Build & Deploy (docker compose)
+        env:
+          WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           set -e
           # -p portfolio-v2 : meme nom de projet que le conteneur deja en place,
