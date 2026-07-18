@@ -29,8 +29,8 @@ export interface ThemeGroup {
 export const THEMES_DATA: ThemeGroup[] = [
   {
     id: "infra",
-    labelFr: "Infrastructure & Réseaux",
-    labelEn: "Infrastructure & Networks",
+    labelFr: "Infrastructure & Réseau",
+    labelEn: "Infrastructure & Network",
     color: "#3b82f6",
     projects: [
       {
@@ -81,10 +81,10 @@ export const THEMES_DATA: ThemeGroup[] = [
     ],
   },
   {
-    id: "auto",
-    labelFr: "Automatisation & Outils",
-    labelEn: "Automation & Tools",
-    color: "#10b981",
+    id: "logiciel",
+    labelFr: "Logiciel & Dev",
+    labelEn: "Software & Dev",
+    color: "#f59e0b",
     projects: [
       {
         slug: "automation-scripts",
@@ -101,14 +101,6 @@ export const THEMES_DATA: ThemeGroup[] = [
         badgeEn: "Done",
         badgeColor: "emerald",
       },
-    ],
-  },
-  {
-    id: "ia",
-    labelFr: "IA & DevOps",
-    labelEn: "AI & DevOps",
-    color: "#a855f7",
-    projects: [
       {
         slug: "docforge",
         tag: "IA · DEVOPS · BTS SISR",
@@ -124,29 +116,6 @@ export const THEMES_DATA: ThemeGroup[] = [
         badgeEn: "Live",
         badgeColor: "violet",
       },
-    ],
-  },
-  {
-    id: "dev",
-    labelFr: "Dev & DevSecOps",
-    labelEn: "Dev & DevSecOps",
-    color: "#f59e0b",
-    projects: [
-      {
-        slug: "n-core",
-        tag: "DEV · MOBILE · SÉCURITÉ",
-        tagEn: "DEV · MOBILE · SECURITY",
-        title: "N.C0re — App fitness chiffrée offline-first",
-        titleEn: "N.C0re — Encrypted offline-first fitness app",
-        desc: "App mobile React Native. Données de santé chiffrées AES-256-GCM, clé dans le trousseau natif, IA locale sans serveur.",
-        descEn: "React Native mobile app. Health data encrypted with AES-256-GCM, key in the native keychain, on-device AI, no server.",
-        stack: "React Native · Expo · TypeScript · AES-256-GCM · Zustand · WebGL",
-        href: "/projects/n-core",
-        preview: "/projects/n-core/logo-ncore.png",
-        badge: "En cours",
-        badgeEn: "In progress",
-        badgeColor: "amber",
-      },
       {
         slug: "generateur-cv",
         tag: "DEV · IA · OUTIL",
@@ -161,6 +130,21 @@ export const THEMES_DATA: ThemeGroup[] = [
         badge: "Terminé",
         badgeEn: "Done",
         badgeColor: "emerald",
+      },
+      {
+        slug: "n-core",
+        tag: "DEV · MOBILE · SÉCURITÉ",
+        tagEn: "DEV · MOBILE · SECURITY",
+        title: "N.C0re — App fitness chiffrée offline-first",
+        titleEn: "N.C0re — Encrypted offline-first fitness app",
+        desc: "App mobile React Native. Données de santé chiffrées AES-256-GCM, clé dans le trousseau natif, IA locale sans serveur.",
+        descEn: "React Native mobile app. Health data encrypted with AES-256-GCM, key in the native keychain, on-device AI, no server.",
+        stack: "React Native · Expo · TypeScript · AES-256-GCM · Zustand · WebGL",
+        href: "/projects/n-core",
+        preview: "/projects/n-core/logo-ncore.png",
+        badge: "En cours",
+        badgeEn: "In progress",
+        badgeColor: "amber",
       },
     ],
   },
