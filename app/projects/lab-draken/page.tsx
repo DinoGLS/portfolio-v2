@@ -8,7 +8,7 @@ const data: BPData = {
     en: "I migrated my old physical server to a self-hosted Proxmox VE node, with an OPNsense firewall routing and filtering across 4 network segments (WAN/LAN/AD/DMZ). My goal was to drive everything through Infrastructure as Code (Terraform + Ansible) — including the network itself, not just the VMs.",
   },
   status: { fr: "Terminé", en: "Done" },
-  img: "/projects/lab-draken/placeholder.svg",
+  img: "/projects/lab-draken/proxmox-datacenter.png",
   badges: [
     { label: "Proxmox VE 9.2" },
     { label: "OPNsense" },
