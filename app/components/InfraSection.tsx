@@ -70,33 +70,6 @@ const SERVERS: Server[] = [
       { name: "DMZ", desc: "Réseau isolé — cibles exposées", descEn: "Isolated network — exposed targets", port: "vmbr3", status: "planned", icon: "🎯", stack: "Réseau isolé" },
     ],
   },
-  {
-    id: "hp",
-    name: "Serveur HP (gls)",
-    codename: "gls",
-    role: "Ancien serveur — services migrés vers Draken",
-    roleEn: "Legacy server — services migrated to Draken",
-    color: "#3b82f6",
-    statusColor: "#64748b",
-    status: "Éteint (migré)",
-    statusEn: "Off (migrated)",
-    specs: [
-      { label: "CPU", value: "Intel i3-7020U @ 2.30GHz" },
-      { label: "RAM", value: "3.7 Go DDR4" },
-      { label: "Stockage", value: "453 Go SSD" },
-      { label: "OS", value: "Debian 13 (Trixie)" },
-      { label: "Réseau", value: "Tailscale + LAN" },
-      { label: "Futur", value: "Cible de sauvegarde PBS" },
-    ],
-    services: [
-      { name: "Portfolio", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "🌐", stack: "Next.js" },
-      { name: "Gitea", desc: "→ migré vers dino (LXC git)", descEn: "→ migrated to dino (git LXC)", port: "—", status: "migrated", icon: "📦", stack: "Gitea" },
-      { name: "DocForge", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "📄", stack: "Flask" },
-      { name: "Générateur CV", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "📝", stack: "Node.js" },
-      { name: "Intelligence Hub", desc: "→ migré vers dino (VM apps)", descEn: "→ migrated to dino (apps VM)", port: "—", status: "migrated", icon: "📰", stack: "Nginx · RSS" },
-      { name: "Reverse proxy / TLS", desc: "→ remplacé par Traefik sur dino", descEn: "→ replaced by Traefik on dino", port: "—", status: "migrated", icon: "🔀", stack: "NPM → Traefik" },
-    ],
-  },
 ];
 
 const STATUS_LABELS = {
@@ -121,7 +94,7 @@ function useTerminalLines(server: Server, lang: "fr" | "en") {
     setDone(false);
 
     const allLines = [
-      `$ ssh ${server.codename}@${server.id === "hp" ? "10.0.0.10" : "10.0.0.1"}`,
+      `$ ssh ${server.codename}@10.0.0.1`,
       `Welcome to ${server.name}`,
       ``,
       `$ neofetch --short`,
@@ -131,7 +104,7 @@ function useTerminalLines(server: Server, lang: "fr" | "en") {
       `  Disk    : ${server.specs.find((s) => s.label === "Stockage")?.value}`,
       `  Network : ${server.specs.find((s) => s.label === "Réseau")?.value}`,
       ``,
-      server.id === "hp" ? `$ docker ps --format "{{.Names}} ({{.Status}})"` : `$ qm list && pct list`,
+      `$ qm list && pct list`,
       ...server.services
         .filter((s) => s.status === "up")
         .map((s) => `  ✓ ${s.name.padEnd(22)} ${s.port.padEnd(10)} ${s.stack}`),
@@ -177,7 +150,7 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const bp = useBlueprintTokens(isDark);
-  const [activeServer, setActiveServer] = useState<string>("hp");
+  const [activeServer, setActiveServer] = useState<string>("dino");
   const termRef = useRef<HTMLDivElement>(null);
 
   const server = SERVERS.find((s) => s.id === activeServer)!;
@@ -393,24 +366,6 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
                 );
               })}
             </div>
-
-            {/* Ligne migration */}
-            {activeServer === "hp" && (
-              <div className="mt-6 flex items-center justify-center gap-3">
-                <div className="h-px flex-1 max-w-24" style={{ background: bp.chipBorder }} />
-                <span
-                  className="font-mono text-[0.65rem] px-3 py-1 rounded-[4px] border"
-                  style={{
-                    color: bp.faint,
-                    borderColor: bp.chipBorder,
-                    background: bp.chipBg,
-                  }}
-                >
-                  {lang === "fr" ? "migration vers dino →" : "migrating to dino →"}
-                </span>
-                <div className="h-px flex-1 max-w-24" style={{ background: bp.chipBorder }} />
-              </div>
-            )}
           </motion.div>
         </AnimatePresence>
       </div>
