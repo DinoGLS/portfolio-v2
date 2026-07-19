@@ -35,7 +35,7 @@ function clamp(s: unknown, max: number): string {
 // Demande à Groq de classer le message. Renvoie true si spam probable.
 // Ne lève jamais : en cas d'erreur/timeout, on renvoie false (fail-open).
 async function isLikelySpam(text: string): Promise<boolean> {
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY || process.env.groq;
   if (!apiKey) return false; // pas de clé => pas de triage
 
   const controller = new AbortController();
@@ -100,7 +100,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "validation" }, { status: 422 });
   }
 
-  const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
+  const accessKey = process.env.WEB3FORMS_ACCESS_KEY || process.env.webform;
   if (!accessKey) {
     // Mauvaise config serveur : on le log côté serveur, message générique au client.
     console.error("WEB3FORMS_ACCESS_KEY manquante.");
