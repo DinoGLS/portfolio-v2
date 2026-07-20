@@ -110,7 +110,7 @@ export default function Home() {
     const html = document.documentElement;
     const body = document.body;
 
-    if (showContact) {
+    if (showContact && !isMobile) {
       contactScrollSave.current = {
         bodyOverflow: body.style.overflow,
         htmlOverflow: html.style.overflow,
@@ -144,7 +144,7 @@ export default function Home() {
         body.style.paddingRight = "";
       }
     };
-  }, [showContact]);
+  }, [showContact, isMobile]);
 
   // ── Rendu ────────────────────────────────────────────────────────────────
   return (
