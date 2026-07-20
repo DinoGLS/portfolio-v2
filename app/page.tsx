@@ -191,7 +191,7 @@ export default function Home() {
                       isActive || (isContact && showContact)
                         ? "text-blue-700 bg-blue-500/10 border border-blue-500/30 dark:text-blue-300"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 border border-transparent dark:text-slate-300 dark:hover:text-blue-300 dark:hover:bg-blue-500/10"
-                    } ${id === "/competences" || id === "contact" ? "hidden md:inline-flex" : ""}`}
+                    } ${id === "/competences" ? "hidden md:inline-flex" : ""}`}
                 >
                   {link.label}
                   {(isActive || (isContact && showContact)) && (
