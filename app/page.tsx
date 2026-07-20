@@ -171,13 +171,13 @@ export default function Home() {
                   key={link.href}
                   href={link.href}
                   onMouseEnter={() => {
-                    if (isContact) {
+                    if (isContact && !isMobile) {
                       if (contactTimer.current) clearTimeout(contactTimer.current);
                       setShowContact(true);
                     }
                   }}
                   onMouseLeave={() => {
-                    if (isContact) {
+                    if (isContact && !isMobile) {
                       contactTimer.current = setTimeout(() => setShowContact(false), 350);
                     }
                   }}
