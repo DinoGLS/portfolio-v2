@@ -64,16 +64,23 @@ export default function VeilleCyberPage() {
 
   return (
     <main
-      className="min-h-screen px-4 py-16 text-slate-800 dark:text-slate-200 transition-colors duration-300"
+      className="relative min-h-screen px-4 py-16 text-slate-800 dark:text-slate-200 transition-colors duration-300"
       style={{ background: bp.pageBg }}
     >
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(${bp.gridLine} 1px, transparent 1px), linear-gradient(90deg, ${bp.gridLine} 1px, transparent 1px)`,
+          backgroundSize: "30px 30px",
+        }}
+      />
+      <motion.div className="relative" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <Link href="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           ← Retour au portfolio
         </Link>
       </motion.div>
 
-      <div className="max-w-4xl mx-auto">
+      <div className="relative max-w-4xl mx-auto">
         <motion.header className="mt-8 mb-10" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <span className="relative flex h-2 w-2 mr-1">
