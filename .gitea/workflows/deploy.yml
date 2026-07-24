@@ -23,7 +23,7 @@ jobs:
           # compose l'adopte et le recree proprement (pas de conflit de nom).
           # up --build construit l'image AVANT de remplacer le conteneur : si le
           # build echoue, le site reste en ligne sur l'ancien conteneur.
-          docker compose -p portfolio-v2 -f docker-compose.portfolio.yml up -d --build
+          docker compose -p portfolio-v2 -f docker-compose.portfolio.yml up -d --build portfolio-prod
           docker image prune -f --filter "dangling=true" || true
 
       - name: Verification (HTTP 200 sur le port local)
