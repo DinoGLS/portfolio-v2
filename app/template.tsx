@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 // Dans l'App Router, `template.tsx` se remonte à CHAQUE navigation
 // (contrairement à `layout.tsx`). C'est l'endroit idéal pour une
@@ -9,7 +9,11 @@ import type { ReactNode } from "react";
 // reflow) pour que ce soit fluide sur mobile comme sur desktop.
 export default function Template({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   if (reduce || isMobile) {
     return <>{children}</>;

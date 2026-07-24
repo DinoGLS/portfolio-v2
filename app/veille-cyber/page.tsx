@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTheme } from "@/app/providers/ThemeProvider";
+import { BP_DARK, BP_LIGHT } from "@/app/data/blueprint-tokens";
 
 interface FeedItem {
   title: string;
@@ -27,6 +29,9 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function VeilleCyberPage() {
+  const { theme } = useTheme();
+  const dark = theme !== "light";
+  const bp = dark ? BP_DARK : BP_LIGHT;
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +63,10 @@ export default function VeilleCyberPage() {
   const filtered = filter === "Tous" ? items : items.filter((i) => i.source === filter);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-slate-950 px-4 py-16 text-slate-800 dark:text-slate-200 transition-colors duration-300">
+    <main
+      className="min-h-screen px-4 py-16 text-slate-800 dark:text-slate-200 transition-colors duration-300"
+      style={{ background: bp.pageBg }}
+    >
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
         <Link href="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           ← Retour au portfolio

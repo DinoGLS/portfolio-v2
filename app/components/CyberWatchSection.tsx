@@ -137,7 +137,7 @@ export default function CyberWatchSection({ isMobile }: CyberWatchSectionProps) 
                 animate={isMobile ? { opacity: 1, y: 0 } : undefined}
                 whileInView={isMobile ? undefined : { opacity: 1, y: 0 }}
                 viewport={isMobile ? undefined : { once: true, amount: 0.25 }}
-                transition={{ duration: isMobile ? 0 : 0.4, delay: isMobile ? 0 : i * 0.07 }}
+                transition={{ duration: isMobile ? 0 : 0.4, delay: isMobile ? 0 : Math.min(i * 0.03, 0.3) }}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span

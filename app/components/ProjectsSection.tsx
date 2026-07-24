@@ -120,7 +120,7 @@ export default function ProjectsSection({ isMobile }: ProjectsSectionProps) {
                 viewport={isMobile ? undefined : { once: true, amount: 0.15 }}
                 transition={{
                   duration: isMobile ? 0 : 0.45,
-                  delay: isMobile ? 0 : idx * 0.06,
+                  delay: isMobile ? 0 : Math.min(idx * 0.03, 0.3),
                 }}
               >
                 <Link href={p.href} className="block h-full">

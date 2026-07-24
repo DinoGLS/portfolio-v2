@@ -316,7 +316,7 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
                     viewport={isMobile ? undefined : { once: true, amount: 0.15 }}
                     transition={{
                       duration: isMobile ? 0 : 0.35,
-                      delay: isMobile ? 0 : i * 0.05,
+                      delay: isMobile ? 0 : Math.min(i * 0.03, 0.3),
                     }}
                     className="group rounded-[5px] border p-4 backdrop-blur-[8px] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
                     style={{ background: bp.cardBg, borderColor: bp.cardBorder }}
