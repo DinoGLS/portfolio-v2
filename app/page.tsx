@@ -36,8 +36,6 @@ export default function Home() {
     { label: lang === "fr" ? "Accueil" : "Home", href: "#top" },
     { label: lang === "fr" ? "À propos" : "About", href: "#about" },
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
-    { label: lang === "fr" ? "Veille" : "News", href: "#veille" },
-    { label: "Infra", href: "#infra" },
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
     { label: "Contact", href: "#contact" },
   ];
@@ -112,13 +110,11 @@ export default function Home() {
             <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"/>"}</span>
           </a>
           <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar">
-            {/* Sur mobile, « À propos » est retiré de la barre : elle est trop
-                étroite pour 7 entrées. Le filtre est appliqué au rendu et non
-                sur NAV_LINKS, pour que le scroll-spy continue de suivre la
-                section #about. */}
-            {NAV_LINKS.filter((link) => !(isMobile && link.href === "#about")).map((link) => {
+            {NAV_LINKS.map((link) => {
               const id = link.href.replace("#", "");
               const isActive = activeSection === id;
+              // Pas de `transition` sur ces liens : le survol et le changement de
+              // section actif doivent être instantanés, sans effet qui traîne.
               return (
                 <Link
                   key={link.href}
@@ -128,7 +124,7 @@ export default function Home() {
                       scrollToSection(e, link.href);
                     }
                   }}
-                  className={`relative px-2 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-mono tracking-wide transition-all duration-200 whitespace-nowrap
+                  className={`relative px-2 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-mono tracking-wide whitespace-nowrap
                     ${
                       isActive
                         ? "text-blue-700 bg-blue-500/10 border border-blue-500/30 dark:text-blue-300"
