@@ -112,7 +112,11 @@ export default function Home() {
             <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"/>"}</span>
           </a>
           <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar">
-            {NAV_LINKS.map((link) => {
+            {/* Sur mobile, « À propos » est retiré de la barre : elle est trop
+                étroite pour 7 entrées. Le filtre est appliqué au rendu et non
+                sur NAV_LINKS, pour que le scroll-spy continue de suivre la
+                section #about. */}
+            {NAV_LINKS.filter((link) => !(isMobile && link.href === "#about")).map((link) => {
               const id = link.href.replace("#", "");
               const isActive = activeSection === id;
               return (
