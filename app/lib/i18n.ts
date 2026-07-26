@@ -266,9 +266,9 @@ export const homeStrings: Record<Lang, HomeStrings> = {
     parcours: {
       heading: "Mon parcours",
       items: [
-        { year: "2024 - Aujourd'hui", title: "BTS SIO option SISR", desc: "Spécialisation en systèmes, réseaux, cybersécurité et environnements virtualisés. Construction de labs techniques (AD, Proxmox, Cisco, supervision, automatisation)." },
-        { year: "2023 - 2024", title: "Cycle préparatoire international (école d'ingénieur)", desc: "Renforcement des bases scientifiques, ouverture internationale, méthodologie d'ingénieur." },
-        { year: "2021 - 2023", title: "Sûreté aéroportuaire — Securitas", desc: "Diplôme interne, responsabilités opérationnelles, gestion d'équipe, prise de décision en environnement critique." },
+        { year: "2025 - Aujourd'hui", title: "BTS SIO option SISR", desc: "Spécialisation en systèmes, réseaux, cybersécurité et environnements virtualisés. Construction de labs techniques (AD, Proxmox, Cisco, supervision, automatisation)." },
+        { year: "2022 - 2024", title: "Sûreté aéroportuaire — Securitas", desc: "Diplôme interne, responsabilités opérationnelles, gestion d'équipe, prise de décision en environnement critique." },
+        { year: "2021 - 2022", title: "Cycle préparatoire international (école d'ingénieur)", desc: "Renforcement des bases scientifiques, ouverture internationale, méthodologie d'ingénieur." },
         { year: "2021", title: "Bac Général", desc: "Spécialités scientifiques, orientation vers l'informatique et les systèmes." },
       ],
     },
@@ -311,9 +311,9 @@ export const homeStrings: Record<Lang, HomeStrings> = {
     parcours: {
       heading: "My background",
       items: [
-        { year: "2024 - Present", title: "BTS SIO — SISR track", desc: "Specialization in systems, networks, cybersecurity and virtualized environments. Building technical labs (AD, Proxmox, Cisco, monitoring, automation)." },
-        { year: "2023 - 2024", title: "International preparatory program (engineering school)", desc: "Strengthening scientific foundations, international exposure, engineering methodology." },
-        { year: "2021 - 2023", title: "Airport security — Securitas", desc: "Internal certification, operational responsibilities, team management, decision-making in critical environments." },
+        { year: "2025 - Present", title: "BTS SIO — SISR track", desc: "Specialization in systems, networks, cybersecurity and virtualized environments. Building technical labs (AD, Proxmox, Cisco, monitoring, automation)." },
+        { year: "2022 - 2024", title: "Airport security — Securitas", desc: "Internal certification, operational responsibilities, team management, decision-making in critical environments." },
+        { year: "2021 - 2022", title: "International preparatory program (engineering school)", desc: "Strengthening scientific foundations, international exposure, engineering methodology." },
         { year: "2021", title: "High school diploma (science track)", desc: "Science specializations, orientation toward IT and systems." },
       ],
     },
