@@ -31,6 +31,16 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     type: "website",
   },
+  icons: {
+    icon: [
+      { url: "/favicons/portfolio-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicons/portfolio-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicons/portfolio-48.png", sizes: "48x48", type: "image/png" },
+    ],
+    apple: [
+      { url: "/favicons/portfolio-180.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
