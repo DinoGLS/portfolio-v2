@@ -41,6 +41,7 @@ export const metadata: Metadata = {
       { url: "/favicons/portfolio-180.png", sizes: "180x180", type: "image/png" },
     ],
   },
+  manifest: "/favicons/portfolio.webmanifest",
 };
 
 export const viewport: Viewport = {
