@@ -3,33 +3,37 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-const MIN_VISIBLE_MS = 500;
-const FADE_MS = 400;
+// Le "load" du navigateur ne couvre que les ressources reseau : il se
+// declenche avant que le canvas anime et l'hydratation React lourde de la
+// page aient fini de s'afficher. On ajoute donc une duree minimum genereuse
+// + un buffer apres le "load" pour laisser le temps au rendu de se stabiliser.
+const MIN_VISIBLE_MS = 1200;
+const POST_LOAD_BUFFER_MS = 500;
+const FADE_MS = 450;
 
 export default function LoadingSplash() {
   const [visible, setVisible] = useState(true);
   const [fadingOut, setFadingOut] = useState(false);
 
   useEffect(() => {
-    if (document.readyState === "complete") {
-      // deja charge (cache, navigation retour) : on ne montre rien
-      setVisible(false);
-      return;
-    }
-
     const shownAt = performance.now();
 
-    const hide = () => {
+    const startHide = () => {
       const elapsed = performance.now() - shownAt;
-      const wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
+      const wait = Math.max(POST_LOAD_BUFFER_MS, MIN_VISIBLE_MS - elapsed);
       window.setTimeout(() => {
         setFadingOut(true);
         window.setTimeout(() => setVisible(false), FADE_MS);
       }, wait);
     };
 
-    window.addEventListener("load", hide);
-    return () => window.removeEventListener("load", hide);
+    if (document.readyState === "complete") {
+      startHide();
+      return;
+    }
+
+    window.addEventListener("load", startHide);
+    return () => window.removeEventListener("load", startHide);
   }, []);
 
   if (!visible) return null;
