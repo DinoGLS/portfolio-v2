@@ -6,7 +6,6 @@ import { LanguageProvider } from "@/app/providers/LanguageProvider";
 import ControlsDock from "@/app/components/ControlsDock";
 import MatrixCanvas from "@/app/components/MatrixCanvas";
 import LoadingSplash from "@/app/components/LoadingSplash";
-import PageReveal from "@/app/components/PageReveal";
 
 const geistSans = localFont({
   src: "../public/fonts/Geist-Variable.woff2",
@@ -66,11 +65,9 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <LoadingSplash />
-            <PageReveal>
-              <MatrixCanvas />
-              <ControlsDock />
-              {children}
-            </PageReveal>
+            <MatrixCanvas />
+            <ControlsDock />
+            {children}
           </LanguageProvider>
         </ThemeProvider>
       </body>

@@ -7,10 +7,9 @@ import Image from "next/image";
 // declenche avant que le canvas anime et l'hydratation React lourde de la
 // page aient fini de s'afficher. On ajoute donc une duree minimum genereuse
 // + un buffer apres le "load" pour laisser le temps au rendu de se stabiliser.
-const MIN_VISIBLE_MS = 1200;
+const MIN_VISIBLE_MS = 2600;
 const POST_LOAD_BUFFER_MS = 500;
-const FADE_MS = 900;
-export const SPLASH_FADE_EVENT = "splash:fadeout";
+const FADE_MS = 700;
 
 export default function LoadingSplash() {
   const [visible, setVisible] = useState(true);
@@ -24,7 +23,6 @@ export default function LoadingSplash() {
       const wait = Math.max(POST_LOAD_BUFFER_MS, MIN_VISIBLE_MS - elapsed);
       window.setTimeout(() => {
         setFadingOut(true);
-        window.dispatchEvent(new Event(SPLASH_FADE_EVENT));
         window.setTimeout(() => setVisible(false), FADE_MS);
       }, wait);
     };
