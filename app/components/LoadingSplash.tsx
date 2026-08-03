@@ -7,7 +7,7 @@ import Image from "next/image";
 // declenche avant que le canvas anime et l'hydratation React lourde de la
 // page aient fini de s'afficher. On ajoute donc une duree minimum genereuse
 // + un buffer apres le "load" pour laisser le temps au rendu de se stabiliser.
-const MIN_VISIBLE_MS = 2600;
+const MIN_VISIBLE_MS = 2000;
 const POST_LOAD_BUFFER_MS = 500;
 const FADE_MS = 700;
 
