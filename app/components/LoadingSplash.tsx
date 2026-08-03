@@ -54,14 +54,24 @@ export default function LoadingSplash() {
           50% { transform: scale(0.88); opacity: 0.55; }
         }
       `}</style>
-      <Image
-        src="/favicons/portfolio-192.png"
-        alt=""
-        width={72}
-        height={72}
-        priority
-        style={{ animation: "splashBreathe 1.4s ease-in-out infinite" }}
-      />
+      <div
+        style={{
+          width: 104,
+          height: 104,
+          borderRadius: "50%",
+          overflow: "hidden",
+          animation: "splashBreathe 1.4s ease-in-out infinite",
+        }}
+      >
+        <Image
+          src="/favicons/portfolio-192.png"
+          alt=""
+          width={104}
+          height={104}
+          priority
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </div>
     </div>
   );
 }
