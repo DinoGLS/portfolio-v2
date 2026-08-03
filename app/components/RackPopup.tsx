@@ -16,36 +16,72 @@ interface RackNode {
 
 const RACK_NODES: RackNode[] = [
   {
-    host: "HP-GLS",
-    ip: "10.0.0.10",
-    role: "Legacy server — Docker production",
-    roleFr: "Serveur legacy — production Docker",
-    status: "online",
-    services: ["Portfolio:3001", "Gitea:3000", "DocForge:5000", "CV-App:8080", "Portainer:9000", "NPM:443", "HP-Bot"],
-  },
-  {
     host: "PVE-DINO",
-    ip: "10.0.0.1",
+    ip: "192.168.1.50",
     role: "Proxmox VE 9.2 hypervisor",
     roleFr: "Hyperviseur Proxmox VE 9.2",
     status: "online",
-    services: ["OPNsense (VM101)", "draken-admin (CT102)"],
+    services: ["OPNsense (VM101)", "apps (VM120)", "draken-admin (CT102)", "edge (CT110)", "git (CT112)", "db (CT113)"],
   },
   {
     host: "OPNSENSE",
-    ip: "10.0.10.1",
-    role: "Lab firewall & router",
-    roleFr: "Firewall & routeur du lab",
+    ip: "192.168.2.1",
+    role: "Lab firewall & DNS resolver",
+    roleFr: "Firewall & résolveur DNS du lab",
     status: "online",
-    services: ["DHCP", "DNS", "Firewall", "WireGuard"],
+    services: ["Firewall", "DNS (Unbound)", "Routage inter-VLAN"],
   },
   {
     host: "DRAKEN-ADM",
-    ip: "10.0.10.11",
+    ip: "192.168.2.101",
     role: "IaC bastion — Terraform & Ansible",
     roleFr: "Bastion IaC — Terraform & Ansible",
     status: "online",
     services: ["Terraform bpg", "Ansible", "SSH bastion"],
+  },
+  {
+    host: "EDGE",
+    ip: "192.168.2.10",
+    role: "Reverse proxy — Traefik",
+    roleFr: "Reverse proxy — Traefik",
+    status: "online",
+    services: ["Traefik :80/:443", "Dashboard :8080", "*.gls routing"],
+  },
+  {
+    host: "GIT",
+    ip: "192.168.2.12",
+    role: "Self-hosted Git forge — Gitea",
+    roleFr: "Forge Git auto-hébergée — Gitea",
+    status: "online",
+    services: ["Gitea :3000", "Actions (CI/CD)"],
+  },
+  {
+    host: "DB",
+    ip: "192.168.2.13",
+    role: "Centralized database",
+    roleFr: "Base de données centralisée",
+    status: "online",
+    services: ["PostgreSQL 17 :5432"],
+  },
+  {
+    host: "APPS",
+    ip: "192.168.2.20",
+    role: "Docker host — most production services",
+    roleFr: "Hôte Docker — quasi tous les services",
+    status: "online",
+    services: [
+      "portfolio:3001", "forge:5000", "cv-app:8080", "news:4000", "brain:3010",
+      "hub-dash:7777", "ncore:7788", "ecole:7790", "vault:8082",
+      "uptime-kuma:3002", "adminer:8081", "notes-sync:4300",
+    ],
+  },
+  {
+    host: "HP-GLS",
+    ip: "100.121.13.37",
+    role: "Legacy server — backups only (PBS)",
+    roleFr: "Ancien serveur — sauvegardes uniquement (PBS)",
+    status: "online",
+    services: ["Proxmox Backup Server", "Backups hebdo"],
   },
 ];
 
@@ -312,7 +348,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
               >
                 <span
                   className="w-[5px] h-[5px] rounded-full"
-                  style={{ background: "#f59e0b", boxShadow: "0 0 4px #f59e0b" }}
+                  style={{ background: "#4cc4ff", boxShadow: "0 0 4px #4cc4ff" }}
                 />
                 <span
                   style={{
@@ -321,7 +357,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                     color: "#5d89b6",
                   }}
                 >
-                  {lang === "fr" ? "migration HP → dino en cours" : "HP → dino migration in progress"}
+                  {lang === "fr" ? "migration HP → dino terminée" : "HP → dino migration complete"}
                 </span>
               </div>
             </motion.div>

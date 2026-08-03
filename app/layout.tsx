@@ -5,6 +5,7 @@ import { ThemeProvider, THEME_INIT_SCRIPT } from "@/app/providers/ThemeProvider"
 import { LanguageProvider } from "@/app/providers/LanguageProvider";
 import ControlsDock from "@/app/components/ControlsDock";
 import MatrixCanvas from "@/app/components/MatrixCanvas";
+import LoadingSplash from "@/app/components/LoadingSplash";
 
 const geistSans = localFont({
   src: "../public/fonts/Geist-Variable.woff2",
@@ -63,6 +64,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#edf1fc] dark:bg-[#020617]`}>
         <ThemeProvider>
           <LanguageProvider>
+            <LoadingSplash />
             <MatrixCanvas />
             <ControlsDock />
             {children}
