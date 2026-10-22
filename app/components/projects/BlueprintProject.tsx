@@ -224,7 +224,7 @@ function Datasheet({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: strin
         {data.img && (
           <div style={{ marginTop: 34, borderRadius: 5, overflow: "hidden", border: `1px solid ${bp.cardBorder}` }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={data.img} alt="Aperçu" style={{ display: "block", width: "100%", height: 300, objectFit: "cover", objectPosition: "50% 14%", filter: bp.imgFilter }} />
+            <img src={data.img} alt="Aperçu" style={{ display: "block", width: "100%", height: "auto", maxHeight: 560, objectFit: "contain", filter: bp.imgFilter }} />
           </div>
         )}
 
@@ -378,7 +378,7 @@ function IDE({ data, bp, lang, dark }: { data: BPData; bp: BP; lang: string; dar
                 {data.img && (
                   <div style={{ marginTop: 24, borderRadius: 5, overflow: "hidden", border: `1px solid ${bp.ideBorder}`, maxWidth: 680 }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={data.img} alt="Aperçu" style={{ display: "block", width: "100%", maxHeight: 360, objectFit: "cover", objectPosition: "50% 14%" }} />
+                    <img src={data.img} alt="Aperçu" style={{ display: "block", width: "100%", height: "auto", maxHeight: 560, objectFit: "contain" }} />
                   </div>
                 )}
 

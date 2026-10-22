@@ -140,12 +140,12 @@ export default function ProjectsSection({ isMobile }: ProjectsSectionProps) {
                       className="relative overflow-hidden max-h-0 group-hover:max-h-40 transition-all duration-300"
                       style={{ borderColor: bp.cardBorder }}
                     >
-                      <div className="relative w-full h-40">
+                      <div className="relative w-full h-40 bg-black/25">
                         <Image
                           src={p.preview}
                           alt={lang === "fr" ? p.title : p.titleEn}
                           fill
-                          className="object-cover object-[50%_20%] transition-transform duration-500 group-hover:scale-105"
+                          className="object-contain transition-transform duration-500 group-hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 33vw"
                           style={{ filter: "saturate(0.92) hue-rotate(-6deg)" }}
                         />
