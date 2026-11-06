@@ -32,6 +32,12 @@
   --page-bg: #020617;
 }
 
+/* Échelle d'affichage sur ordinateur : tout est en rem, donc tout grossit de 25 %.
+   Même rendu que le zoom 125 % du navigateur, sans réglage à faire côté visiteur. */
+@media (min-width: 1024px) {
+  html { font-size: 125%; }
+}
+
 body {
   background-color: var(--page-bg);
   color: var(--foreground);
