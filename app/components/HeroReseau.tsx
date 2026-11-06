@@ -6,8 +6,6 @@ import Link from "next/link";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
-import PastilleStatut from "@/app/components/PastilleStatut";
-import { STATUT, STATUTS } from "@/app/data/statut";
 
 interface HeroReseauProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
@@ -48,12 +46,18 @@ const Ports = ({ n, allumes, couleur }: { n: number; allumes: number[]; couleur:
     {Array.from({ length: n }).map((_, i) => (
       <span
         key={i}
-        className="block rounded-[1.5px] border border-slate-400/60 bg-slate-200 dark:border-slate-600/70 dark:bg-slate-900"
+        className="block rounded-[1.5px] border border-slate-300 bg-white dark:border-slate-600/70 dark:bg-slate-900"
         style={{ width: "1cqw", height: "0.9cqw", boxShadow: allumes.includes(i) ? `inset 0 -0.3cqw 0 ${couleur}` : undefined }}
       />
     ))}
   </span>
 );
+
+// Mode clair : mêmes teintes, plus foncées et moins vives pour rester lisibles sur fond pâle
+const CABLE_CLAIR: Record<string, string> = {
+  "#60a5fa": "#2563eb", "#38bdf8": "#0284c7", "#818cf8": "#4f46e5", "#a78bfa": "#7c3aed",
+  "#22d3ee": "#0e7490", "#6366f1": "#4338ca", "#93c5fd": "#3b82f6",
+};
 
 export default function HeroReseau({ onNavigate }: HeroReseauProps) {
   const { lang } = useLanguage();
@@ -70,7 +74,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
   const nomStyle = { backgroundImage: degrade, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
   return (
-    <section id="hero" className="relative min-h-dvh flex flex-col justify-center px-4 pt-20 pb-12">
+    <section id="hero" className="relative px-4 pt-24 pb-4">
       <div className="max-w-4xl mx-auto w-full">
         {/* ── Carte réseau (ordinateur) ── */}
         <div className="hidden md:block [container-type:inline-size]">
@@ -79,29 +83,30 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
             <svg viewBox="0 0 1000 560" className="absolute inset-0 w-full h-full" aria-hidden>
               {NOEUDS.map((n, i) => {
                 const on = actif === n.id;
+                const cc = isDark ? n.couleur : CABLE_CLAIR[n.couleur] ?? n.couleur;
                 return (
                   <g key={n.id}>
-                    <path d={n.cable} fill="none" stroke={n.couleur} strokeWidth={on ? 12 : 7} strokeOpacity={on ? 0.28 : 0.1} strokeLinecap="round" />
+                    <path d={n.cable} fill="none" stroke={cc} strokeWidth={on ? 12 : 7} strokeOpacity={on ? (isDark ? 0.28 : 0.2) : isDark ? 0.1 : 0.07} strokeLinecap="round" />
                     <motion.path
                       id={`cable-${n.id}`}
                       d={n.cable}
                       fill="none"
-                      stroke={n.couleur}
+                      stroke={cc}
                       strokeWidth={on ? 3.2 : 2.2}
                       strokeLinecap="round"
-                      strokeOpacity={on ? 1 : 0.8}
+                      strokeOpacity={on ? 1 : isDark ? 0.8 : 0.55}
                       initial={reduit ? false : { pathLength: 0 }}
                       animate={{ pathLength: 1 }}
                       transition={{ duration: 0.9, delay: 0.5 + i * 0.1, ease: "easeInOut" }}
                     />
                     {!reduit && (
                       <>
-                        <circle r={on ? 9 : 6} fill={n.couleur} opacity={0.22}>
+                        <circle r={on ? 9 : 6} fill={cc} opacity={isDark ? 0.22 : 0.18}>
                           <animateMotion dur={`${3 + (i % 3) * 0.8}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
                             <mpath href={`#cable-${n.id}`} />
                           </animateMotion>
                         </circle>
-                        <circle r={on ? 4.5 : 3.2} fill="#fff" opacity={0.95}>
+                        <circle r={on ? 4.5 : 3.2} fill={isDark ? "#fff" : cc} opacity={0.95}>
                           <animateMotion dur={`${3 + (i % 3) * 0.8}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
                             <mpath href={`#cable-${n.id}`} />
                           </animateMotion>
@@ -115,13 +120,13 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
 
             {/* Commutateur central : le nom */}
             <motion.div
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[0.8cqw] border bg-gradient-to-b from-white to-slate-100 border-slate-400/70 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/40 flex flex-col items-center justify-center text-center"
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[0.8cqw] border bg-gradient-to-b from-slate-50 to-slate-100 border-slate-300 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/40 flex flex-col items-center justify-center text-center"
               style={{
                 left: "50%",
                 top: "50%",
                 width: "34%",
                 height: `${(170 / 560) * 100}%`,
-                boxShadow: isDark ? "0 0 3cqw rgba(96,165,250,0.18), inset 0 0 0 1px rgba(96,165,250,0.08)" : "0 1cqw 3cqw rgba(30,64,175,0.12)",
+                boxShadow: isDark ? "0 0 3cqw rgba(96,165,250,0.18), inset 0 0 0 1px rgba(96,165,250,0.08)" : "0 0.6cqw 2.4cqw rgba(51,65,100,0.10)",
               }}
               initial={reduit ? false : { opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -135,8 +140,8 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                 <Ports n={8} allumes={[0, 1, 2, 4, 5, 7]} couleur="#22c55e" />
               </div>
               <h1 className="font-extrabold leading-[1.02] tracking-tight" style={{ fontSize: "3.7cqw", marginTop: "1.4cqw" }}>
-                <span className="block" style={nomStyle}>Garlens</span>
-                <span className="block" style={nomStyle}>Charles</span>
+                <span className="block"><span className="inline-block" style={nomStyle}>Garlens</span></span>
+                <span className="block"><span className="inline-block" style={nomStyle}>Charles</span></span>
               </h1>
               <p className="font-mono uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400" style={{ fontSize: "0.95cqw", marginTop: "1cqw" }}>
                 {sousTitre}
@@ -157,15 +162,15 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                   onBlur={() => setActif(null)}
                   className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-between rounded-[0.5cqw] border text-left bg-gradient-to-b ${
                     on
-                      ? "from-blue-50 to-blue-100 border-blue-500 dark:from-[#14264d] dark:to-[#0c1a38] dark:border-blue-400"
-                      : "from-white to-slate-100 border-slate-400/70 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/30"
+                      ? "from-blue-50 to-blue-100/80 border-blue-400 dark:from-[#14264d] dark:to-[#0c1a38] dark:border-blue-400"
+                      : "from-slate-50 to-slate-100 border-slate-300 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/30"
                   }`}
                   style={{
                     left: `${n.x / 10}%`,
                     top: `${(n.y / 560) * 100}%`,
                     width: "22%",
                     padding: "1.15cqw 2.4cqw",
-                    boxShadow: on && isDark ? `0 0 2cqw ${n.couleur}55` : undefined,
+                    boxShadow: on ? (isDark ? `0 0 2cqw ${n.couleur}55` : `0 0.4cqw 1.6cqw ${CABLE_CLAIR[n.couleur] ?? n.couleur}33`) : undefined,
                   }}
                   initial={reduit ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -198,13 +203,9 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
 
         {/* ── Téléphone : le même réseau en liste verticale ── */}
         <div className="md:hidden">
-          <p className="font-mono text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2.5">
-            <PastilleStatut taille={9} />
-            {STATUTS[STATUT][lang]}
-          </p>
-          <h1 className="mt-4 text-[3rem] font-extrabold leading-[0.95] tracking-tight">
-            <span className="block" style={nomStyle}>Garlens</span>
-            <span className="block" style={nomStyle}>Charles</span>
+          <h1 className="mt-2 text-[3rem] font-extrabold leading-[0.95] tracking-tight">
+            <span className="block"><span className="inline-block" style={nomStyle}>Garlens</span></span>
+            <span className="block"><span className="inline-block" style={nomStyle}>Charles</span></span>
           </h1>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{sousTitre}</p>
           <ul className="mt-8 ml-1 border-l border-slate-400/50 dark:border-blue-300/30">
@@ -226,12 +227,11 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
         </div>
 
         <motion.div
-          className="mt-8 md:mt-10 flex flex-col items-center gap-5 text-center"
+          className="mt-6 md:mt-8 flex flex-col items-center gap-5 text-center"
           initial={reduit ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.5 }}
         >
-          <p className="max-w-2xl text-sm md:text-base leading-relaxed text-slate-600 dark:text-slate-300 text-left md:text-center">{h.hero.intro}</p>
           <div className="flex flex-wrap items-center justify-start md:justify-center gap-3 w-full">
             <a
               href="/documents/Tableau_synthese_E5_Charles_Garlens.pdf"

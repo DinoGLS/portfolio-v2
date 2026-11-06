@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "@/app/providers/ThemeProvider";
 
 // ─── Données rack ───────────────────────────────────────────────────────────
 
@@ -93,6 +94,8 @@ interface RackPopupProps {
 
 export default function RackPopup({ lang }: RackPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme } = useTheme();
+  const clair = theme !== "dark";
   const [openDrawer, setOpenDrawer] = useState<number>(0);
 
   return (
@@ -107,23 +110,23 @@ export default function RackPopup({ lang }: RackPopupProps) {
           aria-label={lang === "fr" ? "Ouvrir le rack infra" : "Open infra rack"}
           className="fixed right-0 top-1/2 -translate-y-1/2 z-[60] flex flex-col items-center gap-[7px] transition-all hover:pr-1"
           style={{
-            background: "rgba(8,28,49,0.85)",
-            border: "1px solid rgba(76,196,255,0.32)",
+            background: clair ? "rgba(248,250,252,0.9)" : "rgba(8,28,49,0.85)",
+            border: clair ? "1px solid rgba(51,65,100,0.25)" : "1px solid rgba(76,196,255,0.32)",
             borderRight: "none",
             borderRadius: "8px 0 0 8px",
             padding: "12px 9px",
             backdropFilter: "blur(8px)",
-            boxShadow: "0 8px 24px rgba(2,10,20,0.5), 0 0 16px rgba(76,196,255,0.08)",
+            boxShadow: clair ? "0 6px 18px rgba(51,65,100,0.14)" : "0 8px 24px rgba(2,10,20,0.5), 0 0 16px rgba(76,196,255,0.08)",
             cursor: "pointer",
           }}
         >
           <span
             className="w-[7px] h-[7px] rounded-full"
-            style={{ background: "#4cc4ff", boxShadow: "0 0 8px #4cc4ff", animation: "infraPulse 1.8s ease-in-out infinite" }}
+            style={{ background: clair ? "#1d4ed8" : "#4cc4ff", boxShadow: clair ? "0 0 6px rgba(29,78,216,0.5)" : "0 0 8px #4cc4ff", animation: "infraPulse 1.8s ease-in-out infinite" }}
           />
           <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {[0, 1, 2].map((k) => (
-              <span key={k} style={{ width: "15px", height: "3px", borderRadius: "1px", background: "#4cc4ff", opacity: 0.85 }} />
+              <span key={k} style={{ width: "15px", height: "3px", borderRadius: "1px", background: clair ? "#1d4ed8" : "#4cc4ff", opacity: 0.85 }} />
             ))}
           </span>
           <span
@@ -131,7 +134,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
               fontFamily: "'Geist Mono', monospace",
               fontSize: "9.5px",
               letterSpacing: "0.2em",
-              color: "#bfe3ff",
+              color: clair ? "#1e3a8a" : "#bfe3ff",
               textTransform: "uppercase",
               writingMode: "vertical-rl",
               transform: "rotate(180deg)",
@@ -139,7 +142,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
           >
             Rack
           </span>
-          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "9px", color: "#5d89b6" }}>
+          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "9px", color: clair ? "#64748b" : "#5d89b6" }}>
             {RACK_NODES.length}U
           </span>
         </button>

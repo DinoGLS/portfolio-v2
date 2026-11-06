@@ -25,7 +25,7 @@ export default function Home() {
   const [showTop, setShowTop] = useState(false);
   const isScrolling = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
-  // Ordinateur : la barre du haut reste cachée tant qu'on est sur l'accueil (le hero)
+  // La barre du haut reste cachée tant qu'on est sur l'accueil (le hero)
   const [navCachee, setNavCachee] = useState(false);
 
   useEffect(() => {
@@ -38,8 +38,8 @@ export default function Home() {
 
   const NAV_LINKS = [
     { label: lang === "fr" ? "Accueil" : "Home", href: "#top" },
-    { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "À propos" : "About", href: "#about" },
+    { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
     { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
     { label: "Contact", href: "#contact" },
@@ -56,7 +56,7 @@ export default function Home() {
         const scrollY = window.scrollY;
         setShowTop(scrollY > 100);
         const hero = document.getElementById("hero");
-        setNavCachee(window.innerWidth >= 768 && !!hero && hero.getBoundingClientRect().bottom > 160);
+        setNavCachee(!!hero && hero.getBoundingClientRect().bottom > 160);
         if (isScrolling.current) return;
         const atBottom = window.innerHeight + scrollY >= document.body.scrollHeight - 10;
         if (atBottom) {
@@ -162,17 +162,18 @@ export default function Home() {
         <div className="relative z-10">
           <HeroReseau onNavigate={scrollToSection} />
 
+          {/* ── À propos et parcours : dans la continuité de la carte ── */}
+          <Reveal>
+            <AboutSection />
+          </Reveal>
+          <ParcoursSection isMobile={isMobile} />
+
           {/* ── ZONE BLUEPRINT : Projets + Veille cyber + Infra ── */}
           <BlueprintZone>
             <ProjectsExplorer />
             <CyberWatchSection isMobile={isMobile} />
             <InfraSection isMobile={isMobile} />
           </BlueprintZone>
-
-          <Reveal>
-            <AboutSection />
-          </Reveal>
-          <ParcoursSection isMobile={isMobile} />
 
           {/* ── COMPÉTENCES ── */}
           <Reveal>

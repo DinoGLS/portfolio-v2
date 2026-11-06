@@ -5,6 +5,9 @@ import { motion } from "framer-motion";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useLanguage, LANGS } from "@/app/providers/LanguageProvider";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import PastilleStatut from "@/app/components/PastilleStatut";
+import { STATUT, STATUTS } from "@/app/data/statut";
 
 export default function ControlsDock() {
   const pathname = usePathname();
@@ -12,6 +15,8 @@ export default function ControlsDock() {
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, t } = useLanguage();
   const isDark = theme === "dark";
+  const [statutOuvert, setStatutOuvert] = useState(false);
+  const libelleStatut = STATUTS[STATUT][lang];
 
   if (isHome) {
     return (
@@ -35,6 +40,12 @@ export default function ControlsDock() {
           >
             {lang}
           </button>
+          <div className="group relative flex items-center" tabIndex={0} aria-label={libelleStatut}>
+            <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-100 text-xs font-mono whitespace-nowrap text-blue-400 px-2.5 py-1 rounded border border-blue-500/30 bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-sm">
+              {libelleStatut}
+            </span>
+            <PastilleStatut taille={10} />
+          </div>
         </div>
 
         {/* MOBILE home — bottom-left */}
@@ -67,6 +78,23 @@ export default function ControlsDock() {
           >
             {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
           </button>
+          {/* Statut : point lumineux, touche pour lire le texte */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setStatutOuvert((v) => !v)}
+              aria-label={libelleStatut}
+              aria-expanded={statutOuvert}
+              className="grid h-8 w-8 place-items-center rounded-full border border-slate-300/70 bg-white/80 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/70"
+            >
+              <PastilleStatut taille={10} />
+            </button>
+            {statutOuvert && (
+              <span className="absolute bottom-full left-0 mb-2 text-xs font-mono whitespace-nowrap text-blue-400 px-2.5 py-1 rounded border border-blue-500/30 bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-sm">
+                {libelleStatut}
+              </span>
+            )}
+          </div>
         </div>
       </>
     );
