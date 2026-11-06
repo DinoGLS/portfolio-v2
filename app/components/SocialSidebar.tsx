@@ -3,6 +3,8 @@
 import { EnvelopeIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useLanguage } from "@/app/providers/LanguageProvider";
+import PastilleStatut from "@/app/components/PastilleStatut";
+import { STATUT, STATUTS } from "@/app/data/statut";
 
 const GitHubSVG = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" aria-hidden="true">
@@ -55,7 +57,14 @@ export default function SocialSidebar() {
           <EnvelopeIcon className="w-5 h-5" />
         </a>
       </div>
-      <div className="w-px h-24 bg-slate-400/40 dark:bg-slate-600/40 mt-1" />
+      {/* Statut : point lumineux, le texte apparaît au survol */}
+      <div className="group relative flex items-center -mt-1" tabIndex={0} aria-label={STATUTS[STATUT][lang]}>
+        <span className="pointer-events-none absolute left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-100 text-xs font-mono whitespace-nowrap text-blue-400 px-2.5 py-1 rounded border border-blue-500/30 bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-sm">
+          {STATUTS[STATUT][lang]}
+        </span>
+        <PastilleStatut taille={10} />
+      </div>
+      <div className="w-px h-20 bg-slate-400/40 dark:bg-slate-600/40" />
     </div>
   );
 }

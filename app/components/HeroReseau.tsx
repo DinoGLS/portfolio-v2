@@ -4,15 +4,18 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@/app/providers/LanguageProvider";
+import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
+import PastilleStatut from "@/app/components/PastilleStatut";
+import { STATUT, STATUTS } from "@/app/data/statut";
 
 interface HeroReseauProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
 }
 
-// Accueil en carte réseau : le nom est le routeur central, chaque section est un équipement
-// relié par un câble. La carte sert de menu. Sur téléphone, la même chose en liste verticale.
-// Coordonnées en unités d'un plan de 1000 x 560.
+// Accueil en carte réseau : le nom est le commutateur central, chaque section une unité de baie
+// reliée par un câble. La carte sert de menu. Sur téléphone, la même chose en liste verticale.
+// Plan de 1000 x 560. Équipements : 220 de large, centre à (x, y). Commutateur central : x 330 à 670, y 195 à 365.
 interface Noeud {
   id: string;
   href: string;
@@ -21,84 +24,126 @@ interface Noeud {
   x: number;
   y: number;
   cable: string;
+  couleur: string;
 }
 
 const NOEUDS: Noeud[] = [
-  { id: "projects", href: "#projects", fr: "Projets", en: "Projects", x: 130, y: 100, cable: "M350 280 H290 V100 H240" },
-  { id: "infra", href: "#infra", fr: "Infrastructure", en: "Infrastructure", x: 130, y: 280, cable: "M350 280 H240" },
-  { id: "about", href: "#about", fr: "À propos", en: "About", x: 130, y: 460, cable: "M350 280 H290 V460 H240" },
-  { id: "veille", href: "#veille", fr: "Veille cyber", en: "Cyber watch", x: 870, y: 100, cable: "M650 280 H710 V100 H760" },
-  { id: "competences", href: "#competences", fr: "Compétences", en: "Skills", x: 870, y: 280, cable: "M650 280 H760" },
-  { id: "synthese", href: "#synthese", fr: "Tableau de synthèse", en: "Summary table", x: 870, y: 460, cable: "M650 280 H710 V460 H760" },
-  { id: "contact", href: "#contact", fr: "Contact", en: "Contact", x: 500, y: 500, cable: "M500 340 V468" },
+  { id: "projects", href: "#projects", fr: "Projets", en: "Projects", x: 130, y: 100, cable: "M330 250 C285 250 285 100 241 100", couleur: "#60a5fa" },
+  { id: "infra", href: "#infra", fr: "Infrastructure", en: "Infrastructure", x: 130, y: 280, cable: "M330 280 H241", couleur: "#38bdf8" },
+  { id: "about", href: "#about", fr: "À propos", en: "About", x: 130, y: 460, cable: "M330 310 C285 310 285 460 241 460", couleur: "#818cf8" },
+  { id: "veille", href: "#veille", fr: "Veille cyber", en: "Cyber watch", x: 870, y: 100, cable: "M670 250 C715 250 715 100 759 100", couleur: "#a78bfa" },
+  { id: "competences", href: "#competences", fr: "Compétences", en: "Skills", x: 870, y: 280, cable: "M670 280 H759", couleur: "#22d3ee" },
+  { id: "synthese", href: "#synthese", fr: "Tableau de synthèse", en: "Summary table", x: 870, y: 460, cable: "M670 310 C715 310 715 460 759 460", couleur: "#6366f1" },
+  { id: "contact", href: "#contact", fr: "Contact", en: "Contact", x: 500, y: 500, cable: "M500 365 V468", couleur: "#93c5fd" },
 ];
+
+// Vis de fixation d'une baie
+const Vis = ({ className }: { className: string }) => (
+  <span className={`absolute rounded-full border border-slate-400/70 bg-slate-300 dark:border-slate-500/60 dark:bg-slate-700 ${className}`} style={{ width: "0.7cqw", height: "0.7cqw" }} />
+);
+
+// Rangée de ports réseau (carrés creux, certains allumés)
+const Ports = ({ n, allumes, couleur }: { n: number; allumes: number[]; couleur: string }) => (
+  <span className="flex" style={{ gap: "0.35cqw" }}>
+    {Array.from({ length: n }).map((_, i) => (
+      <span
+        key={i}
+        className="block rounded-[1.5px] border border-slate-400/60 bg-slate-200 dark:border-slate-600/70 dark:bg-slate-900"
+        style={{ width: "1cqw", height: "0.9cqw", boxShadow: allumes.includes(i) ? `inset 0 -0.3cqw 0 ${couleur}` : undefined }}
+      />
+    ))}
+  </span>
+);
 
 export default function HeroReseau({ onNavigate }: HeroReseauProps) {
   const { lang } = useLanguage();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const fr = lang === "fr";
   const h = homeStrings[lang];
   const reduit = useReducedMotion();
   const [actif, setActif] = useState<string | null>(null);
 
   const sousTitre = fr ? "Systèmes & réseaux · Cybersécurité" : "Systems & networks · Cybersecurity";
+  // Dégradé d'origine du nom
+  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #1d4ed8, #4338ca)";
+  const nomStyle = { backgroundImage: degrade, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
   return (
-    <section className="relative min-h-dvh flex flex-col justify-center px-4 pt-24 pb-12">
+    <section id="hero" className="relative min-h-dvh flex flex-col justify-center px-4 pt-20 pb-12">
       <div className="max-w-4xl mx-auto w-full">
-        {/* ── Carte réseau (tablette et plus) ── */}
+        {/* ── Carte réseau (ordinateur) ── */}
         <div className="hidden md:block [container-type:inline-size]">
           <div className="relative w-full" style={{ aspectRatio: "1000 / 560" }}>
+            {/* Câbles */}
             <svg viewBox="0 0 1000 560" className="absolute inset-0 w-full h-full" aria-hidden>
               {NOEUDS.map((n, i) => {
                 const on = actif === n.id;
                 return (
                   <g key={n.id}>
+                    <path d={n.cable} fill="none" stroke={n.couleur} strokeWidth={on ? 12 : 7} strokeOpacity={on ? 0.28 : 0.1} strokeLinecap="round" />
                     <motion.path
                       id={`cable-${n.id}`}
                       d={n.cable}
                       fill="none"
-                      strokeLinejoin="round"
-                      className={on ? "stroke-blue-500 dark:stroke-blue-400" : "stroke-slate-400/70 dark:stroke-blue-300/30"}
-                      strokeWidth={on ? 2.5 : 1.5}
+                      stroke={n.couleur}
+                      strokeWidth={on ? 3.2 : 2.2}
+                      strokeLinecap="round"
+                      strokeOpacity={on ? 1 : 0.8}
                       initial={reduit ? false : { pathLength: 0 }}
                       animate={{ pathLength: 1 }}
                       transition={{ duration: 0.9, delay: 0.5 + i * 0.1, ease: "easeInOut" }}
                     />
                     {!reduit && (
-                      <circle r={on ? 4.5 : 3} className="fill-blue-500 dark:fill-blue-300" opacity={on ? 1 : 0.75}>
-                        <animateMotion dur={`${3.2 + (i % 3) * 0.9}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
-                          <mpath href={`#cable-${n.id}`} />
-                        </animateMotion>
-                      </circle>
+                      <>
+                        <circle r={on ? 9 : 6} fill={n.couleur} opacity={0.22}>
+                          <animateMotion dur={`${3 + (i % 3) * 0.8}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
+                            <mpath href={`#cable-${n.id}`} />
+                          </animateMotion>
+                        </circle>
+                        <circle r={on ? 4.5 : 3.2} fill="#fff" opacity={0.95}>
+                          <animateMotion dur={`${3 + (i % 3) * 0.8}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
+                            <mpath href={`#cable-${n.id}`} />
+                          </animateMotion>
+                        </circle>
+                      </>
                     )}
                   </g>
                 );
               })}
             </svg>
 
-            {/* Routeur central : le nom */}
+            {/* Commutateur central : le nom */}
             <motion.div
-              className="absolute -translate-x-1/2 -translate-y-1/2 text-center rounded-[6px] border border-slate-400/60 bg-white/70 backdrop-blur-sm dark:border-blue-400/35 dark:bg-slate-950/70"
-              style={{ left: "50%", top: "50%", width: "30%", padding: "2.2cqw 1.5cqw" }}
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[0.8cqw] border bg-gradient-to-b from-white to-slate-100 border-slate-400/70 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/40 flex flex-col items-center justify-center text-center"
+              style={{
+                left: "50%",
+                top: "50%",
+                width: "34%",
+                height: `${(170 / 560) * 100}%`,
+                boxShadow: isDark ? "0 0 3cqw rgba(96,165,250,0.18), inset 0 0 0 1px rgba(96,165,250,0.08)" : "0 1cqw 3cqw rgba(30,64,175,0.12)",
+              }}
               initial={reduit ? false : { opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <p className="font-mono text-slate-500 dark:text-slate-400 flex items-center justify-center gap-1.5" style={{ fontSize: "1.15cqw" }}>
-                <span className="inline-block rounded-full bg-emerald-500" style={{ width: "0.8cqw", height: "0.8cqw" }} />
-                {h.hero.available}
-              </p>
-              <h1 className="font-extrabold leading-[1.02] tracking-tight text-slate-900 dark:text-slate-50 mt-[1cqw]" style={{ fontSize: "3.6cqw" }}>
-                Garlens
-                <br />
-                <span className="text-blue-600 dark:text-blue-400">Charles</span>
+              <Vis className="left-[1cqw] top-[1cqw]" />
+              <Vis className="right-[1cqw] top-[1cqw]" />
+              <Vis className="left-[1cqw] bottom-[1cqw]" />
+              <Vis className="right-[1cqw] bottom-[1cqw]" />
+              <div className="absolute top-[1.1cqw] left-1/2 -translate-x-1/2">
+                <Ports n={8} allumes={[0, 1, 2, 4, 5, 7]} couleur="#22c55e" />
+              </div>
+              <h1 className="font-extrabold leading-[1.02] tracking-tight" style={{ fontSize: "3.7cqw", marginTop: "1.4cqw" }}>
+                <span className="block" style={nomStyle}>Garlens</span>
+                <span className="block" style={nomStyle}>Charles</span>
               </h1>
-              <p className="font-mono uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400 mt-[1cqw]" style={{ fontSize: "1cqw" }}>
+              <p className="font-mono uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400" style={{ fontSize: "0.95cqw", marginTop: "1cqw" }}>
                 {sousTitre}
               </p>
             </motion.div>
 
-            {/* Équipements = sections */}
+            {/* Unités de baie = sections */}
             {NOEUDS.map((n, i) => {
               const on = actif === n.id;
               return (
@@ -110,25 +155,41 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                   onMouseLeave={() => setActif(null)}
                   onFocus={() => setActif(n.id)}
                   onBlur={() => setActif(null)}
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center rounded-[5px] border text-left ${
+                  className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-between rounded-[0.5cqw] border text-left bg-gradient-to-b ${
                     on
-                      ? "border-blue-500 bg-blue-500/15 dark:border-blue-400"
-                      : "border-slate-400/60 bg-white/65 dark:border-blue-400/30 dark:bg-slate-950/65"
+                      ? "from-blue-50 to-blue-100 border-blue-500 dark:from-[#14264d] dark:to-[#0c1a38] dark:border-blue-400"
+                      : "from-white to-slate-100 border-slate-400/70 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/30"
                   }`}
-                  style={{ left: `${n.x / 10}%`, top: `${(n.y / 560) * 100}%`, width: "22%", gap: "1cqw", padding: "1.1cqw 1.3cqw" }}
+                  style={{
+                    left: `${n.x / 10}%`,
+                    top: `${(n.y / 560) * 100}%`,
+                    width: "22%",
+                    padding: "1.15cqw 2.4cqw",
+                    boxShadow: on && isDark ? `0 0 2cqw ${n.couleur}55` : undefined,
+                  }}
                   initial={reduit ? false : { opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.7 + i * 0.1 }}
                 >
-                  <span className="rounded-full bg-emerald-500 flex-none" style={{ width: "0.8cqw", height: "0.8cqw" }} />
+                  {/* oreilles de fixation */}
+                  <span className="absolute inset-y-0 left-0 border-r border-slate-400/40 dark:border-slate-600/50" style={{ width: "1.6cqw" }}>
+                    <Vis className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  </span>
+                  <span className="absolute inset-y-0 right-0 border-l border-slate-400/40 dark:border-slate-600/50" style={{ width: "1.6cqw" }}>
+                    <Vis className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  </span>
+
                   <span className="min-w-0">
-                    <span className="block font-semibold text-slate-900 dark:text-slate-100 leading-tight" style={{ fontSize: "1.45cqw" }}>
+                    <span className="block font-semibold leading-tight text-slate-900 dark:text-slate-100" style={{ fontSize: "1.4cqw" }}>
                       {fr ? n.fr : n.en}
                     </span>
-                    <span className="block font-mono text-slate-500 dark:text-slate-400" style={{ fontSize: "1cqw" }}>
+                    <span className="flex items-center font-mono text-slate-500 dark:text-slate-400" style={{ fontSize: "0.95cqw", gap: "0.5cqw", marginTop: "0.3cqw" }}>
+                      <span className="rounded-full bg-emerald-500 flex-none" style={{ width: "0.6cqw", height: "0.6cqw" }} />
+                      <span className={`rounded-full flex-none led-clignote`} style={{ width: "0.6cqw", height: "0.6cqw", background: n.couleur, animationDelay: `${i * 0.35}s` }} />
                       {`port ${String(i + 1).padStart(2, "0")}`}
                     </span>
                   </span>
+                  <Ports n={4} allumes={on ? [0, 1, 2, 3] : [0, 2]} couleur={on ? n.couleur : "#22c55e"} />
                 </motion.a>
               );
             })}
@@ -137,14 +198,13 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
 
         {/* ── Téléphone : le même réseau en liste verticale ── */}
         <div className="md:hidden">
-          <p className="font-mono text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-            {h.hero.available}
+          <p className="font-mono text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2.5">
+            <PastilleStatut taille={9} />
+            {STATUTS[STATUT][lang]}
           </p>
-          <h1 className="mt-4 text-[3rem] font-extrabold leading-[0.95] tracking-tight text-slate-900 dark:text-slate-50">
-            Garlens
-            <br />
-            <span className="text-blue-600 dark:text-blue-400">Charles</span>
+          <h1 className="mt-4 text-[3rem] font-extrabold leading-[0.95] tracking-tight">
+            <span className="block" style={nomStyle}>Garlens</span>
+            <span className="block" style={nomStyle}>Charles</span>
           </h1>
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400">{sousTitre}</p>
           <ul className="mt-8 ml-1 border-l border-slate-400/50 dark:border-blue-300/30">
@@ -166,7 +226,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
         </div>
 
         <motion.div
-          className="mt-8 md:mt-10 flex flex-col items-center md:items-center gap-5 text-center"
+          className="mt-8 md:mt-10 flex flex-col items-center gap-5 text-center"
           initial={reduit ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.5 }}

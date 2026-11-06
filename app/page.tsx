@@ -25,6 +25,8 @@ export default function Home() {
   const [showTop, setShowTop] = useState(false);
   const isScrolling = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
+  // Ordinateur : la barre du haut reste cachée tant qu'on est sur l'accueil (le hero)
+  const [navCachee, setNavCachee] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -53,6 +55,8 @@ export default function Home() {
         rafId = null;
         const scrollY = window.scrollY;
         setShowTop(scrollY > 100);
+        const hero = document.getElementById("hero");
+        setNavCachee(window.innerWidth >= 768 && !!hero && hero.getBoundingClientRect().bottom > 160);
         if (isScrolling.current) return;
         const atBottom = window.innerHeight + scrollY >= document.body.scrollHeight - 10;
         if (atBottom) {
@@ -101,7 +105,10 @@ export default function Home() {
   return (
     <>
       {/* ── NAVBAR ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 flex justify-center">
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 flex justify-center transition-transform duration-150 ${navCachee ? "-translate-y-24 pointer-events-none" : ""}`}
+        aria-hidden={navCachee}
+      >
         <div className="flex items-center justify-center md:justify-between w-full max-w-4xl px-3 md:px-5 py-2 rounded-full border backdrop-blur-md shadow-lg border-slate-200/70 bg-white/90 dark:border-blue-500/25 dark:bg-slate-900/90">
           {/* Brand */}
           <a

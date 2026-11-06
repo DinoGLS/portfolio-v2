@@ -193,3 +193,17 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 /* Controles responsive — definis ici pour garantir leur presence dans le bundle CSS */
 /* Equivalent de hidden sm:flex et sm:hidden (Tailwind ne les generait pas) */
 /* nav-desktop-only/nav-mobile-only supprimees (sidebar verticale) */
+
+/* Point de statut lumineux */
+@keyframes statut-pulse {
+  0%, 100% { box-shadow: 0 0 5px var(--statut), 0 0 12px var(--statut); }
+  50% { box-shadow: 0 0 8px var(--statut), 0 0 20px var(--statut); }
+}
+.statut-pastille { box-shadow: 0 0 5px var(--statut), 0 0 12px var(--statut); animation: statut-pulse 2.6s ease-in-out infinite; }
+
+/* Voyants clignotants de la carte réseau */
+@keyframes led-clignote { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+.led-clignote { animation: led-clignote 1.8s steps(2, jump-none) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .statut-pastille, .led-clignote { animation: none; }
+}
