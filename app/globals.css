@@ -10,13 +10,13 @@
    ────────────────────────────────────────────────────────────────────────── */
 :root {
   /* MODE CLAIR (valeurs par défaut) */
-  --background: #f4f5fb;
+  --background: #f1f2f4;
   --foreground: #0b0b14;
   --primary: #7c3aed;        /* violet néon (lisible aussi sur clair) */
   --secondary: #9333ea;
   --accent: #0891b2;         /* cyan assombri pour le contraste sur clair */
   --metal: #e2e8f0;
-  --page-bg: #edf1fc;
+  --page-bg: #eceef0;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -128,7 +128,7 @@ body {
 
 /* Scrollbar — une seule barre, slim, sans gutter visible */
 html { overflow-x: hidden; overflow-y: scroll; scrollbar-width: thin; scrollbar-color: #4b5563 transparent; }
-body { overflow-x: hidden; }
+body { overflow-x: clip; } /* clip (et non hidden) : hidden ferait de body un conteneur de défilement et casserait le sticky de la scène d accueil */
 html::-webkit-scrollbar { width: 6px; }
 html::-webkit-scrollbar-track { background: transparent; }
 html::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }

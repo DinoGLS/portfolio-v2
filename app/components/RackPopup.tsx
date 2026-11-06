@@ -96,6 +96,22 @@ export default function RackPopup({ lang }: RackPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useTheme();
   const clair = theme !== "dark";
+  // Mode clair : mêmes éléments, palette gris-bleu douce
+  const c = (s: string) =>
+    !clair
+      ? s
+      : s
+          .replaceAll("rgba(8,28,49,0.92)", "rgba(246,247,249,0.96)")
+          .replaceAll("rgba(2,10,20,0.5)", "rgba(110,125,142,0.32)")
+          .replaceAll("rgba(2,10,20,0.6)", "rgba(51,65,100,0.22)")
+          .replaceAll("rgba(4,14,26,0.5)", "rgba(228,233,238,0.8)")
+          .replaceAll("rgba(76,196,255,", "rgba(61,106,158,")
+          .replace(/#4cc4ff/g, "#3d6a9e")
+          .replace(/#5d89b6/g, "#6b7f95")
+          .replace(/#bfe3ff/g, "#2d4f7c")
+          .replace(/#e8f4ff/g, "#243447")
+          .replace(/#cfe6fb/g, "#33475c")
+          .replace(/#7fa8cc/g, "#5a6f86");
   const [openDrawer, setOpenDrawer] = useState<number>(0);
 
   return (
@@ -110,8 +126,8 @@ export default function RackPopup({ lang }: RackPopupProps) {
           aria-label={lang === "fr" ? "Ouvrir le rack infra" : "Open infra rack"}
           className="fixed right-0 top-1/2 -translate-y-1/2 z-[60] flex flex-col items-center gap-[7px] transition-all hover:pr-1"
           style={{
-            background: clair ? "rgba(248,250,252,0.9)" : "rgba(8,28,49,0.85)",
-            border: clair ? "1px solid rgba(51,65,100,0.25)" : "1px solid rgba(76,196,255,0.32)",
+            background: clair ? "rgba(246,247,249,0.94)" : "rgba(8,28,49,0.85)",
+            border: clair ? "1px solid rgba(71,98,135,0.28)" : "1px solid rgba(76,196,255,0.32)",
             borderRight: "none",
             borderRadius: "8px 0 0 8px",
             padding: "12px 9px",
@@ -122,11 +138,11 @@ export default function RackPopup({ lang }: RackPopupProps) {
         >
           <span
             className="w-[7px] h-[7px] rounded-full"
-            style={{ background: clair ? "#1d4ed8" : "#4cc4ff", boxShadow: clair ? "0 0 6px rgba(29,78,216,0.5)" : "0 0 8px #4cc4ff", animation: "infraPulse 1.8s ease-in-out infinite" }}
+            style={{ background: clair ? "#3d6a9e" : "#4cc4ff", boxShadow: clair ? "0 0 6px rgba(61,106,158,0.45)" : "0 0 8px #4cc4ff", animation: "infraPulse 1.8s ease-in-out infinite" }}
           />
           <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {[0, 1, 2].map((k) => (
-              <span key={k} style={{ width: "15px", height: "3px", borderRadius: "1px", background: clair ? "#1d4ed8" : "#4cc4ff", opacity: 0.85 }} />
+              <span key={k} style={{ width: "15px", height: "3px", borderRadius: "1px", background: clair ? "#3d6a9e" : "#4cc4ff", opacity: 0.85 }} />
             ))}
           </span>
           <span
@@ -134,7 +150,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
               fontFamily: "'Geist Mono', monospace",
               fontSize: "9.5px",
               letterSpacing: "0.2em",
-              color: clair ? "#1e3a8a" : "#bfe3ff",
+              color: clair ? "#2d4f7c" : "#bfe3ff",
               textTransform: "uppercase",
               writingMode: "vertical-rl",
               transform: "rotate(180deg)",
@@ -142,7 +158,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
           >
             Rack
           </span>
-          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "9px", color: clair ? "#64748b" : "#5d89b6" }}>
+          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "9px", color: clair ? "#6b7f95" : "#5d89b6" }}>
             {RACK_NODES.length}U
           </span>
         </button>
@@ -159,7 +175,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[70]"
-              style={{ background: "rgba(2,10,20,0.5)", backdropFilter: "blur(4px)" }}
+              style={{ background: c("rgba(2,10,20,0.5)"), backdropFilter: "blur(4px)" }}
               onClick={() => setIsOpen(false)}
             />
 
@@ -171,11 +187,11 @@ export default function RackPopup({ lang }: RackPopupProps) {
               transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
               className="fixed right-6 top-1/2 -translate-y-1/2 z-[80] w-[320px] max-h-[80vh] overflow-y-auto no-scrollbar"
               style={{
-                background: "rgba(8,28,49,0.92)",
-                border: "1px solid rgba(76,196,255,0.32)",
+                background: c("rgba(8,28,49,0.92)"),
+                border: c("1px solid rgba(76,196,255,0.32)"),
                 borderRadius: "8px",
                 padding: "14px",
-                boxShadow: "0 20px 50px rgba(2,10,20,0.6), 0 0 30px rgba(76,196,255,0.08)",
+                boxShadow: c("0 20px 50px rgba(2,10,20,0.6), 0 0 30px rgba(76,196,255,0.08)"),
                 backdropFilter: "blur(16px)",
               }}
             >
@@ -185,8 +201,8 @@ export default function RackPopup({ lang }: RackPopupProps) {
                   <span
                     className="w-[7px] h-[7px] rounded-full"
                     style={{
-                      background: "#4cc4ff",
-                      boxShadow: "0 0 8px #4cc4ff",
+                      background: c("#4cc4ff"),
+                      boxShadow: c("0 0 8px #4cc4ff"),
                       animation: "infraPulse 1.8s ease-in-out infinite",
                     }}
                   />
@@ -195,7 +211,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                       fontFamily: "'Geist Mono', monospace",
                       fontSize: "10.5px",
                       letterSpacing: "0.14em",
-                      color: "#bfe3ff",
+                      color: c("#bfe3ff"),
                       textTransform: "uppercase",
                     }}
                   >
@@ -207,7 +223,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                   style={{
                     fontFamily: "'Geist Mono', monospace",
                     fontSize: "14px",
-                    color: "#5d89b6",
+                    color: c("#5d89b6"),
                     background: "none",
                     border: "none",
                     cursor: "pointer",
@@ -229,7 +245,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                       style={{
                         borderRadius: "5px",
                         overflow: "hidden",
-                        border: `1px solid ${isDrawerOpen ? "rgba(76,196,255,0.5)" : "rgba(76,196,255,0.2)"}`,
+                        border: `1px solid ${isDrawerOpen ? c("rgba(76,196,255,0.5)") : c("rgba(76,196,255,0.2)")}`,
                         transition: "border-color 0.2s ease",
                       }}
                     >
@@ -239,7 +255,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                         className="w-full text-left flex items-center gap-2 transition-colors"
                         style={{
                           padding: "9px 11px",
-                          background: isDrawerOpen ? "rgba(76,196,255,0.1)" : "rgba(76,196,255,0.04)",
+                          background: isDrawerOpen ? c("rgba(76,196,255,0.1)") : c("rgba(76,196,255,0.04)"),
                           cursor: "pointer",
                           border: "none",
                         }}
@@ -248,8 +264,8 @@ export default function RackPopup({ lang }: RackPopupProps) {
                         <span
                           className="w-[7px] h-[7px] rounded-full flex-shrink-0"
                           style={{
-                            background: node.status === "online" ? "#4cc4ff" : "#6b7280",
-                            boxShadow: node.status === "online" ? "0 0 6px #4cc4ff" : "none",
+                            background: node.status === "online" ? c("#4cc4ff") : "#6b7280",
+                            boxShadow: node.status === "online" ? c("0 0 6px #4cc4ff") : "none",
                           }}
                         />
                         {/* Host */}
@@ -257,7 +273,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                           style={{
                             fontFamily: "'Geist Mono', monospace",
                             fontSize: "11.5px",
-                            color: "#e8f4ff",
+                            color: c("#e8f4ff"),
                             flex: 1,
                           }}
                         >
@@ -268,7 +284,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                           style={{
                             fontFamily: "'Geist Mono', monospace",
                             fontSize: "9px",
-                            color: "#5d89b6",
+                            color: c("#5d89b6"),
                           }}
                         >
                           {node.ip}
@@ -278,7 +294,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                           style={{
                             fontFamily: "'Geist Mono', monospace",
                             fontSize: "10px",
-                            color: "#4cc4ff",
+                            color: c("#4cc4ff"),
                             display: "inline-block",
                             transform: isDrawerOpen ? "rotate(180deg)" : "rotate(0deg)",
                             transition: "transform 0.2s ease",
@@ -301,7 +317,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                             <div
                               style={{
                                 padding: "9px 11px 11px",
-                                background: "rgba(4,14,26,0.5)",
+                                background: c("rgba(4,14,26,0.5)"),
                               }}
                             >
                               {/* Rôle */}
@@ -309,7 +325,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                                 style={{
                                   fontFamily: "'Geist Mono', monospace",
                                   fontSize: "10px",
-                                  color: "#7fa8cc",
+                                  color: c("#7fa8cc"),
                                   marginBottom: "8px",
                                 }}
                               >
@@ -326,9 +342,9 @@ export default function RackPopup({ lang }: RackPopupProps) {
                                       fontSize: "9.5px",
                                       padding: "3px 8px",
                                       borderRadius: "3px",
-                                      background: "rgba(76,196,255,0.12)",
-                                      border: "1px solid rgba(76,196,255,0.3)",
-                                      color: "#cfe6fb",
+                                      background: c("rgba(76,196,255,0.12)"),
+                                      border: c("1px solid rgba(76,196,255,0.3)"),
+                                      color: c("#cfe6fb"),
                                     }}
                                   >
                                     {svc}
@@ -347,17 +363,17 @@ export default function RackPopup({ lang }: RackPopupProps) {
               {/* Footer migration */}
               <div
                 className="flex items-center justify-center gap-2 mt-3 pt-3"
-                style={{ borderTop: "1px solid rgba(76,196,255,0.15)" }}
+                style={{ borderTop: c("1px solid rgba(76,196,255,0.15)") }}
               >
                 <span
                   className="w-[5px] h-[5px] rounded-full"
-                  style={{ background: "#4cc4ff", boxShadow: "0 0 4px #4cc4ff" }}
+                  style={{ background: c("#4cc4ff"), boxShadow: c("0 0 4px #4cc4ff") }}
                 />
                 <span
                   style={{
                     fontFamily: "'Geist Mono', monospace",
                     fontSize: "9px",
-                    color: "#5d89b6",
+                    color: c("#5d89b6"),
                   }}
                 >
                   {lang === "fr" ? "migration HP → dino terminée" : "HP → dino migration complete"}

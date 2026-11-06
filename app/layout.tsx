@@ -61,7 +61,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#edf1fc] dark:bg-[#020617]`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#eceef0] dark:bg-[#020617]`}>
         <ThemeProvider>
           <LanguageProvider>
             <LoadingSplash />

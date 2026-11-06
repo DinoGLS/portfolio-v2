@@ -5,9 +5,8 @@ import { ArrowUpIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import ContactForm from "@/app/components/ContactForm";
 import SocialSidebar from "@/app/components/SocialSidebar";
-import HeroReseau from "@/app/components/HeroReseau";
+import AccueilScene from "@/app/components/AccueilScene";
 import Reveal from "@/app/components/Reveal";
-import AboutSection from "@/app/components/AboutSection";
 import ParcoursSection from "@/app/components/ParcoursSection";
 import ProjectsExplorer from "@/app/components/ProjectsExplorer";
 import CyberWatchSection from "@/app/components/CyberWatchSection";
@@ -89,8 +88,12 @@ export default function Home() {
     isScrolling.current = true;
     const navbarHeight = id === "top" ? 0 : 72;
     const el = id === "top" ? null : document.getElementById(id);
-    const target =
-      id === "top"
+    // « À propos » vit dans la scène épinglée de l'accueil : on vise la fin de la scène
+    const scene = document.getElementById("hero");
+    const dansScene = id === "about" && scene?.dataset.scene === "1";
+    const target = dansScene
+      ? scene!.getBoundingClientRect().top + window.scrollY + (scene!.offsetHeight - window.innerHeight) * 0.95
+      : id === "top"
         ? 0
         : el
           ? el.getBoundingClientRect().top + window.scrollY - navbarHeight
@@ -160,12 +163,8 @@ export default function Home() {
 
       <main id="top" className="relative">
         <div className="relative z-10">
-          <HeroReseau onNavigate={scrollToSection} />
-
-          {/* ── À propos et parcours : dans la continuité de la carte ── */}
-          <Reveal>
-            <AboutSection />
-          </Reveal>
+          {/* ── ACCUEIL : carte réseau + À propos dans une seule scène ── */}
+          <AccueilScene isMobile={isMobile} onNavigate={scrollToSection} />
           <ParcoursSection isMobile={isMobile} />
 
           {/* ── ZONE BLUEPRINT : Projets + Veille cyber + Infra ── */}

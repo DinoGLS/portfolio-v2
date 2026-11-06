@@ -32,18 +32,18 @@ export const BP_DARK: BlueprintTokens = {
 };
 
 export const BP_LIGHT: BlueprintTokens = {
-  pageBg: "radial-gradient(120% 95% at 50% 0%, #eef5ff 0%, #ddebfc 55%, #cfe1f7 100%)",
-  gridLine: "rgba(29,78,216,0.11)",
-  text: "#0f2b4a",
-  sub: "#46628a",
-  faint: "#8fadd2",
-  accent: "#1d4ed8",
-  titleGrad: "linear-gradient(90deg,#1e3a8a,#2563eb)",
-  cardBg: "rgba(255,255,255,0.62)",
-  cardBorder: "rgba(29,78,216,0.22)",
-  chipBg: "rgba(29,78,216,0.07)",
-  chipText: "#33517d",
-  chipBorder: "rgba(29,78,216,0.20)",
+  pageBg: "radial-gradient(120% 95% at 50% 0%, #f2f5f8 0%, #e5eaf0 55%, #dae1e9 100%)",
+  gridLine: "rgba(71,98,135,0.10)",
+  text: "#243447",
+  sub: "#52667d",
+  faint: "#98a8bb",
+  accent: "#3d6a9e",
+  titleGrad: "linear-gradient(90deg,#2d4f7c,#4a6fa5)",
+  cardBg: "rgba(250,251,252,0.72)",
+  cardBorder: "rgba(71,98,135,0.22)",
+  chipBg: "rgba(71,98,135,0.07)",
+  chipText: "#3a516b",
+  chipBorder: "rgba(71,98,135,0.20)",
 };
 
 export function useBlueprintTokens(isDark: boolean): BlueprintTokens {

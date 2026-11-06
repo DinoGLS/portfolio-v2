@@ -78,7 +78,7 @@ export default function MatrixCanvas() {
 
       ctx.fillStyle = isDark
         ? "rgba(7, 12, 28, 0.07)"
-        : "rgba(234, 240, 255, 0.09)";
+        : "rgba(236, 238, 240, 0.09)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${FONT_SZ}px monospace`;
@@ -92,12 +92,12 @@ export default function MatrixCanvas() {
 
         ctx.fillStyle = isDark
           ? `rgba(110, 190, 255, ${head})`
-          : `rgba(0, 50, 170, ${head * 0.85})`;
+          : `rgba(52, 84, 128, ${head * 0.8})`;
         ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x, yPos);
 
         ctx.fillStyle = isDark
           ? `rgba(50, 130, 210, ${bri * 0.5})`
-          : `rgba(0, 65, 190, ${bri * 0.38})`;
+          : `rgba(62, 98, 142, ${bri * 0.34})`;
         for (let t = 1; t <= TRAIL; t++) {
           const ty = yPos - t * COL_W;
           if (ty > 0) ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x, ty);

@@ -46,7 +46,7 @@ const Ports = ({ n, allumes, couleur }: { n: number; allumes: number[]; couleur:
     {Array.from({ length: n }).map((_, i) => (
       <span
         key={i}
-        className="block rounded-[1.5px] border border-slate-300 bg-white dark:border-slate-600/70 dark:bg-slate-900"
+        className="block rounded-[1.5px] border border-[#c5cdd6] bg-[#f8f9fb] dark:border-slate-600/70 dark:bg-slate-900"
         style={{ width: "1cqw", height: "0.9cqw", boxShadow: allumes.includes(i) ? `inset 0 -0.3cqw 0 ${couleur}` : undefined }}
       />
     ))}
@@ -55,8 +55,8 @@ const Ports = ({ n, allumes, couleur }: { n: number; allumes: number[]; couleur:
 
 // Mode clair : mêmes teintes, plus foncées et moins vives pour rester lisibles sur fond pâle
 const CABLE_CLAIR: Record<string, string> = {
-  "#60a5fa": "#2563eb", "#38bdf8": "#0284c7", "#818cf8": "#4f46e5", "#a78bfa": "#7c3aed",
-  "#22d3ee": "#0e7490", "#6366f1": "#4338ca", "#93c5fd": "#3b82f6",
+  "#60a5fa": "#3f6fb5", "#38bdf8": "#3b86ab", "#818cf8": "#5b57b0", "#a78bfa": "#7a5ab5",
+  "#22d3ee": "#2f8191", "#6366f1": "#4d4aa0", "#93c5fd": "#5b86c0",
 };
 
 export default function HeroReseau({ onNavigate }: HeroReseauProps) {
@@ -70,11 +70,11 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
 
   const sousTitre = fr ? "Systèmes & réseaux · Cybersécurité" : "Systems & networks · Cybersecurity";
   // Dégradé d'origine du nom
-  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #1d4ed8, #4338ca)";
+  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #2f5c99, #5457b0)";
   const nomStyle = { backgroundImage: degrade, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
   return (
-    <section id="hero" className="relative px-4 pt-24 pb-4">
+    <section className="relative px-4 pt-16 pb-4">
       <div className="max-w-4xl mx-auto w-full">
         {/* ── Carte réseau (ordinateur) ── */}
         <div className="hidden md:block [container-type:inline-size]">
@@ -120,13 +120,13 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
 
             {/* Commutateur central : le nom */}
             <motion.div
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[0.8cqw] border bg-gradient-to-b from-slate-50 to-slate-100 border-slate-300 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/40 flex flex-col items-center justify-center text-center"
+              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-[0.8cqw] border bg-gradient-to-b from-[#f6f7f9] to-[#eceff2] border-[#c5cdd6] dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/40 flex flex-col items-center justify-center text-center"
               style={{
                 left: "50%",
                 top: "50%",
                 width: "34%",
                 height: `${(170 / 560) * 100}%`,
-                boxShadow: isDark ? "0 0 3cqw rgba(96,165,250,0.18), inset 0 0 0 1px rgba(96,165,250,0.08)" : "0 0.6cqw 2.4cqw rgba(51,65,100,0.10)",
+                boxShadow: isDark ? "0 0 3cqw rgba(96,165,250,0.18), inset 0 0 0 1px rgba(96,165,250,0.08)" : "0 0.5cqw 2cqw rgba(51,65,100,0.08)",
               }}
               initial={reduit ? false : { opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -162,8 +162,8 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                   onBlur={() => setActif(null)}
                   className={`absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-between rounded-[0.5cqw] border text-left bg-gradient-to-b ${
                     on
-                      ? "from-blue-50 to-blue-100/80 border-blue-400 dark:from-[#14264d] dark:to-[#0c1a38] dark:border-blue-400"
-                      : "from-slate-50 to-slate-100 border-slate-300 dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/30"
+                      ? "from-[#eef2f7] to-[#e2e9f1] border-[#7d9cc0] dark:from-[#14264d] dark:to-[#0c1a38] dark:border-blue-400"
+                      : "from-[#f6f7f9] to-[#eceff2] border-[#c5cdd6] dark:from-[#0f1a33] dark:to-[#08101f] dark:border-blue-400/30"
                   }`}
                   style={{
                     left: `${n.x / 10}%`,
