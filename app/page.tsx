@@ -5,7 +5,7 @@ import { ArrowUpIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import ContactForm from "@/app/components/ContactForm";
 import SocialSidebar from "@/app/components/SocialSidebar";
-import HeroV2 from "@/app/components/HeroV2";
+import HeroReseau from "@/app/components/HeroReseau";
 import Reveal from "@/app/components/Reveal";
 import AboutSection from "@/app/components/AboutSection";
 import ParcoursSection from "@/app/components/ParcoursSection";
@@ -153,7 +153,7 @@ export default function Home() {
 
       <main id="top" className="relative">
         <div className="relative z-10">
-          <HeroV2 onNavigate={scrollToSection} />
+          <HeroReseau onNavigate={scrollToSection} />
 
           {/* ── ZONE BLUEPRINT : Projets + Veille cyber + Infra ── */}
           <BlueprintZone>
