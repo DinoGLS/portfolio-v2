@@ -5,10 +5,11 @@ import { ArrowUpIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import ContactForm from "@/app/components/ContactForm";
 import SocialSidebar from "@/app/components/SocialSidebar";
-import HeroSection from "@/app/components/HeroSection";
+import HeroV2 from "@/app/components/HeroV2";
+import Reveal from "@/app/components/Reveal";
 import AboutSection from "@/app/components/AboutSection";
 import ParcoursSection from "@/app/components/ParcoursSection";
-import ProjectsSection from "@/app/components/ProjectsSection";
+import ProjectsExplorer from "@/app/components/ProjectsExplorer";
 import CyberWatchSection from "@/app/components/CyberWatchSection";
 import BlueprintZone from "@/app/components/BlueprintZone";
 import InfraSection from "@/app/components/InfraSection";
@@ -35,8 +36,8 @@ export default function Home() {
 
   const NAV_LINKS = [
     { label: lang === "fr" ? "Accueil" : "Home", href: "#top" },
-    { label: lang === "fr" ? "À propos" : "About", href: "#about" },
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
+    { label: lang === "fr" ? "À propos" : "About", href: "#about" },
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
     { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
     { label: "Contact", href: "#contact" },
@@ -152,19 +153,24 @@ export default function Home() {
 
       <main id="top" className="relative">
         <div className="relative z-10">
-          <HeroSection />
-          <AboutSection />
-          <ParcoursSection isMobile={isMobile} />
+          <HeroV2 onNavigate={scrollToSection} />
 
-          {/* ── ZONE BLUEPRINT : Projets + Veille cyber ── */}
+          {/* ── ZONE BLUEPRINT : Projets + Veille cyber + Infra ── */}
           <BlueprintZone>
-            <ProjectsSection isMobile={isMobile} />
+            <ProjectsExplorer />
             <CyberWatchSection isMobile={isMobile} />
             <InfraSection isMobile={isMobile} />
           </BlueprintZone>
 
+          <Reveal>
+            <AboutSection />
+          </Reveal>
+          <ParcoursSection isMobile={isMobile} />
+
           {/* ── COMPÉTENCES ── */}
-          <CompetencesSection />
+          <Reveal>
+            <CompetencesSection />
+          </Reveal>
 
           {/* ── TABLEAU DE SYNTHÈSE E5 ── */}
           <SyntheseSection />
