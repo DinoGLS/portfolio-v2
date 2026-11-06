@@ -251,7 +251,7 @@ export const homeStrings: Record<Lang, HomeStrings> = {
       subtitle: "Administration Systèmes & Réseaux · Cybersécurité · DevSecOps en formation",
       intro:
         "Je construis mes compétences en administration systèmes et réseaux, cybersécurité et environnements virtualisés, en combinant théorie et pratique à travers des projets personnels et académiques.",
-      cv: "Curriculum Vitae",
+      cv: "Tableau de synthèse",
     },
     about: {
       heading: "À propos de moi",
@@ -296,7 +296,7 @@ export const homeStrings: Record<Lang, HomeStrings> = {
       subtitle: "Systems & Network Administration · Cybersecurity · DevSecOps in training",
       intro:
         "I'm building my skills in systems and network administration, cybersecurity and virtualized environments, combining theory and practice through personal and academic projects.",
-      cv: "Resume (CV)",
+      cv: "Summary table",
     },
     about: {
       heading: "About me",

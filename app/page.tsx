@@ -13,6 +13,8 @@ import CyberWatchSection from "@/app/components/CyberWatchSection";
 import BlueprintZone from "@/app/components/BlueprintZone";
 import InfraSection from "@/app/components/InfraSection";
 import CompetencesSection from "@/app/components/CompetencesSection";
+import SyntheseSection from "@/app/components/SyntheseSection";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
 // ─── Composant principal ─────────────────────────────────────────────────────
@@ -23,6 +25,8 @@ export default function Home() {
   const [showTop, setShowTop] = useState(false);
   const isScrolling = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progression = useSpring(scrollYProgress, { stiffness: 220, damping: 32, mass: 0.2 });
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -37,6 +41,7 @@ export default function Home() {
     { label: lang === "fr" ? "À propos" : "About", href: "#about" },
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
+    { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
     { label: "Contact", href: "#contact" },
   ];
 
@@ -97,6 +102,13 @@ export default function Home() {
   // ── Rendu ────────────────────────────────────────────────────────────────
   return (
     <>
+      {/* ── BARRE DE PROGRESSION ── */}
+      <motion.div
+        aria-hidden
+        className="fixed top-0 left-0 right-0 h-0.5 z-[60] origin-left bg-blue-500"
+        style={{ scaleX: progression }}
+      />
+
       {/* ── NAVBAR ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 flex justify-center">
         <div className="flex items-center justify-center md:justify-between w-full max-w-4xl px-3 md:px-5 py-2 rounded-full border backdrop-blur-md shadow-lg border-slate-200/70 bg-white/90 dark:border-blue-500/25 dark:bg-slate-900/90">
@@ -163,6 +175,9 @@ export default function Home() {
 
           {/* ── COMPÉTENCES ── */}
           <CompetencesSection />
+
+          {/* ── TABLEAU DE SYNTHÈSE E5 ── */}
+          <SyntheseSection />
 
           {/* ── CONTACT ── */}
           <section id="contact" className="px-4 pb-24 mt-20">

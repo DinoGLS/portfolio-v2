@@ -92,7 +92,7 @@ export default function HeroSection() {
         transition={{ delay: 1.3, duration: 0.7, ease: "easeOut" }}
       >
         <a
-          href="/documents/CV_GarlensCharles-Apprenti.pdf"
+          href="/documents/Tableau_synthese_E5_Charles_Garlens.pdf"
           rel="noopener noreferrer"
           target="_blank"
           className="inline-flex items-center px-8 py-3 rounded-full border border-slate-300/70 bg-white/60 text-slate-700 font-semibold hover:border-blue-400 hover:text-blue-700 transition-all backdrop-blur-sm shadow-sm dark:border-slate-600/40 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:text-blue-300"
