@@ -37,7 +37,7 @@ export default function Home() {
 
   const NAV_LINKS = [
     { label: lang === "fr" ? "Accueil" : "Home", href: "#top" },
-    { label: lang === "fr" ? "À propos" : "About", href: "#about" },
+    { label: lang === "fr" ? "Parcours" : "Background", href: "#parcours" },
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
     { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
@@ -91,8 +91,9 @@ export default function Home() {
     // « À propos » vit dans la scène épinglée de l'accueil : on vise la fin de la scène
     const scene = document.getElementById("hero");
     const dansScene = id === "about" && scene?.dataset.scene === "1";
+    if (dansScene) window.dispatchEvent(new CustomEvent("accueil-vue", { detail: "apropos" }));
     const target = dansScene
-      ? scene!.getBoundingClientRect().top + window.scrollY + (scene!.offsetHeight - window.innerHeight) * 0.95
+      ? scene!.getBoundingClientRect().top + window.scrollY
       : id === "top"
         ? 0
         : el

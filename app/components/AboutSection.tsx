@@ -3,13 +3,13 @@
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { homeStrings } from "@/app/lib/i18n";
 
-export default function AboutSection() {
+export default function AboutSection({ empile = false }: { empile?: boolean }) {
   const { lang } = useLanguage();
   const h = homeStrings[lang];
 
   return (
-    <section id="about" className="px-4 pb-16 mt-6">
-      <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-[1.1fr_1.4fr]">
+    <section id="about" className={empile ? "px-2 py-2" : "px-4 pb-16 mt-6"}>
+      <div className={empile ? "grid gap-4" : "max-w-6xl mx-auto grid gap-8 md:grid-cols-[1.1fr_1.4fr]"}>
         <div className="rounded-2xl border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 p-6 md:p-7 md:backdrop-blur-md shadow-sm">
           <h2 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
             {h.about.heading}
@@ -21,7 +21,7 @@ export default function AboutSection() {
             {h.about.p2}
           </p>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className={empile ? "grid gap-3 grid-cols-3" : "grid gap-4 md:grid-cols-3"}>
           {h.about.skills.map((block) => (
             <div
               key={block.title}
