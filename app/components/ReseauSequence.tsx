@@ -41,7 +41,7 @@ const PORTS: PortDef[] = [
   ...(SANS_SYNTHESE
     ? [
         { fr: "Apprentissage", en: "Learning", href: "#apprentissage", c: "#60a5fa", x: 88.5, y: 67, left: false },
-        { fr: "Mon CV", en: "My CV", href: "/documents/CV_Garlens_Charles.pdf", c: "#6366f1", x: 87.5, y: 87, left: false, externe: true },
+        { fr: "Mon CV", en: "My CV", href: "#cv", c: "#6366f1", x: 87.5, y: 87, left: false },
       ]
     : [
         { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88.5, y: 67, left: false },

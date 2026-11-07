@@ -41,7 +41,7 @@ const NOEUDS_BASE: Noeud[] = [
 
 // Version publique (Vercel) : pas de tableau de synthèse, « Mon CV » à la place
 const NOEUDS: Noeud[] = SANS_SYNTHESE
-  ? [...NOEUDS_BASE.filter((n) => n.id !== "synthese"), { id: "cv", href: "/documents/CV_Garlens_Charles.pdf", fr: "Mon CV", en: "My CV", x: 0, y: 0, cable: "M0 0", couleur: "#6366f1" }]
+  ? [...NOEUDS_BASE.filter((n) => n.id !== "synthese"), { id: "cv", href: "#cv", fr: "Mon CV", en: "My CV", x: 0, y: 0, cable: "M0 0", couleur: "#6366f1" }]
   : NOEUDS_BASE;
 
 // Vis de fixation d'une baie
@@ -242,9 +242,8 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
         >
           <div className="flex flex-wrap items-center justify-start md:justify-center gap-3 w-full">
             <a
-              href="/documents/CV_Garlens_Charles.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#cv"
+              onClick={(e) => onNavigate(e, "#cv")}
               className="inline-flex items-center px-6 py-2.5 rounded-full border border-slate-300/80 text-sm font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-700 dark:border-slate-600/60 dark:text-slate-200 dark:hover:text-blue-300"
             >
               {fr ? "Mon CV" : "My CV"}
