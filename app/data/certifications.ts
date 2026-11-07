@@ -43,4 +43,40 @@ export const CERTIFICATIONS: Certification[] = [
       en: "The basics of information systems security, account protection (authentication, passwords), good habits online, and how to secure a workstation and mobile use (laptop, USB keys, Wi-Fi).",
     },
   },
+  {
+    id: "cisco-debut",
+    organisme: "Cisco",
+    court: { fr: "Packet Tracer : premiers pas", en: "Packet Tracer: getting started" },
+    titre: { fr: "Premiers pas avec Cisco Packet Tracer", en: "Getting Started with Cisco Packet Tracer" },
+    date: { fr: "9 oct. 2025", en: "9 Oct 2025" },
+    image: "/formation/attestation-cisco-packet-tracer-debut.jpg",
+    appris: {
+      fr: "Cours en ligne de Cisco Networking Academy : prise en main du simulateur Cisco Packet Tracer, que j'utilise ensuite pour mes labs réseau.",
+      en: "Online course from Cisco Networking Academy: getting started with the Cisco Packet Tracer simulator, which I then use for my network labs.",
+    },
+  },
+  {
+    id: "cisco-reseaux",
+    organisme: "Cisco",
+    court: { fr: "Packet Tracer : réseaux", en: "Packet Tracer: networking" },
+    titre: { fr: "Exploring Networking with Cisco Packet Tracer", en: "Exploring Networking with Cisco Packet Tracer" },
+    date: { fr: "11 oct. 2025", en: "11 Oct 2025" },
+    image: "/formation/attestation-cisco-packet-tracer-reseaux.jpg",
+    appris: {
+      fr: "Cours en ligne de Cisco Networking Academy : exploration des bases du réseau avec Cisco Packet Tracer.",
+      en: "Online course from Cisco Networking Academy: exploring networking basics with Cisco Packet Tracer.",
+    },
+  },
+  {
+    id: "cisco-iot",
+    organisme: "Cisco",
+    court: { fr: "Packet Tracer : objets connectés", en: "Packet Tracer: IoT" },
+    titre: { fr: "Exploring Internet of Things with Cisco Packet Tracer", en: "Exploring Internet of Things with Cisco Packet Tracer" },
+    date: { fr: "11 oct. 2025", en: "11 Oct 2025" },
+    image: "/formation/attestation-cisco-packet-tracer-iot.jpg",
+    appris: {
+      fr: "Cours en ligne de Cisco Networking Academy : exploration de l'Internet des objets avec Cisco Packet Tracer.",
+      en: "Online course from Cisco Networking Academy: exploring the Internet of Things with Cisco Packet Tracer.",
+    },
+  },
 ];

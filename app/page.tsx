@@ -17,6 +17,7 @@ import CertificationsSection from "@/app/components/CertificationsSection";
 import InfraSection from "@/app/components/InfraSection";
 import CompetencesSection from "@/app/components/CompetencesSection";
 import SyntheseSection from "@/app/components/SyntheseSection";
+import { SANS_SYNTHESE } from "@/app/lib/version";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
 // ─── Composant principal ─────────────────────────────────────────────────────
@@ -46,7 +47,7 @@ export default function Home() {
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
     { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
     { label: "Contact", href: "#contact" },
-  ];
+  ].filter((l) => !(SANS_SYNTHESE && l.href === "#synthese"));
 
   // ── Scroll actif — throttlé RAF ──────────────────────────────────────────
   useEffect(() => {
@@ -196,7 +197,7 @@ export default function Home() {
           </Reveal>
 
           {/* ── TABLEAU DE SYNTHÈSE E5 ── */}
-          <SyntheseSection />
+          {!SANS_SYNTHESE && <SyntheseSection />}
 
           {/* ── CONTACT ── */}
           <section id="contact" className="px-4 pb-24 mt-20">
@@ -219,6 +220,15 @@ export default function Home() {
                     className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     garlenscharles10@gmail.com
+                  </a>
+                  <span className="text-slate-300 dark:text-slate-700">·</span>
+                  <a
+                    href="/documents/CV_Garlens_Charles.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    {lang === "fr" ? "Mon CV (PDF)" : "My CV (PDF)"}
                   </a>
                   <span className="text-slate-300 dark:text-slate-700">·</span>
                   <a

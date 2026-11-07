@@ -5,6 +5,7 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
 import { usePalette } from "@/app/lib/palette";
+import { SANS_SYNTHESE } from "@/app/lib/version";
 
 interface ReseauSequenceProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
@@ -25,6 +26,8 @@ interface PortDef {
   x: number;
   y: number;
   left: boolean;
+  /** Lien vers un fichier (ouvert dans un nouvel onglet, sans défilement) */
+  externe?: boolean;
 }
 
 const PORTS: PortDef[] = [
@@ -34,8 +37,16 @@ const PORTS: PortDef[] = [
   { fr: "Certifications", en: "Certifications", href: "#certifications", c: "#22d3ee", x: 12.5, y: 87, left: true },
   { fr: "Veille cyber", en: "Cyber watch", href: "#veille", c: "#a78bfa", x: 85.5, y: 27, left: false },
   { fr: "Compétences", en: "Skills", href: "#competences", c: "#22d3ee", x: 87.5, y: 47, left: false },
-  { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88.5, y: 67, left: false },
-  { fr: "Apprentissage", en: "Learning", href: "#apprentissage", c: "#60a5fa", x: 87.5, y: 87, left: false },
+  // Version publique : pas de tableau de synthèse, un port « Mon CV » à la place
+  ...(SANS_SYNTHESE
+    ? [
+        { fr: "Apprentissage", en: "Learning", href: "#apprentissage", c: "#60a5fa", x: 88.5, y: 67, left: false },
+        { fr: "Mon CV", en: "My CV", href: "/documents/CV_Garlens_Charles.pdf", c: "#6366f1", x: 87.5, y: 87, left: false, externe: true },
+      ]
+    : [
+        { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88.5, y: 67, left: false },
+        { fr: "Apprentissage", en: "Learning", href: "#apprentissage", c: "#60a5fa", x: 87.5, y: 87, left: false },
+      ]),
 ];
 
 // Mode clair : mêmes teintes, plus foncées pour rester lisibles sur fond pâle
@@ -413,7 +424,8 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
           key={p.href}
           ref={(el) => { portEls.current[i] = el; }}
           href={p.href}
-          onClick={(e) => onNavigate(e, p.href)}
+          onClick={(e) => { if (!p.externe) onNavigate(e, p.href); }}
+          {...(p.externe ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           className="abs rack port"
           style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: 0, transition: "opacity .4s, box-shadow .3s, border-color .1s" }}
         >

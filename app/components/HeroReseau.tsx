@@ -7,6 +7,7 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
 import { usePalette } from "@/app/lib/palette";
+import { SANS_SYNTHESE } from "@/app/lib/version";
 
 interface HeroReseauProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
@@ -26,7 +27,7 @@ interface Noeud {
   couleur: string;
 }
 
-const NOEUDS: Noeud[] = [
+const NOEUDS_BASE: Noeud[] = [
   { id: "projects", href: "#projects", fr: "Projets", en: "Projects", x: 130, y: 100, cable: "M330 250 C285 250 285 100 241 100", couleur: "#60a5fa" },
   { id: "infra", href: "#infra", fr: "Infrastructure", en: "Infrastructure", x: 130, y: 280, cable: "M330 280 H241", couleur: "#38bdf8" },
   { id: "about", href: "#about", fr: "À propos", en: "About", x: 130, y: 460, cable: "M330 310 C285 310 285 460 241 460", couleur: "#818cf8" },
@@ -37,6 +38,11 @@ const NOEUDS: Noeud[] = [
   { id: "apprentissage", href: "#apprentissage", fr: "Apprentissage", en: "Learning", x: 0, y: 0, cable: "M0 0", couleur: "#60a5fa" },
   { id: "contact", href: "#contact", fr: "Contact", en: "Contact", x: 500, y: 500, cable: "M500 365 V468", couleur: "#93c5fd" },
 ];
+
+// Version publique (Vercel) : pas de tableau de synthèse, « Mon CV » à la place
+const NOEUDS: Noeud[] = SANS_SYNTHESE
+  ? [...NOEUDS_BASE.filter((n) => n.id !== "synthese"), { id: "cv", href: "/documents/CV_Garlens_Charles.pdf", fr: "Mon CV", en: "My CV", x: 0, y: 0, cable: "M0 0", couleur: "#6366f1" }]
+  : NOEUDS_BASE;
 
 // Vis de fixation d'une baie
 const Vis = ({ className }: { className: string }) => (
@@ -155,7 +161,8 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                 <motion.a
                   key={n.id}
                   href={n.href}
-                  onClick={(e) => onNavigate(e, n.href)}
+                  onClick={(e) => { if (!n.href.startsWith("/")) onNavigate(e, n.href); }}
+                  {...(n.href.startsWith("/") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   onMouseEnter={() => setActif(n.id)}
                   onMouseLeave={() => setActif(null)}
                   onFocus={() => setActif(n.id)}
@@ -214,7 +221,8 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                 <span className="absolute left-0 top-1/2 w-4 border-t border-slate-400/50 dark:border-blue-300/30" />
                 <a
                   href={n.href}
-                  onClick={(e) => onNavigate(e, n.href)}
+                  onClick={(e) => { if (!n.href.startsWith("/")) onNavigate(e, n.href); }}
+                  {...(n.href.startsWith("/") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className="flex items-center gap-3 rounded-[5px] border border-slate-400/60 bg-white/65 px-3 py-2.5 dark:border-blue-400/30 dark:bg-slate-950/65"
                 >
                   <span className="h-2 w-2 rounded-full bg-green-500 flex-none" />
@@ -234,6 +242,15 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
         >
           <div className="flex flex-wrap items-center justify-start md:justify-center gap-3 w-full">
             <a
+              href="/documents/CV_Garlens_Charles.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-6 py-2.5 rounded-full border border-slate-300/80 text-sm font-semibold text-slate-700 hover:border-blue-400 hover:text-blue-700 dark:border-slate-600/60 dark:text-slate-200 dark:hover:text-blue-300"
+            >
+              {fr ? "Mon CV" : "My CV"}
+            </a>
+            {!SANS_SYNTHESE && (
+<a
               href="/documents/Tableau_synthese_E5_Charles_Garlens.pdf"
               target="_blank"
               rel="noopener noreferrer"
@@ -241,6 +258,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
             >
               {h.hero.cv}
             </a>
+            )}
             <Link href="/veille-cyber" className="inline-flex items-center px-3 py-2.5 text-sm font-semibold text-slate-600 hover:text-blue-700 dark:text-slate-300 dark:hover:text-blue-300">
               {fr ? "Veille cyber" : "Cyber news"} →
             </Link>

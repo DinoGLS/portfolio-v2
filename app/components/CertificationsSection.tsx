@@ -64,7 +64,6 @@ export default function CertificationsSection() {
                 {vis("right-[7px]")}
                 <div className="px-6 pt-3 pb-4">
                   <div className="flex items-center gap-1.5 font-mono text-[10px]" style={{ color: bp.faint }}>
-                    <i className="inline-block w-[6px] h-[6px] rounded-full bg-green-500" style={{ boxShadow: "0 0 5px rgba(34,197,94,.6)" }} aria-hidden />
                     {`CERT ${String(i + 1).padStart(2, "0")}`}
                   </div>
 
