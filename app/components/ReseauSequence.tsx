@@ -28,12 +28,14 @@ interface PortDef {
 }
 
 const PORTS: PortDef[] = [
-  { fr: "Projets", en: "Projects", href: "#projects", c: "#60a5fa", x: 14.5, y: 31, left: true },
-  { fr: "Infrastructure", en: "Infrastructure", href: "#infra", c: "#38bdf8", x: 12.5, y: 56, left: true },
-  { fr: "Parcours", en: "Background", href: "#parcours", c: "#818cf8", x: 11.5, y: 81, left: true },
-  { fr: "Veille cyber", en: "Cyber watch", href: "#veille", c: "#a78bfa", x: 85.5, y: 31, left: false },
-  { fr: "Compétences", en: "Skills", href: "#competences", c: "#22d3ee", x: 87.5, y: 56, left: false },
-  { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88.5, y: 81, left: false },
+  { fr: "Projets", en: "Projects", href: "#projects", c: "#60a5fa", x: 14.5, y: 27, left: true },
+  { fr: "Infrastructure", en: "Infrastructure", href: "#infra", c: "#38bdf8", x: 12.5, y: 47, left: true },
+  { fr: "Parcours", en: "Background", href: "#parcours", c: "#818cf8", x: 11.5, y: 67, left: true },
+  { fr: "Certifications", en: "Certifications", href: "#certifications", c: "#22d3ee", x: 12.5, y: 87, left: true },
+  { fr: "Veille cyber", en: "Cyber watch", href: "#veille", c: "#a78bfa", x: 85.5, y: 27, left: false },
+  { fr: "Compétences", en: "Skills", href: "#competences", c: "#22d3ee", x: 87.5, y: 47, left: false },
+  { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88.5, y: 67, left: false },
+  { fr: "Apprentissage", en: "Learning", href: "#apprentissage", c: "#60a5fa", x: 87.5, y: 87, left: false },
 ];
 
 // Mode clair : mêmes teintes, plus foncées pour rester lisibles sur fond pâle
@@ -178,11 +180,11 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
         if (!el) return;
         const pe = pos(el);
         const k = p.left ? nb.l++ : nb.r++;
-        const sy = s.t + (s.b - s.t) * (0.3 + 0.2 * k);
+        const sy = s.t + (s.b - s.t) * (0.2 + 0.19 * k);
         const sx = p.left ? s.l : s.r;
         const ex = p.left ? pe.r : pe.l;
         const ey = pe.cy;
-        const dx = Math.abs(ex - sx) * 0.55 + W * 0.03 * (2 - k);
+        const dx = Math.abs(ex - sx) * 0.55 + W * 0.025 * (3 - k);
         const d = p.left ? `M${sx} ${sy} C${sx - dx} ${sy} ${ex + dx} ${ey} ${ex} ${ey}` : `M${sx} ${sy} C${sx + dx} ${sy} ${ex - dx} ${ey} ${ex} ${ey}`;
         defs.push({ d, c: p.c, kind: "port", i, sx, sy, ex, ey, left: p.left });
       });

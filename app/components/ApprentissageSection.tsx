@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useBlueprintTokens } from "@/app/data/blueprint-tokens";
-import data from "@/app/data/apprentissage.json";
+import embarque from "@/app/data/apprentissage.json";
 
 // Section « Apprentissage » : ce que j'apprends, pourquoi, comment, où j'en suis et ce qui vient après.
 // Les chiffres (heures, séances, notions) viennent de app/data/apprentissage.json, généré par
@@ -40,6 +40,8 @@ const METHODE: Loc[] = [
   { fr: "Un bot Telegram me pose une question chaque soir.", en: "A Telegram bot asks me a question every evening." },
 ];
 
+type Donnees = typeof embarque;
+
 interface CommitsReponse { commits: { repo: string; message: string; date: string; url: string }[]; depots: { repo: string; existe: boolean }[] }
 
 const fmtDate = (iso: string | null, lang: string) =>
@@ -53,8 +55,11 @@ export default function ApprentissageSection() {
   const L = (x: Loc) => (fr ? x.fr : x.en);
 
   const [git, setGit] = useState<CommitsReponse | null>(null);
+  // Données : copie embarquée au départ, puis version à jour lue sur le serveur (régénérée toutes les 30 min)
+  const [data, setData] = useState<Donnees>(embarque);
   useEffect(() => {
     let vivant = true;
+    fetch("/api/apprentissage").then((r) => (r.ok ? r.json() : null)).then((j: Donnees | null) => { if (vivant && j && Array.isArray(j.notions) && j.heures) setData(j); }).catch(() => {});
     fetch("/api/apprentissage/git").then((r) => (r.ok ? r.json() : null)).then((j) => { if (vivant) setGit(j); }).catch(() => {});
     return () => { vivant = false; };
   }, []);
@@ -71,10 +76,9 @@ export default function ApprentissageSection() {
     { etat: "non-acquis", titre: fr ? "Pas encore acquis" : "Not yet acquired" },
   ];
 
-  const carte = { background: bp.cardBg, borderColor: bp.cardBorder } as const;
 
   return (
-    <section id="apprentissage" className="relative px-4 mt-16 pb-16 scroll-mt-20">
+    <section id="apprentissage" className="lisible relative px-4 mt-16 pb-16 scroll-mt-20">
       <div className="max-w-5xl mx-auto">
         <div className="max-w-2xl mx-auto text-center mb-9">
           <p className="font-mono text-[11px] tracking-[0.2em] font-medium mb-3" style={{ color: bp.accent }}>
@@ -101,7 +105,7 @@ export default function ApprentissageSection() {
             { v: `${compteurs.acquis} / ${compteurs.total}`, k: fr ? "notions acquises" : "topics acquired" },
             { v: fmtDate(heures.derniereSeance, lang), k: fr ? "dernière séance" : "last session" },
           ].map((t) => (
-            <div key={t.k} className="rounded-[6px] border p-4" style={carte}>
+            <div key={t.k} className="rounded-[6px] p-4 border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 md:backdrop-blur-md shadow-sm">
               <div className="text-xl md:text-2xl font-extrabold leading-tight" style={{ color: bp.accent }}>{t.v}</div>
               <div className="mt-1 text-xs" style={{ color: bp.sub }}>{t.k}</div>
             </div>
@@ -110,7 +114,7 @@ export default function ApprentissageSection() {
 
         <div className="grid gap-6 md:grid-cols-5">
           {/* Où j'en suis */}
-          <div className="md:col-span-3 rounded-[6px] border p-5" style={carte}>
+          <div className="md:col-span-3 rounded-[6px] p-5 border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 md:backdrop-blur-md shadow-sm">
             <h3 className="font-mono text-xs font-semibold tracking-[0.14em] mb-4" style={{ color: bp.faint }}>
               {fr ? "OÙ J'EN SUIS" : "WHERE I AM"}
             </h3>
@@ -160,7 +164,7 @@ export default function ApprentissageSection() {
           </div>
 
           {/* Comment j'apprends */}
-          <div className="md:col-span-2 rounded-[6px] border p-5" style={carte}>
+          <div className="md:col-span-2 rounded-[6px] p-5 border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 md:backdrop-blur-md shadow-sm">
             <h3 className="font-mono text-xs font-semibold tracking-[0.14em] mb-4" style={{ color: bp.faint }}>
               {fr ? "COMMENT J'APPRENDS" : "HOW I LEARN"}
             </h3>
@@ -176,7 +180,7 @@ export default function ApprentissageSection() {
         </div>
 
         {/* Ce qui vient après */}
-        <div className="mt-6 rounded-[6px] border p-5" style={carte}>
+        <div className="mt-6 rounded-[6px] p-5 border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 md:backdrop-blur-md shadow-sm">
           <h3 className="font-mono text-xs font-semibold tracking-[0.14em] mb-4" style={{ color: bp.faint }}>
             {fr ? "CE QUI VIENT APRÈS" : "WHAT COMES NEXT"}
           </h3>
@@ -215,7 +219,7 @@ export default function ApprentissageSection() {
         </div>
 
         {/* Activité git publique */}
-        <div className="mt-6 rounded-[6px] border p-5" style={carte}>
+        <div className="mt-6 rounded-[6px] p-5 border border-white/60 bg-white/40 dark:bg-slate-900/40 dark:border-slate-700/50 md:backdrop-blur-md shadow-sm">
           <h3 className="font-mono text-xs font-semibold tracking-[0.14em] mb-3" style={{ color: bp.faint }}>
             {fr ? "ACTIVITÉ PUBLIQUE SUR GITHUB" : "PUBLIC ACTIVITY ON GITHUB"}
           </h3>

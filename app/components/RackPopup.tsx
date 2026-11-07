@@ -9,7 +9,8 @@ import { usePalette } from "@/app/lib/palette";
 
 interface RackNode {
   host: string;
-  ip: string;
+  zone: string;
+  zoneFr: string;
   role: string;
   roleFr: string;
   services: string[];
@@ -19,7 +20,8 @@ interface RackNode {
 const RACK_NODES: RackNode[] = [
   {
     host: "PVE-DINO",
-    ip: "192.168.1.50",
+    zone: "Proxmox host",
+    zoneFr: "Hôte Proxmox",
     role: "Proxmox VE 9.2 hypervisor",
     roleFr: "Hyperviseur Proxmox VE 9.2",
     status: "online",
@@ -27,7 +29,8 @@ const RACK_NODES: RackNode[] = [
   },
   {
     host: "OPNSENSE",
-    ip: "192.168.2.1",
+    zone: "Lab gateway",
+    zoneFr: "Passerelle du lab",
     role: "Lab firewall & DNS resolver",
     roleFr: "Firewall & résolveur DNS du lab",
     status: "online",
@@ -35,7 +38,8 @@ const RACK_NODES: RackNode[] = [
   },
   {
     host: "DRAKEN-ADM",
-    ip: "192.168.2.101",
+    zone: "Lab network",
+    zoneFr: "Réseau lab",
     role: "IaC bastion — Terraform & Ansible",
     roleFr: "Bastion IaC — Terraform & Ansible",
     status: "online",
@@ -43,7 +47,8 @@ const RACK_NODES: RackNode[] = [
   },
   {
     host: "EDGE",
-    ip: "192.168.2.10",
+    zone: "Lab network",
+    zoneFr: "Réseau lab",
     role: "Reverse proxy — Traefik",
     roleFr: "Reverse proxy — Traefik",
     status: "online",
@@ -51,7 +56,8 @@ const RACK_NODES: RackNode[] = [
   },
   {
     host: "GIT",
-    ip: "192.168.2.12",
+    zone: "Lab network",
+    zoneFr: "Réseau lab",
     role: "Self-hosted Git forge — Gitea",
     roleFr: "Forge Git auto-hébergée — Gitea",
     status: "online",
@@ -59,7 +65,8 @@ const RACK_NODES: RackNode[] = [
   },
   {
     host: "DB",
-    ip: "192.168.2.13",
+    zone: "Lab network",
+    zoneFr: "Réseau lab",
     role: "Centralized database",
     roleFr: "Base de données centralisée",
     status: "online",
@@ -67,23 +74,16 @@ const RACK_NODES: RackNode[] = [
   },
   {
     host: "APPS",
-    ip: "192.168.2.20",
+    zone: "Lab network",
+    zoneFr: "Réseau lab",
     role: "Docker host — most production services",
     roleFr: "Hôte Docker — quasi tous les services",
     status: "online",
     services: [
       "portfolio:3001", "forge:5000", "cv-app:8080", "news:4000", "brain:3010",
-      "hub-dash:7777", "ncore:7788", "ecole:7790", "vault:8082",
+      "hub-dash:7777", "ecole:7790", "vault:8082",
       "uptime-kuma:3002", "adminer:8081", "notes-sync:4300",
     ],
-  },
-  {
-    host: "HP-GLS",
-    ip: "100.121.13.37",
-    role: "Legacy server — backups only (PBS)",
-    roleFr: "Ancien serveur — sauvegardes uniquement (PBS)",
-    status: "online",
-    services: ["Proxmox Backup Server", "Backups hebdo"],
   },
 ];
 
@@ -292,7 +292,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
                             color: c("#5d89b6"),
                           }}
                         >
-                          {node.ip}
+                          {lang === "fr" ? node.zoneFr : node.zone}
                         </span>
                         {/* Chevron */}
                         <span

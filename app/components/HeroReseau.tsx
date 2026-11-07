@@ -33,6 +33,8 @@ const NOEUDS: Noeud[] = [
   { id: "veille", href: "#veille", fr: "Veille cyber", en: "Cyber watch", x: 870, y: 100, cable: "M670 250 C715 250 715 100 759 100", couleur: "#a78bfa" },
   { id: "competences", href: "#competences", fr: "Compétences", en: "Skills", x: 870, y: 280, cable: "M670 280 H759", couleur: "#22d3ee" },
   { id: "synthese", href: "#synthese", fr: "Tableau de synthèse", en: "Summary table", x: 870, y: 460, cable: "M670 310 C715 310 715 460 759 460", couleur: "#6366f1" },
+  { id: "certifications", href: "#certifications", fr: "Certifications", en: "Certifications", x: 0, y: 0, cable: "M0 0", couleur: "#22d3ee" },
+  { id: "apprentissage", href: "#apprentissage", fr: "Apprentissage", en: "Learning", x: 0, y: 0, cable: "M0 0", couleur: "#60a5fa" },
   { id: "contact", href: "#contact", fr: "Contact", en: "Contact", x: 500, y: 500, cable: "M500 365 V468", couleur: "#93c5fd" },
 ];
 

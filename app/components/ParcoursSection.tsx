@@ -176,7 +176,7 @@ export default function ParcoursSection({ isMobile }: ParcoursProps) {
   const priseBord = isDark ? "#475569" : "#8d9bb0";
 
   return (
-    <section id="parcours" className="px-4 pb-16 mt-16">
+    <section id="parcours" className="lisible px-4 pb-16 mt-16">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 text-center mb-12">
           {h.parcours.heading}

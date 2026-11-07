@@ -13,7 +13,7 @@ import CyberWatchSection from "@/app/components/CyberWatchSection";
 import BlueprintZone from "@/app/components/BlueprintZone";
 import LabsSpotlight from "@/app/components/LabsSpotlight";
 import ApprentissageSection from "@/app/components/ApprentissageSection";
-import FormationSection from "@/app/components/FormationSection";
+import CertificationsSection from "@/app/components/CertificationsSection";
 import InfraSection from "@/app/components/InfraSection";
 import CompetencesSection from "@/app/components/CompetencesSection";
 import SyntheseSection from "@/app/components/SyntheseSection";
@@ -67,7 +67,7 @@ export default function Home() {
           return;
         }
         // Sections sans lien dans la barre : rattachées à la section dont elles font partie
-        const RATTACHE: Record<string, string> = { formation: "apprentissage", labs: "projects" };
+        const RATTACHE: Record<string, string> = { certifications: "apprentissage", labs: "projects" };
         const ids = [...NAV_LINKS.map((l) => l.href.replace("#", "")), ...Object.keys(RATTACHE)];
         let current = "";
         let meilleur = -Infinity;
@@ -179,8 +179,8 @@ export default function Home() {
           {/* ── APPRENTISSAGE : ce que j apprends, pourquoi, comment, où j en suis ── */}
           <ApprentissageSection />
 
-          {/* ── FORMATION & CERTIFICATIONS ── */}
-          <FormationSection />
+          {/* ── CERTIFICATIONS ── */}
+          <CertificationsSection />
 
           {/* ── ZONE BLUEPRINT : Projets + Veille cyber + Infra ── */}
           <BlueprintZone>

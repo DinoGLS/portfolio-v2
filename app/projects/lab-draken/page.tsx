@@ -44,10 +44,10 @@ const data: BPData = {
       title: { fr: "OPNsense comme routeur du lab", en: "OPNsense as the lab router" },
       subtitle: { fr: "pare-feu virtualisé, WAN + LAN", en: "virtualized firewall, WAN + LAN" },
       desc: {
-        fr: "J'ai installé OPNsense en VM (101) pour qu'il devienne le routeur/pare-feu de tout le lab. Au départ il n'a que deux interfaces : WAN (vmbr0, la carte physique du serveur) et LAN (vmbr1, mon réseau interne 192.168.2.0/24).",
-        en: "I installed OPNsense as a VM (101) to make it the router/firewall for the whole lab. At first it only has two interfaces: WAN (vmbr0, the server's physical NIC) and LAN (vmbr1, my internal network 192.168.2.0/24).",
+        fr: "J'ai installé OPNsense en VM (101) pour qu'il devienne le routeur/pare-feu de tout le lab. Au départ il n'a que deux interfaces : WAN (vmbr0, la carte physique du serveur) et LAN (vmbr1, mon réseau interne).",
+        en: "I installed OPNsense as a VM (101) to make it the router/firewall for the whole lab. At first it only has two interfaces: WAN (vmbr0, the server's physical NIC) and LAN (vmbr1, my internal network).",
       },
-      features: ["vmbr0 WAN", "vmbr1 LAN 192.168.2.0/24", "Gateway .1 par segment", "Blocage par défaut"],
+      features: ["vmbr0 WAN", "vmbr1 LAN (réseau du lab)", "Une passerelle par segment", "Blocage par défaut"],
       lang: "bash",
       code: "qm set 101 -net0 virtio,bridge=vmbr0\nqm set 101 -net1 virtio,bridge=vmbr1",
     },
@@ -73,7 +73,7 @@ const data: BPData = {
       },
       features: ["Module lxc réutilisable", "Module vm cloud-init", "Nouveau service = quelques lignes", "Pas de copier-coller"],
       lang: "hcl",
-      code: 'module "edge" {\n  source     = "./modules/lxc"\n  vm_id      = 110\n  bridge     = "vmbr1"\n  ip_address = "192.168.2.10/24"\n}',
+      code: 'module "edge" {\n  source     = "./modules/lxc"\n  vm_id      = 110\n  bridge     = "vmbr1"\n  ip_address = var.edge_ip\n}',
     },
     {
       num: "04",
@@ -81,8 +81,8 @@ const data: BPData = {
       title: { fr: "Segmentation réseau AD / DMZ par Terraform", en: "AD / DMZ network segmentation via Terraform" },
       subtitle: { fr: "bridges isolés, ports = []", en: "isolated bridges, ports = []" },
       desc: {
-        fr: "Je pensais au départ que Terraform ne pouvait gérer que des VM/LXC, pas le réseau lui-même — en creusant la doc du provider bpg j'ai trouvé la ressource qu'il fallait. J'ai écrit un module network qui crée les bridges vmbr2 (AD, 192.168.10.0/24) et vmbr3 (DMZ, 192.168.20.0/24), isolés (pas de carte physique). Par contre j'ai volontairement laissé vmbr0/vmbr1 hors de Terraform : ils existaient déjà avant que je m'en serve sur ce projet, et je ne voulais pas risquer de les casser avec un drift de state sur un lab qui doit rester joignable.",
-        en: "I initially thought Terraform could only manage VMs/LXCs, not the network itself — digging into the bpg provider's docs I found the right resource. I wrote a network module that creates the vmbr2 (AD, 192.168.10.0/24) and vmbr3 (DMZ, 192.168.20.0/24) bridges, isolated (no physical NIC). I deliberately left vmbr0/vmbr1 out of Terraform though: they already existed before I started using it on this project, and I didn't want to risk breaking them with a state drift on a lab that has to stay reachable.",
+        fr: "Je pensais au départ que Terraform ne pouvait gérer que des VM/LXC, pas le réseau lui-même — en creusant la doc du provider bpg j'ai trouvé la ressource qu'il fallait. J'ai écrit un module network qui crée les bridges vmbr2 (AD) et vmbr3 (DMZ), isolés (pas de carte physique). Par contre j'ai volontairement laissé vmbr0/vmbr1 hors de Terraform : ils existaient déjà avant que je m'en serve sur ce projet, et je ne voulais pas risquer de les casser avec un drift de state sur un lab qui doit rester joignable.",
+        en: "I initially thought Terraform could only manage VMs/LXCs, not the network itself — digging into the bpg provider's docs I found the right resource. I wrote a network module that creates the vmbr2 (AD) and vmbr3 (DMZ) bridges, isolated (no physical NIC). I deliberately left vmbr0/vmbr1 out of Terraform though: they already existed before I started using it on this project, and I didn't want to risk breaking them with a state drift on a lab that has to stay reachable.",
       },
       features: ["vmbr2 AD isolé", "vmbr3 DMZ isolé", "ports = [] (sans NIC physique)", "vmbr0/vmbr1 hors state Terraform"],
       lang: "hcl",

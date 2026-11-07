@@ -1,7 +1,9 @@
 // Génère app/data/apprentissage.json à partir du suivi de progression tenu par le professeur d'apprentissage.
 //
-//   node scripts/build-apprentissage.mjs [chemin/vers/02 - Suivi de progression.md]
-//   (ou variable d'environnement SUIVI_PATH)
+//   node scripts/build-apprentissage.mjs [suivi.md] [sortie.json]
+//   (ou variables d'environnement SUIVI_PATH et SORTIE_PATH)
+//   Sans 2e argument : écrit app/data/apprentissage.json (copie embarquée dans le site, utilisée en secours).
+//   Sur le serveur apps, un cron l'exécute toutes les 30 min avec une sortie lue par le conteneur (voir README).
 //
 // DÉPENDANCE AU FORMAT — le professeur ne doit pas casser ces deux tableaux de « 02 - Suivi de progression.md » :
 //   1. « ## Niveau par notion »       colonnes : | Notion | Statut | Dernier test | Remarque |
@@ -15,6 +17,7 @@ import path from "node:path";
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1")), "..");
 const DEFAUT = "C:/Users/Asus/Documents/Obsidian Vault/01 Etudiant/Apprentissage Python/02 - Suivi de progression.md";
 const source = process.argv[2] || process.env.SUIVI_PATH || DEFAUT;
+const sortieArg = process.argv[3] || process.env.SORTIE_PATH || null;
 const txt = fs.readFileSync(source, "utf8").replace(/\r\n/g, "\n");
 
 const nettoie = (s) => s.replace(/\*\*/g, "").replace(/`/g, "").replace(/\[\[([^\]|]+)(\|[^\]]+)?\]\]/g, "$1").replace(/\s+/g, " ").trim();
@@ -80,6 +83,14 @@ const sortie = {
   heures: { total: Math.round(heures * 10) / 10, seances: seances.length, seancesMesurees: mesurees.length, derniereSeance: derniere ? derniere.toISOString().slice(0, 10) : null, parSemaine: semaines },
 };
 
-const dest = path.join(ROOT, "app", "data", "apprentissage.json");
-fs.writeFileSync(dest, JSON.stringify(sortie, null, 2) + "\n");
-console.log(`écrit ${path.relative(ROOT, dest)} : ${notions.length} notions (${sortie.compteurs.acquis} acquises, ${sortie.compteurs.fragile} fragiles), ${sortie.heures.total} h sur ${seances.length} séances, dernière séance ${sortie.heures.derniereSeance}`);
+// Garde-fou : si le format du suivi a changé et que rien n'est lu, on n'écrase PAS le fichier existant
+if (notions.length === 0 || seances.length === 0) {
+  console.error("ERREUR : aucune notion ou aucune séance lue : le format de « 02 - Suivi de progression.md » a-t-il changé ? Fichier de sortie inchangé.");
+  process.exit(1);
+}
+const dest = sortieArg ? path.resolve(sortieArg) : path.join(ROOT, "app", "data", "apprentissage.json");
+// Écriture atomique : fichier temporaire puis renommage, pour qu'un lecteur ne voie jamais un fichier à moitié écrit
+const tmp = dest + ".tmp";
+fs.writeFileSync(tmp, JSON.stringify(sortie, null, 2) + "\n");
+fs.renameSync(tmp, dest);
+console.log(`${new Date().toISOString()} écrit ${sortieArg ? dest : path.relative(ROOT, dest)} : ${notions.length} notions (${sortie.compteurs.acquis} acquises, ${sortie.compteurs.fragile} fragiles), ${sortie.heures.total} h sur ${seances.length} séances, dernière séance ${sortie.heures.derniereSeance}`);

@@ -49,7 +49,7 @@ export default function CompetencesSection() {
   const { lang } = useLanguage();
 
   return (
-    <section id="competences" className="px-4 pb-24 mt-16">
+    <section id="competences" className="lisible px-4 pb-24 mt-16">
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-xl mx-auto mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100 mb-3">

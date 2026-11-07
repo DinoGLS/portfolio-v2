@@ -17,7 +17,7 @@ export default function LabsSpotlight() {
   const labs = ALL_PROJECTS.filter((p) => p.featured && p.lab);
 
   return (
-    <section id="labs" className="relative mt-16 pt-20 md:pt-24 px-4 scroll-mt-20">
+    <section id="labs" className="lisible relative mt-16 pt-20 md:pt-24 px-4 scroll-mt-20">
       <div className="relative max-w-6xl mx-auto">
         <div className="max-w-2xl mx-auto text-center mb-9">
           <p className="font-mono text-[11px] tracking-[0.2em] font-medium mb-3" style={{ color: bp.accent }}>
