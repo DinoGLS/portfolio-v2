@@ -15,6 +15,7 @@ import LabsSpotlight from "@/app/components/LabsSpotlight";
 import ApprentissageSection from "@/app/components/ApprentissageSection";
 import CertificationsSection from "@/app/components/CertificationsSection";
 import CvSection from "@/app/components/CvSection";
+import NavSelecteur from "@/app/components/NavSelecteur";
 import InfraSection from "@/app/components/InfraSection";
 import CompetencesSection from "@/app/components/CompetencesSection";
 import SyntheseSection from "@/app/components/SyntheseSection";
@@ -40,13 +41,20 @@ export default function Home() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  // Toutes les sections de la page, dans l'ordre : elles alimentent le sélecteur de la barre du haut
+  const fr = lang === "fr";
   const NAV_LINKS = [
-    { label: lang === "fr" ? "Accueil" : "Home", href: "#top" },
-    { label: lang === "fr" ? "Parcours" : "Background", href: "#parcours" },
-    { label: lang === "fr" ? "Apprentissage" : "Learning", href: "#apprentissage" },
-    { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
-    { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
-    { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
+    { label: fr ? "Accueil" : "Home", href: "#top" },
+    { label: fr ? "Parcours" : "Background", href: "#parcours" },
+    { label: fr ? "Apprentissage" : "Learning", href: "#apprentissage" },
+    { label: fr ? "Mon CV" : "My CV", href: "#cv" },
+    { label: "Certifications", href: "#certifications" },
+    { label: "Labs", href: "#labs" },
+    { label: fr ? "Projets" : "Projects", href: "#projects" },
+    { label: fr ? "Veille cyber" : "Cyber watch", href: "#veille" },
+    { label: "Infrastructure", href: "#infra" },
+    { label: fr ? "Compétences" : "Skills", href: "#competences" },
+    { label: fr ? "Synthèse" : "Summary", href: "#synthese" },
     { label: "Contact", href: "#contact" },
   ].filter((l) => !(SANS_SYNTHESE && l.href === "#synthese"));
 
@@ -68,16 +76,14 @@ export default function Home() {
           setActiveSection("contact");
           return;
         }
-        // Sections sans lien dans la barre : rattachées à la section dont elles font partie
-        const RATTACHE: Record<string, string> = { cv: "apprentissage", certifications: "apprentissage", labs: "projects" };
-        const ids = [...NAV_LINKS.map((l) => l.href.replace("#", "")), ...Object.keys(RATTACHE)];
+        const ids = NAV_LINKS.map((l) => l.href.replace("#", ""));
         let current = "";
         let meilleur = -Infinity;
         for (const id of ids) {
           const el = document.getElementById(id);
           if (!el) continue;
           const top = el.getBoundingClientRect().top;
-          if (top <= 100 && top > meilleur) { meilleur = top; current = RATTACHE[id] ?? id; }
+          if (top <= 100 && top > meilleur) { meilleur = top; current = id; }
         }
         if (current) setActiveSection(current);
       });
@@ -119,55 +125,12 @@ export default function Home() {
   return (
     <>
       {/* ── NAVBAR ── */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 flex justify-center transition-transform duration-150 ${navCachee ? "-translate-y-24 pointer-events-none" : ""}`}
-        aria-hidden={navCachee}
-      >
-        <div className="flex items-center justify-center md:justify-between w-full max-w-4xl px-3 md:px-5 py-2 rounded-full border backdrop-blur-md shadow-lg border-slate-200/70 bg-white/90 dark:border-blue-500/25 dark:bg-slate-900/90">
-          {/* Brand */}
-          <a
-            href="#"
-            onClick={(e) => scrollToSection(e, "#top")}
-            className="hidden md:inline-flex font-mono text-sm font-bold text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 select-none whitespace-nowrap"
-          >
-            <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"<"}</span>Dino
-            <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"/>"}</span>
-          </a>
-          <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar">
-            {NAV_LINKS.map((link) => {
-              const id = link.href.replace("#", "");
-              const isActive = activeSection === id;
-              // Pas de `transition` sur ces liens : le survol et le changement de
-              // section actif doivent être instantanés, sans effet qui traîne.
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={(e) => {
-                    if (!link.href.startsWith("/")) {
-                      scrollToSection(e, link.href);
-                    }
-                  }}
-                  className={`relative px-2 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-mono tracking-wide whitespace-nowrap
-                    ${
-                      isActive
-                        ? "text-blue-700 bg-blue-500/10 border border-blue-500/30 dark:text-blue-300"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 border border-transparent dark:text-slate-300 dark:hover:text-blue-300 dark:hover:bg-blue-500/10"
-                    }`}
-                >
-                  {link.label}
-                  {isActive && (
-                    <span
-                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400"
-                      style={{ boxShadow: "0 0 4px var(--glow-accent)" }}
-                    />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
+      <NavSelecteur
+        sections={NAV_LINKS.map((l) => ({ id: l.href.replace("#", ""), label: l.label, href: l.href }))}
+        actifId={activeSection}
+        onAller={(href) => scrollToSection({ preventDefault() {} } as React.MouseEvent<HTMLAnchorElement>, href)}
+        cachee={navCachee}
+      />
 
       {/* ── SIDEBAR RÉSEAUX SOCIAUX ── */}
       <SocialSidebar />
