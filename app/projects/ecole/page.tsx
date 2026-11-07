@@ -8,6 +8,7 @@ const data: BPData = {
     en: "Installable web app to revise for the BTS: sectioned courses, quizzes, graded exams, revision tracking and a weekly plan. Courses come from my Obsidian notes, synced into a PostgreSQL database.",
   },
   status: { fr: "En production", en: "Live" },
+  img: "/projects/ecole/preview.jpg",
   statusColor: "#3b82f6",
   badges: [
     { label: "Node.js", color: "#3b82f6" },

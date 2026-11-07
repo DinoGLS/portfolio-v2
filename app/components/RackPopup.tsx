@@ -129,7 +129,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
         <button
           onClick={() => setIsOpen(true)}
           aria-label={lang === "fr" ? "Ouvrir le rack infra" : "Open infra rack"}
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-[60] flex flex-col items-center gap-[7px] transition-all hover:pr-1"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-[60] hidden md:flex flex-col items-center gap-[7px] transition-all hover:pr-1"
           style={{
             background: clair ? (neige ? "rgba(255,255,255,0.96)" : "rgba(228,221,238,0.94)") : "rgba(8,28,49,0.85)",
             border: clair ? (neige ? "1px solid rgba(31,26,46,0.2)" : "1px solid rgba(110,90,160,0.3)") : "1px solid rgba(76,196,255,0.32)",

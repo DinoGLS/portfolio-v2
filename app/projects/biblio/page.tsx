@@ -8,6 +8,7 @@ const data: BPData = {
     en: "My knowledge notes (Obsidian) are published as readable books, installable on a phone and usable offline.",
   },
   status: { fr: "En production", en: "Live" },
+  img: "/projects/biblio/preview.jpg",
   statusColor: "#ea580c",
   badges: [
     { label: "Python", color: "#ea580c" },

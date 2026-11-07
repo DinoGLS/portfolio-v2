@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" role="img" aria-label="Architecture du projet SISR sur serverecole">
+<rect width="1000" height="600" fill="#fafbfd"/>
+<text x="40" y="38" font-size="20" font-weight="800" fill="#1f1a2e" text-anchor="start">Projet SISR — serverecole</text>
+<text x="40" y="58" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Serveur dédié (Dell OptiPlex Micro, Proxmox VE 9) · 4 VM · état au 07/11/2026</text>
+<rect x="30" y="76" width="940" height="480" rx="14" fill="#f4f5fb" stroke="#5c5968" stroke-width="1.5" stroke-dasharray="0"/>
+<text x="954" y="100" font-size="12" font-weight="700" fill="#5c5968" text-anchor="end" letter-spacing="0.08em">SERVERECOLE — HÔTE PROXMOX VE</text>
+<text x="150" y="108" font-size="12" font-weight="400" fill="#5c5968" text-anchor="middle">Internet / box de l'école</text>
+<path d="M150 114 L150 134" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<rect x="50" y="134" width="200" height="130" rx="8" fill="#ffffff" stroke="#aa0003" stroke-width="1.5"/>
+<text x="64" y="158" font-size="14" font-weight="700" fill="#1f1a2e" text-anchor="start">OPNsense · VM 100</text>
+<text x="64" y="178" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">pare-feu · routeur</text>
+<text x="64" y="195" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">règles journalisées</text>
+<text x="64" y="212" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">SNMP lecture seule</text>
+<circle cx="234" cy="152" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<rect x="64" y="232" width="37.8" height="22" rx="11" fill="#fff" stroke="#e8b3b3" stroke-width="1"/>
+<text x="82.9" y="247" font-size="11" font-weight="400" fill="#aa0003" text-anchor="middle" font-family="ui-monospace,Consolas,monospace">WAN</text>
+<rect x="107.8" y="232" width="31.2" height="22" rx="11" fill="#fff" stroke="#e8b3b3" stroke-width="1"/>
+<text x="123.39999999999999" y="247" font-size="11" font-weight="400" fill="#aa0003" text-anchor="middle" font-family="ui-monospace,Consolas,monospace">AD</text>
+<rect x="145" y="232" width="37.8" height="22" rx="11" fill="#fff" stroke="#e8b3b3" stroke-width="1"/>
+<text x="163.9" y="247" font-size="11" font-weight="400" fill="#aa0003" text-anchor="middle" font-family="ui-monospace,Consolas,monospace">DMZ</text>
+<text x="50" y="300" font-size="12" font-weight="700" fill="#1f1a2e" text-anchor="start">Réseau local de l'école</text>
+<text x="50" y="318" font-size="11.5" font-weight="400" fill="#5c5968" text-anchor="start">vmbr0 : hôte + WAN du pare-feu</text>
+<path d="M250 190 L292 190" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<rect x="292" y="100" width="660" height="232" rx="14" fill="#fdf6f6" stroke="#aa0003" stroke-width="1.5" stroke-dasharray="7 5"/>
+<text x="308" y="124" font-size="12" font-weight="700" fill="#5c5968" text-anchor="start" letter-spacing="0.08em">ZONE AD · VMBR1 · DOMAINE DU PROJET</text>
+<rect x="310" y="128" width="200" height="112" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5"/>
+<text x="324" y="152" font-size="14" font-weight="700" fill="#1f1a2e" text-anchor="start">AD-DC01 · VM 101</text>
+<text x="324" y="172" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Windows Server 2022</text>
+<text x="324" y="189" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">AD DS · DNS · DHCP</text>
+<text x="324" y="206" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">politique de mot de passe</text>
+<circle cx="494" cy="146" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<rect x="524" y="128" width="200" height="112" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5"/>
+<text x="538" y="152" font-size="14" font-weight="700" fill="#1f1a2e" text-anchor="start">LINUX-SRV01 · VM 102</text>
+<text x="538" y="172" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Debian 12, membre du domaine</text>
+<text x="538" y="189" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">GLPI · Kanboard</text>
+<text x="538" y="206" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">PostgreSQL · CrowdSec</text>
+<circle cx="708" cy="146" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<rect x="738" y="128" width="200" height="112" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5"/>
+<text x="752" y="152" font-size="14" font-weight="700" fill="#1f1a2e" text-anchor="start">SUPERVISION · VM 103</text>
+<text x="752" y="172" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Debian 12, membre du domaine</text>
+<text x="752" y="189" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Zabbix (4 hôtes)</text>
+<text x="752" y="206" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">OPNsense en SNMP</text>
+<circle cx="922" cy="146" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<text x="310" y="270" font-size="11.5" font-weight="400" fill="#5c5968" text-anchor="start">Authentification AD pour GLPI (LDAP) · règles de tickets par catégorie · SLA</text>
+<text x="310" y="290" font-size="11.5" font-weight="400" fill="#5c5968" text-anchor="start">DHCP : étendue 100-200 sur AD-DC01 (offre vérifiée, poste client à joindre)</text>
+<text x="310" y="310" font-size="11.5" font-weight="400" fill="#5c5968" text-anchor="start">Exposition : seul le port d'agent Zabbix traverse la DMZ vers l'AD</text>
+<path d="M150 264 L150 366" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M150 366 L292 366" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<rect x="292" y="348" width="660" height="190" rx="14" fill="#f4f5fb" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="308" y="372" font-size="12" font-weight="700" fill="#5c5968" text-anchor="start" letter-spacing="0.08em">DMZ · VMBR2</text>
+<rect x="310" y="376" width="200" height="82" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="324" y="400" font-size="14" font-weight="700" fill="#8a8998" text-anchor="start">LB-demo</text>
+<text x="324" y="420" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">HAProxy (répartiteur)</text>
+<text x="324" y="437" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">PH.3 : à faire</text>
+<circle cx="494" cy="394" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<rect x="524" y="376" width="200" height="82" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="538" y="400" font-size="14" font-weight="700" fill="#8a8998" text-anchor="start">web-a</text>
+<text x="538" y="420" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">serveur web de démo</text>
+<text x="538" y="437" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">à créer</text>
+<circle cx="708" cy="394" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<rect x="738" y="376" width="200" height="82" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="752" y="400" font-size="14" font-weight="700" fill="#8a8998" text-anchor="start">web-b</text>
+<text x="752" y="420" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">serveur web de démo</text>
+<text x="752" y="437" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">à créer</text>
+<circle cx="922" cy="394" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<text x="310" y="488" font-size="11.5" font-weight="400" fill="#5c5968" text-anchor="start">AD ↔ DMZ refusé par défaut · tout le reste journalisé</text>
+<text x="310" y="508" font-size="11.5" font-weight="400" fill="#8a8998" text-anchor="start">PH.4 sauvegarde / PRA : en attente d'un NAS · PH.5 documentation : au fil de l'eau</text>
+<circle cx="40" cy="578" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<text x="52" y="582" font-size="11" font-weight="400" fill="#5c5968" text-anchor="start">en place</text>
+<circle cx="130" cy="578" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<text x="142" y="582" font-size="11" font-weight="400" fill="#5c5968" text-anchor="start">à faire / éteint</text>
+<path d="M260 578 L290 578" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<text x="298" y="582" font-size="11" font-weight="400" fill="#5c5968" text-anchor="start">flux routé par le pare-feu</text>
+</svg>

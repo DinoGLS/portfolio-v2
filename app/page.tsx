@@ -11,6 +11,9 @@ import ParcoursSection from "@/app/components/ParcoursSection";
 import ProjectsExplorer from "@/app/components/ProjectsExplorer";
 import CyberWatchSection from "@/app/components/CyberWatchSection";
 import BlueprintZone from "@/app/components/BlueprintZone";
+import LabsSpotlight from "@/app/components/LabsSpotlight";
+import ApprentissageSection from "@/app/components/ApprentissageSection";
+import FormationSection from "@/app/components/FormationSection";
 import InfraSection from "@/app/components/InfraSection";
 import CompetencesSection from "@/app/components/CompetencesSection";
 import SyntheseSection from "@/app/components/SyntheseSection";
@@ -38,6 +41,7 @@ export default function Home() {
   const NAV_LINKS = [
     { label: lang === "fr" ? "Accueil" : "Home", href: "#top" },
     { label: lang === "fr" ? "Parcours" : "Background", href: "#parcours" },
+    { label: lang === "fr" ? "Apprentissage" : "Learning", href: "#apprentissage" },
     { label: lang === "fr" ? "Projets" : "Projects", href: "#projects" },
     { label: lang === "fr" ? "Compétences" : "Skills", href: "#competences" },
     { label: lang === "fr" ? "Synthèse" : "Summary", href: "#synthese" },
@@ -62,11 +66,16 @@ export default function Home() {
           setActiveSection("contact");
           return;
         }
-        const ids = NAV_LINKS.map((l) => l.href.replace("#", ""));
+        // Sections sans lien dans la barre : rattachées à la section dont elles font partie
+        const RATTACHE: Record<string, string> = { formation: "apprentissage", labs: "projects" };
+        const ids = [...NAV_LINKS.map((l) => l.href.replace("#", "")), ...Object.keys(RATTACHE)];
         let current = "";
+        let meilleur = -Infinity;
         for (const id of ids) {
           const el = document.getElementById(id);
-          if (el && el.getBoundingClientRect().top <= 100) current = id;
+          if (!el) continue;
+          const top = el.getBoundingClientRect().top;
+          if (top <= 100 && top > meilleur) { meilleur = top; current = RATTACHE[id] ?? id; }
         }
         if (current) setActiveSection(current);
       });
@@ -167,8 +176,15 @@ export default function Home() {
           <AccueilScene isMobile={isMobile} onNavigate={scrollToSection} />
           <ParcoursSection isMobile={isMobile} />
 
+          {/* ── APPRENTISSAGE : ce que j apprends, pourquoi, comment, où j en suis ── */}
+          <ApprentissageSection />
+
+          {/* ── FORMATION & CERTIFICATIONS ── */}
+          <FormationSection />
+
           {/* ── ZONE BLUEPRINT : Projets + Veille cyber + Infra ── */}
           <BlueprintZone>
+            <LabsSpotlight />
             <ProjectsExplorer />
             <CyberWatchSection isMobile={isMobile} />
             <InfraSection isMobile={isMobile} />

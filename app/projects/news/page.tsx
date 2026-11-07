@@ -7,7 +7,8 @@ const data: BPData = {
     fr: "Outil de veille pour le BTS : il collecte des flux d'actualité, fait trier les articles par un modèle de langage et m'envoie un résumé quotidien sur Telegram.",
     en: "Watch tool for the BTS: it collects news feeds, has a language model sort the articles and sends me a daily digest on Telegram.",
   },
-  status: { fr: "En cours", en: "In progress" },
+  status: { fr: "En production", en: "Live" },
+  img: "/projects/news/preview.jpg",
   statusColor: "#16a34a",
   badges: [
     { label: "Groq", color: "#16a34a" },

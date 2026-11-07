@@ -342,3 +342,7 @@ html:not([data-palette="aube"]) .sq.sq-clair .sq-halo { background:radial-gradie
 html[data-palette="aube"]:not(.dark) body { background-color: #e9e3f0; }
 
 .sq.sq-clair .caret { background: var(--atag); }
+
+/* Parcours : position des prises (téléphone : le long du bord gauche ; ordinateur : de part et d'autre du centre) */
+.parcours-zone { --nxa: 10px; --nxb: 26px; }
+@media (min-width: 768px) { .parcours-zone { --nxa: calc(50% - 60px); --nxb: calc(50% + 60px); } }

@@ -1,82 +1,82 @@
 import BlueprintProject, { BPData } from "@/app/components/projects/BlueprintProject";
 
+// Lab AD perso : les VM 170 (contrôleur) et 171 (client) ont été supprimées.
+// La page décrit donc le plan de reconstruction, sans prétendre que le lab tourne.
 const data: BPData = {
   tag: { fr: "INFRA · ACTIVE DIRECTORY", en: "INFRA · ACTIVE DIRECTORY" },
-  title: { fr: "Lab Active Directory", en: "Active Directory Lab" },
+  title: { fr: "Lab Active Directory sur mon Proxmox", en: "Active Directory lab on my Proxmox" },
   subtitle: {
-    fr: "Lab AD sous Proxmox VE : DC Windows Server, forêt SISR.LOCAL, DNS/DHCP, GPO.",
-    en: "AD Lab on Proxmox VE: Windows Server DC, SISR.LOCAL forest, DNS/DHCP, GPO."
+    fr: "Un domaine complet (contrôleur Windows Server, poste Windows 11, GPO) sur un segment isolé de mon homelab. J'ai monté une première version, puis supprimé les VM : je le refais de zéro pour le documenter proprement.",
+    en: "A full domain (Windows Server controller, Windows 11 workstation, GPOs) on an isolated segment of my homelab. I built a first version, then deleted the VMs: I am redoing it from scratch to document it properly."
   },
-  status: { fr: "En cours", en: "In progress" },
-  img: "/projects/ad-proxmox/ad_proxmox.png",
+  status: { fr: "À recréer", en: "To rebuild" },
+  img: "/projects/ad-proxmox/schema-ad.svg",
   badges: [
     { label: "Proxmox VE" },
-    { label: "Windows Server" },
+    { label: "Windows Server 2022" },
     { label: "Active Directory" },
     { label: "PowerShell" },
   ],
   stats: [
-    { k: { fr: "VMs déployées", en: "Deployed VMs" }, v: "3" },
-    { k: { fr: "Domaine", en: "Domain" }, v: "SISR.LOCAL" },
-    { k: { fr: "Ressources Allouées", en: "Allocated Resources" }, v: "8 vCPU / 16GB RAM" },
+    { k: { fr: "VM à recréer", en: "VMs to rebuild" }, v: "2" },
+    { k: { fr: "Segment réseau", en: "Network segment" }, v: "vmbr2 isolé" },
+    { k: { fr: "Passerelle", en: "Gateway" }, v: "OPNsense" },
   ],
   toc: [
-    { fr: "Hyperviseur Proxmox", en: "Proxmox Hypervisor" },
-    { fr: "Déploiement AD DS", en: "AD DS Deployment" },
-    { fr: "Services DNS/DHCP", en: "DNS/DHCP Services" },
-    { fr: "Configuration GPO", en: "GPO Configuration" }
+    { fr: "Le segment réseau", en: "The network segment" },
+    { fr: "Les deux VM", en: "The two VMs" },
+    { fr: "Le domaine", en: "The domain" },
+    { fr: "Le poste client", en: "The client workstation" },
   ],
   planned: [
-    { fr: "Finaliser les GPO de sécurité", en: "Finalize security GPOs" },
-    { fr: "Tests de bascule et de tolérance aux pannes", en: "Failover and fault tolerance tests" },
-    { fr: "Documentation et livrable PDF", en: "Documentation and PDF deliverable" }
+    { fr: "Recréer le contrôleur et le client, puis joindre le poste au domaine", en: "Rebuild the controller and the client, then join the workstation to the domain" },
+    { fr: "Écrire le plan d'adressage, la liste des unités d'organisation et des GPO", en: "Write the addressing plan, the list of organizational units and GPOs" },
+    { fr: "Prendre des captures nettes et rédiger la fiche de réalisation", en: "Take sharp screenshots and write the write-up" },
   ],
   steps: [
     {
       num: "01",
-      title: { fr: "Hyperviseur Proxmox", en: "Proxmox Hypervisor" },
-      subtitle: { fr: "Création des VMs", en: "VM Creation" },
+      title: { fr: "Le segment réseau", en: "The network segment" },
+      subtitle: { fr: "Déjà en place", en: "Already in place" },
       desc: {
-        fr: "Déploiement de l'environnement virtuel sous Proxmox VE, création des machines virtuelles et configuration du pont réseau (bridge).",
-        en: "Deployment of the virtual environment under Proxmox VE, creation of virtual machines and network bridge configuration."
+        fr: "Le pont vmbr2 existe déjà : c'est un segment réservé à l'AD, isolé du réseau du lab et de la DMZ, dont la passerelle est OPNsense. Il n'a pas de carte physique, il ne sort que par le pare-feu.",
+        en: "The vmbr2 bridge already exists: a segment reserved for AD, isolated from the lab network and the DMZ, with OPNsense as its gateway. It has no physical NIC and only leaves through the firewall."
       },
-      lang: "bash",
-      code: "qm create 100 --name dc01 --memory 4096 --cores 2 --net0 virtio,bridge=vmbr1"
     },
     {
       num: "02",
-      title: { fr: "Déploiement AD DS", en: "AD DS Deployment" },
-      subtitle: { fr: "Forêt SISR.LOCAL", en: "SISR.LOCAL Forest" },
+      title: { fr: "Les deux VM", en: "The two VMs" },
+      subtitle: { fr: "Contrôleur et client", en: "Controller and client" },
       desc: {
-        fr: "Installation du rôle Active Directory Domain Services et promotion du serveur en tant que contrôleur de domaine pour la nouvelle forêt SISR.LOCAL.",
-        en: "Installation of the Active Directory Domain Services role and promotion of the server as a domain controller for the new SISR.LOCAL forest."
+        fr: "Un Windows Server 2022 (évaluation) pour le contrôleur de domaine et un Windows 11 Entreprise pour le poste. Disque et carte réseau en VirtIO, avec les pilotes montés à l'installation.",
+        en: "A Windows Server 2022 (evaluation) for the domain controller and a Windows 11 Enterprise for the workstation. Disk and network card in VirtIO, with drivers mounted at install time."
       },
-      lang: "powershell",
-      code: "Install-WindowsFeature AD-Domain-Services -IncludeManagementTools\nInstall-ADDSForest -DomainName 'SISR.LOCAL' -InstallDns"
+      lang: "bash",
+      code: "# création de la VM du contrôleur (exemple)\nqm create <id> --name ad-dc --memory 4096 --cores 2 \\\n  --net0 virtio,bridge=vmbr2 --scsi0 local-lvm:60",
     },
     {
       num: "03",
-      title: { fr: "Services DNS/DHCP", en: "DNS/DHCP Services" },
-      subtitle: { fr: "Résolution et adressage", en: "Resolution and addressing" },
+      title: { fr: "Le domaine", en: "The domain" },
+      subtitle: { fr: "AD DS, DNS, DHCP", en: "AD DS, DNS, DHCP" },
       desc: {
-        fr: "Configuration de la zone DNS intégrée à l'AD et mise en place d'une étendue DHCP pour les postes clients du réseau local.",
-        en: "Configuration of the AD-integrated DNS zone and setup of a DHCP scope for the local network clients."
+        fr: "Installer le rôle AD DS, promouvoir le serveur en contrôleur d'un nouveau domaine, puis ajouter le DHCP pour que les postes obtiennent leur adresse et trouvent le DNS du domaine.",
+        en: "Install the AD DS role, promote the server to controller of a new domain, then add DHCP so workstations get their address and find the domain DNS."
       },
       lang: "powershell",
-      code: "Add-DhcpServerv4Scope -Name 'LAN-Clients' -StartRange 192.168.10.100 -EndRange 192.168.10.200 -SubnetMask 255.255.255.0"
+      code: "Install-WindowsFeature AD-Domain-Services -IncludeManagementTools\nInstall-ADDSForest -DomainName '<mon-domaine>' -InstallDns",
     },
     {
       num: "04",
-      title: { fr: "Configuration GPO", en: "GPO Configuration" },
-      subtitle: { fr: "Stratégies de groupe", en: "Group Policies" },
+      title: { fr: "Le poste client", en: "The client workstation" },
+      subtitle: { fr: "Jonction et GPO", en: "Join and GPOs" },
       desc: {
-        fr: "Création des Unités d'Organisation (OU) et application des premières stratégies de groupe (GPO) pour la sécurité et les paramètres utilisateurs.",
-        en: "Creation of Organizational Units (OU) and application of the first group policies (GPO) for security and user settings."
+        fr: "Joindre le Windows 11 au domaine, créer des unités d'organisation, des groupes et quelques GPO (sécurité, mots de passe), puis vérifier qu'un utilisateur du domaine ouvre bien une session.",
+        en: "Join the Windows 11 to the domain, create organizational units, groups and a few GPOs (security, passwords), then check that a domain user can log in."
       },
       lang: "powershell",
-      code: "New-ADOrganizationalUnit -Name 'IT_Dept' -Path 'DC=SISR,DC=LOCAL'\nNew-GPO -Name 'Security_Base_Policy'\nNew-GPLink -Name 'Security_Base_Policy' -Target 'OU=IT_Dept,DC=SISR,DC=LOCAL'"
-    }
-  ]
+      code: "New-ADOrganizationalUnit -Name 'IT' -Path 'DC=<mon-domaine>,DC=<ext>'\nNew-GPO -Name 'Base-securite'",
+    },
+  ],
 };
 
 export default function AdProxmoxPage() {

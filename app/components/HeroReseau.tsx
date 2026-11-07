@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
+import { usePalette } from "@/app/lib/palette";
 
 interface HeroReseauProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
@@ -63,6 +64,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
   const { lang } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const palette = usePalette();
   const fr = lang === "fr";
   const h = homeStrings[lang];
   const reduit = useReducedMotion();
@@ -70,7 +72,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
 
   const sousTitre = fr ? "Systèmes & réseaux · Cybersécurité" : "Systems & networks · Cybersecurity";
   // Dégradé d'origine du nom
-  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #2f5c99, #5457b0)";
+  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : palette === "aube" ? "linear-gradient(to right, #5b72b5, #8b6cc0)" : "linear-gradient(to right, #aa0003, #7a0002)";
   const nomStyle = { backgroundImage: degrade, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
   return (
@@ -86,28 +88,25 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                 const cc = isDark ? n.couleur : CABLE_CLAIR[n.couleur] ?? n.couleur;
                 return (
                   <g key={n.id}>
-                    <path d={n.cable} fill="none" stroke={cc} strokeWidth={on ? 12 : 7} strokeOpacity={on ? (isDark ? 0.28 : 0.2) : isDark ? 0.1 : 0.07} strokeLinecap="round" />
                     <motion.path
                       id={`cable-${n.id}`}
                       d={n.cable}
                       fill="none"
                       stroke={cc}
-                      strokeWidth={on ? 3.2 : 2.2}
+                      strokeWidth={on ? 2 : 1.4}
                       strokeLinecap="round"
-                      strokeOpacity={on ? 1 : isDark ? 0.8 : 0.55}
-                      initial={reduit ? false : { pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 0.9, delay: 0.5 + i * 0.1, ease: "easeInOut" }}
+                      strokeOpacity={on ? 0.9 : isDark ? 0.5 : 0.38}
+                      initial={reduit ? false : { pathLength: 0, opacity: 0 }}
+                      animate={{ pathLength: 1, opacity: 1 }}
+                      transition={{
+                        pathLength: { duration: 1.3, delay: 0.3 + i * 0.05, ease: [0.22, 1, 0.36, 1] },
+                        opacity: { duration: 0.8, delay: 0.3 + i * 0.05, ease: "easeOut" },
+                      }}
                     />
                     {!reduit && (
                       <>
-                        <circle r={on ? 9 : 6} fill={cc} opacity={isDark ? 0.22 : 0.18}>
-                          <animateMotion dur={`${3 + (i % 3) * 0.8}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
-                            <mpath href={`#cable-${n.id}`} />
-                          </animateMotion>
-                        </circle>
-                        <circle r={on ? 4.5 : 3.2} fill={isDark ? "#fff" : cc} opacity={0.95}>
-                          <animateMotion dur={`${3 + (i % 3) * 0.8}s`} begin={`${1.6 + i * 0.3}s`} repeatCount="indefinite">
+                        <circle r={on ? 2.6 : 2} fill={isDark ? "#fff" : cc} opacity={on ? 0.85 : 0.6}>
+                          <animateMotion dur={`${4.5 + (i % 3) * 1}s`} begin={`${1.8 + i * 0.3}s`} repeatCount="indefinite">
                             <mpath href={`#cable-${n.id}`} />
                           </animateMotion>
                         </circle>
@@ -126,11 +125,10 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                 top: "50%",
                 width: "34%",
                 height: `${(170 / 560) * 100}%`,
-                boxShadow: isDark ? "0 0 3cqw rgba(96,165,250,0.18), inset 0 0 0 1px rgba(96,165,250,0.08)" : "0 0.5cqw 2cqw rgba(51,65,100,0.08)",
               }}
-              initial={reduit ? false : { opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              initial={reduit ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
               <Vis className="left-[1cqw] top-[1cqw]" />
               <Vis className="right-[1cqw] top-[1cqw]" />
@@ -170,11 +168,11 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                     top: `${(n.y / 560) * 100}%`,
                     width: "22%",
                     padding: "1.15cqw 2.4cqw",
-                    boxShadow: on ? (isDark ? `0 0 2cqw ${n.couleur}55` : `0 0.4cqw 1.6cqw ${CABLE_CLAIR[n.couleur] ?? n.couleur}33`) : undefined,
+                    outline: "none",
                   }}
-                  initial={reduit ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.7 + i * 0.1 }}
+                  initial={reduit ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.9, delay: 0.55 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                 >
                   {/* oreilles de fixation */}
                   <span className="absolute inset-y-0 left-0 border-r border-slate-400/40 dark:border-slate-600/50" style={{ width: "1.6cqw" }}>

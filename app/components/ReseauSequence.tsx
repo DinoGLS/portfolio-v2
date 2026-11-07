@@ -37,11 +37,11 @@ const PORTS: PortDef[] = [
 ];
 
 // Mode clair : mêmes teintes, plus foncées pour rester lisibles sur fond pâle
-const CLAIR: Record<string, string> = {
+export const CLAIR: Record<string, string> = {
   "#60a5fa": "#7e9fd0", "#38bdf8": "#7fb1c9", "#818cf8": "#9391c9", "#a78bfa": "#aa97cd", "#22d3ee": "#7ab4be", "#6366f1": "#8b8ac2",
 };
 
-const CLAIR_NEIGE: Record<string, string> = {
+export const CLAIR_NEIGE: Record<string, string> = {
   "#60a5fa": "#aa0003", "#38bdf8": "#5c5968", "#818cf8": "#c43b3f", "#a78bfa": "#3d3a4d", "#22d3ee": "#d4565a", "#6366f1": "#8a1214",
 };
 const NS = "http://www.w3.org/2000/svg";

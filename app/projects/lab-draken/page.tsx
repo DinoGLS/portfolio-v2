@@ -7,8 +7,8 @@ const data: BPData = {
     fr: "J'ai migré mon ancien serveur physique vers un nœud Proxmox VE que j'auto-héberge, avec un pare-feu OPNsense qui route et filtre entre 4 segments réseau (WAN/LAN/AD/DMZ). Objectif que je me suis fixé : tout piloter en Infrastructure as Code (Terraform + Ansible) — y compris le réseau lui-même, pas juste les VM.",
     en: "I migrated my old physical server to a self-hosted Proxmox VE node, with an OPNsense firewall routing and filtering across 4 network segments (WAN/LAN/AD/DMZ). My goal was to drive everything through Infrastructure as Code (Terraform + Ansible) — including the network itself, not just the VMs.",
   },
-  status: { fr: "Terminé", en: "Done" },
-  img: "/projects/lab-draken/proxmox-datacenter.png",
+  status: { fr: "En production", en: "Live" },
+  img: "/projects/lab-draken/schema-draken.svg",
   badges: [
     { label: "Proxmox VE 9.2" },
     { label: "OPNsense" },
@@ -20,7 +20,7 @@ const data: BPData = {
   stats: [
     { k: { fr: "Segments réseau", en: "Network segments" }, v: "4" },
     { k: { fr: "Nœud Proxmox", en: "Proxmox node" }, v: "16 vCPU / 15 Gio" },
-    { k: { fr: "VM + LXC actifs", en: "Active VM + LXC" }, v: "6" },
+    { k: { fr: "VM + LXC actifs", en: "Active VM + LXC" }, v: "7" },
     { k: { fr: "IaC", en: "IaC" }, v: "Terraform + Ansible" },
   ],
   toc: [
@@ -32,7 +32,8 @@ const data: BPData = {
   ],
   planned: [
     { fr: "Règles de pare-feu OPNsense d'isolation stricte AD→LAN et DMZ→LAN", en: "Strict OPNsense firewall isolation rules AD→LAN and DMZ→LAN" },
-    { fr: "VM du lab Active Directory (DC Windows + client) par clonage Terraform d'un template sysprep", en: "Active Directory lab VMs (Windows DC + client) via Terraform clone of a sysprep template" },
+    { fr: "Recréer le lab Active Directory (DC Windows + client) par clonage Terraform d'un template sysprep : les VM ont été supprimées", en: "Rebuild the Active Directory lab (Windows DC + client) via Terraform clone of a sysprep template: the VMs were deleted" },
+    { fr: "Copie de sauvegarde hors de la machine (aujourd'hui sur le même disque)", en: "Off-machine backup copy (currently on the same disk)" },
     { fr: "Cibles DMZ (service vulnérable, honeypot) pour exercices d'intrusion isolés", en: "DMZ targets (vulnerable service, honeypot) for isolated intrusion exercises" },
     { fr: "DHCP par segment sur OPNsense (actuellement IP statiques)", en: "Per-segment DHCP on OPNsense (currently static IPs)" },
   ],

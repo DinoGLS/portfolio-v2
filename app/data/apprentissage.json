@@ -1,0 +1,115 @@
+{
+  "genere": "2026-11-07T19:36:56.269Z",
+  "notions": [
+    {
+      "nom": "f-strings et méthodes de chaîne",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Types et conversion (int, float, str)",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Conditions if/elif/else",
+      "etat": "acquis"
+    },
+    {
+      "nom": "Tranches de chaîne [a:b:c]",
+      "etat": "acquis"
+    },
+    {
+      "nom": "try/except",
+      "etat": "acquis"
+    },
+    {
+      "nom": "break",
+      "etat": "acquis"
+    },
+    {
+      "nom": "Boucles while",
+      "etat": "acquis"
+    },
+    {
+      "nom": "Listes (indices, tranches, len)",
+      "etat": "acquis"
+    },
+    {
+      "nom": "Boucle for",
+      "etat": "acquis"
+    },
+    {
+      "nom": "append, random.randint, continue",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Drapeau booléen (trouve = False / True + break / if trouve:)",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Lire le nom d'une erreur (NameError / TypeError / SyntaxError)",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Tuples et déballage (nom, port = t, immuable)",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Dictionnaires ({}, KeyError, .get)",
+      "etat": "acquis"
+    },
+    {
+      "nom": "Fonctions (def, appel, paramètre, return, portée)",
+      "etat": "fragile"
+    },
+    {
+      "nom": "Lecture d'un fichier texte (with open, read, strip/split(\"\\n\"), repr)",
+      "etat": "fragile"
+    },
+    {
+      "nom": "JSON (dumps/loads, dump/load, modes \"w\"/\"r\")",
+      "etat": "fragile"
+    }
+  ],
+  "compteurs": {
+    "acquis": 8,
+    "fragile": 9,
+    "nonAcquis": 0,
+    "total": 17
+  },
+  "heures": {
+    "total": 47.9,
+    "seances": 29,
+    "seancesMesurees": 28,
+    "derniereSeance": "2026-11-06",
+    "parSemaine": [
+      {
+        "debut": "2026-09-21",
+        "heures": 6.4
+      },
+      {
+        "debut": "2026-09-28",
+        "heures": 11.8
+      },
+      {
+        "debut": "2026-10-05",
+        "heures": 4.6
+      },
+      {
+        "debut": "2026-10-12",
+        "heures": 1
+      },
+      {
+        "debut": "2026-10-19",
+        "heures": 10.2
+      },
+      {
+        "debut": "2026-10-26",
+        "heures": 11.7
+      },
+      {
+        "debut": "2026-11-02",
+        "heures": 2.3
+      }
+    ]
+  }
+}

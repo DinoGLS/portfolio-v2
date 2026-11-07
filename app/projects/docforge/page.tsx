@@ -8,6 +8,7 @@ const data: BPData = {
     en: "BTS deliverable generator: Flask + LLM cascade (Claude/Groq/Gemini) + Pandoc + WeasyPrint, deployed in Docker (forge.gls). Raw notes -> Structured Markdown -> Themed PDF (11 CSS themes)."
   },
   status: { fr: "En production", en: "Live" },
+  img: "/projects/docforge/preview.jpg",
   statusColor: "#8b5cf6",
   badges: [
     { label: "Flask", color: "#8b5cf6" },

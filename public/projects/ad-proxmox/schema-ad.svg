@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif" role="img" aria-label="Lab Active Directory personnel sur Proxmox">
+<rect width="1000" height="420" fill="#fafbfd"/>
+<text x="40" y="38" font-size="20" font-weight="800" fill="#1f1a2e" text-anchor="start">Lab Active Directory — Proxmox perso</text>
+<text x="40" y="58" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Segment dédié et isolé (vmbr2) derrière OPNsense · VM supprimées, à recréer · état au 07/11/2026</text>
+<rect x="50" y="100" width="220" height="110" rx="8" fill="#ffffff" stroke="#aa0003" stroke-width="1.5"/>
+<text x="64" y="124" font-size="14" font-weight="700" fill="#1f1a2e" text-anchor="start">OPNsense · VM 101</text>
+<text x="64" y="144" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">passerelle de la zone AD</text>
+<text x="64" y="161" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">filtrage entre segments</text>
+<circle cx="254" cy="118" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<path d="M270 155 L340 155" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<rect x="340" y="90" width="620" height="240" rx="14" fill="#f4f5fb" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="356" y="114" font-size="12" font-weight="700" fill="#5c5968" text-anchor="start" letter-spacing="0.08em">ZONE AD · VMBR2 · ISOLÉE DU LAN ET DE LA DMZ</text>
+<rect x="364" y="128" width="270" height="130" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="378" y="152" font-size="14" font-weight="700" fill="#8a8998" text-anchor="start">ad-dc · ancienne VM 170</text>
+<text x="378" y="172" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">Windows Server 2022</text>
+<text x="378" y="189" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">contrôleur de domaine :</text>
+<text x="378" y="206" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">AD DS · DNS · DHCP · GPO</text>
+<circle cx="618" cy="146" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<rect x="660" y="128" width="270" height="130" rx="8" fill="#ffffff" stroke="#c9cce3" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="674" y="152" font-size="14" font-weight="700" fill="#8a8998" text-anchor="start">ad-client · ancienne VM 171</text>
+<text x="674" y="172" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">Windows 11 Entreprise</text>
+<text x="674" y="189" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">poste joint au domaine</text>
+<text x="674" y="206" font-size="12" font-weight="400" fill="#8a8998" text-anchor="start">test des GPO</text>
+<circle cx="914" cy="146" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<text x="364" y="292" font-size="11.5" font-weight="400" fill="#8a8998" text-anchor="start">Pilotes VirtIO · disque et carte réseau paravirtualisés</text>
+<text x="50" y="250" font-size="12" font-weight="700" fill="#1f1a2e" text-anchor="start">À ne pas confondre avec le lab AD de l'école</text>
+<text x="50" y="268" font-size="11.5" font-weight="400" fill="#5c5968" text-anchor="start">(domaine pédagogique, déjà réalisé en formation)</text>
+<text x="50" y="360" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">Objectif : refaire un domaine complet de zéro (utilisateurs, groupes, GPO, DHCP)</text>
+<text x="50" y="378" font-size="12" font-weight="400" fill="#5c5968" text-anchor="start">et le documenter, pas seulement le suivre dans un tutoriel.</text>
+<circle cx="40" cy="404" r="5" fill="#2eb872" stroke="#2eb872" stroke-width="1.6"/>
+<text x="52" y="408" font-size="11" font-weight="400" fill="#5c5968" text-anchor="start">en place</text>
+<circle cx="130" cy="404" r="5" fill="#fff" stroke="#8a8998" stroke-width="1.6"/>
+<text x="142" y="408" font-size="11" font-weight="400" fill="#5c5968" text-anchor="start">à faire / éteint</text>
+<path d="M260 404 L290 404" stroke="#aa0003" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<text x="298" y="408" font-size="11" font-weight="400" fill="#5c5968" text-anchor="start">flux routé par le pare-feu</text>
+</svg>
