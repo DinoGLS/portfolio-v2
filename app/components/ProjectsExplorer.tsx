@@ -8,6 +8,7 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { THEMES_DATA, BADGE_STYLES, type Project } from "@/app/data/projects";
 import { useBlueprintTokens } from "@/app/data/blueprint-tokens";
+import { useCouleur } from "@/app/lib/palette";
 
 type Vue = "index" | "grille";
 
@@ -19,6 +20,7 @@ export default function ProjectsExplorer() {
   const fr = lang === "fr";
   const { theme } = useTheme();
   const bp = useBlueprintTokens(theme === "dark");
+  const k = useCouleur();
   const reduit = useReducedMotion();
 
   const [vue, setVue] = useState<Vue>("index");
@@ -34,7 +36,7 @@ export default function ProjectsExplorer() {
 
   const chip = (actif: boolean, couleur: string) =>
     actif
-      ? { background: `${couleur}22`, color: theme === "dark" ? "#e8f4ff" : couleur, borderColor: couleur }
+      ? { background: `${k(couleur)}22`, color: theme === "dark" ? "#e8f4ff" : k(couleur), borderColor: k(couleur) }
       : { background: bp.chipBg, color: bp.sub, borderColor: bp.chipBorder };
 
   return (
@@ -82,7 +84,7 @@ export default function ProjectsExplorer() {
               className="flex items-center gap-2 px-3.5 py-1.5 rounded-[4px] font-mono text-xs font-semibold border"
               style={chip(groupe === t.id, t.color)}
             >
-              <span className="w-2 h-2 rounded-[2px] inline-block" style={{ background: t.color }} />
+              <span className="w-2 h-2 rounded-[2px] inline-block" style={{ background: k(t.color) }} />
               {fr ? t.labelFr : t.labelEn} <span className="opacity-70">{t.projects.length}</span>
             </button>
           ))}
@@ -154,7 +156,7 @@ export default function ProjectsExplorer() {
                         className="rounded-[5px] border overflow-hidden"
                         style={{ background: bp.cardBg, borderColor: bp.cardBorder }}
                       >
-                        <div className="relative w-full h-56 bg-black/25">
+                        <div className="relative w-full h-56 bg-slate-200 dark:bg-black/25">
                           <Image
                             src={courant.preview}
                             alt={fr ? courant.title : courant.titleEn}
@@ -203,7 +205,7 @@ export default function ProjectsExplorer() {
                 >
                   <Link href={p.href} className="block h-full">
                     <article className="flex flex-col h-full overflow-hidden rounded-[5px] border hover:-translate-y-1 hover:shadow-lg transition-transform duration-100" style={{ background: bp.cardBg, borderColor: bp.cardBorder }}>
-                      <div className="relative w-full h-40 bg-black/25">
+                      <div className="relative w-full h-40 bg-slate-200 dark:bg-black/25">
                         <Image src={p.preview} alt={fr ? p.title : p.titleEn} fill className="object-contain" sizes="(max-width: 768px) 100vw, 33vw" />
                       </div>
                       <div className="flex flex-col gap-2 p-4 flex-1">

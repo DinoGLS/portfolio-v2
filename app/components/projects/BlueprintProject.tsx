@@ -14,6 +14,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useLanguage } from "@/app/providers/LanguageProvider";
+import { usePalette } from "@/app/lib/palette";
+import { couleurNeige } from "@/app/lib/couleurs";
 
 // ── Localisation ────────────────────────────────────────────────────────────
 export type Loc = string | { fr: string; en: string };
@@ -24,12 +26,12 @@ function tx(v: Loc | undefined, lang: string): string {
 }
 
 // ── Tokens blueprint (clair + sombre) ───────────────────────────────────────
-function buildBP(dark: boolean) {
+function buildBP(dark: boolean, neige = false) {
   const mono = "var(--font-geist-mono), ui-monospace, monospace";
   const sans = "var(--font-geist-sans), system-ui, sans-serif";
   if (dark) {
     return {
-      mono, sans,
+      mono, sans, neige: false as const,
       pageBg: "radial-gradient(110% 80% at 50% 0%, #11436f 0%, #0a2a49 50%, #061a30 100%)",
       text: "#e8f4ff", sub: "#a9cdef", faint: "#5d89b6", accent: "#4cc4ff", accent2: "#bfe3ff",
       cardBg: "rgba(13,42,71,0.42)", cardBorder: "rgba(120,180,235,0.34)",
@@ -42,19 +44,36 @@ function buildBP(dark: boolean) {
       statusText: "#04121f",
     };
   }
-  // Blueprint clair : plan technique sur papier bleuté
+  // Neige & inferno : papier blanc, encre aubergine, rouge inferno
+  if (neige) {
+    return {
+      mono, sans, neige: true as const,
+      pageBg: "radial-gradient(110% 80% at 50% 0%, #ffffff 0%, #f4f5fb 55%, #eceef8 100%)",
+      text: "#1f1a2e", sub: "#5c5968", faint: "#8a8998", accent: "#aa0003", accent2: "#5c5968",
+      cardBg: "rgba(255,255,255,0.85)", cardBorder: "rgba(31,26,46,0.16)",
+      chipBg: "rgba(31,26,46,0.05)", chipText: "#3d3a4d", chipBorder: "rgba(31,26,46,0.18)",
+      codeBg: "#1f1a2e", codeBorder: "rgba(170,0,3,0.35)", codeText: "#e6e4ee",
+      gridLine: "rgba(31,26,46,0.06)",
+      titleGrad: "linear-gradient(90deg,#aa0003,#7a0002)",
+      imgFilter: "none",
+      ideBar: "#eceef8", idePage: "#ffffff", ideSide: "#f4f5fb", ideBorder: "rgba(31,26,46,0.14)", ideCard: "rgba(31,26,46,0.03)",
+      statusText: "#ffffff",
+    };
+  }
+  // Blueprint clair (lavande) : plan technique sur papier teinté
   return {
+    neige: false as const,
     mono, sans,
-    pageBg: "radial-gradient(110% 80% at 50% 0%, #f4f9ff 0%, #e6f0fb 55%, #d8e8f7 100%)",
-    text: "#0c2740", sub: "#39597a", faint: "#7ba0c4", accent: "#1f7fc4", accent2: "#2b9fe0",
-    cardBg: "rgba(255,255,255,0.72)", cardBorder: "rgba(31,127,196,0.24)",
-    chipBg: "rgba(31,127,196,0.08)", chipText: "#1a4a70", chipBorder: "rgba(31,127,196,0.22)",
+    pageBg: "radial-gradient(110% 80% at 50% 0%, #efeaf6 0%, #e5def0 55%, #dbd2e8 100%)",
+    text: "#2a2540", sub: "#5a5272", faint: "#9a90b3", accent: "#6a50bf", accent2: "#8a6ad8",
+    cardBg: "rgba(246,243,250,0.72)", cardBorder: "rgba(110,90,160,0.26)",
+    chipBg: "rgba(106,80,191,0.08)", chipText: "#4a3d7a", chipBorder: "rgba(106,80,191,0.22)",
     // code blocks restent sombres pour le contraste (comme la datasheet claire du design)
-    codeBg: "#0b2138", codeBorder: "rgba(31,127,196,0.35)", codeText: "#cfe6fb",
-    gridLine: "rgba(31,127,196,0.10)",
-    titleGrad: "linear-gradient(90deg,#0c3a5e,#1f7fc4)",
+    codeBg: "#1e1a33", codeBorder: "rgba(138,106,216,0.35)", codeText: "#e0d9ee",
+    gridLine: "rgba(106,80,191,0.09)",
+    titleGrad: "linear-gradient(90deg,#4a3d8a,#7a5ab5)",
     imgFilter: "none",
-    ideBar: "#e4eef8", idePage: "#f4f9ff", ideSide: "#eaf2fb", ideBorder: "rgba(31,127,196,0.18)", ideCard: "rgba(31,127,196,0.04)",
+    ideBar: "#e4ddee", idePage: "#efeaf6", ideSide: "#e6dff0", ideBorder: "rgba(106,80,191,0.18)", ideCard: "rgba(106,80,191,0.04)",
     statusText: "#ffffff",
   };
 }
@@ -67,6 +86,7 @@ function getC(c: string | undefined, bp: BP, dark: boolean) {
   if (l === "#bfe3ff") return bp.accent2;
   if (l === "#4cc4ff") return bp.accent;
   if (l === "#ff8f6b") return "#d95c34";
+  if (bp.neige) return couleurNeige(c);
   return c;
 }
 
@@ -473,6 +493,6 @@ export default function BlueprintProject({ variant, data }: { variant: "datashee
   const { theme } = useTheme();
   const { lang } = useLanguage();
   const dark = theme !== "light";
-  const bp = buildBP(dark);
+  const bp = buildBP(dark, usePalette() === "neige");
   return variant === "ide" ? <IDE data={data} bp={bp} lang={lang} dark={dark} /> : <Datasheet data={data} bp={bp} lang={lang} dark={dark} />;
 }

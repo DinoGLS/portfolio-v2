@@ -189,7 +189,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                       {fr ? n.fr : n.en}
                     </span>
                     <span className="flex items-center font-mono text-slate-500 dark:text-slate-400" style={{ fontSize: "0.95cqw", gap: "0.5cqw", marginTop: "0.3cqw" }}>
-                      <span className="rounded-full bg-emerald-500 flex-none" style={{ width: "0.6cqw", height: "0.6cqw" }} />
+                      <span className="rounded-full bg-green-500 flex-none" style={{ width: "0.6cqw", height: "0.6cqw" }} />
                       <span className={`rounded-full flex-none led-clignote`} style={{ width: "0.6cqw", height: "0.6cqw", background: n.couleur, animationDelay: `${i * 0.35}s` }} />
                       {`port ${String(i + 1).padStart(2, "0")}`}
                     </span>
@@ -217,7 +217,7 @@ export default function HeroReseau({ onNavigate }: HeroReseauProps) {
                   onClick={(e) => onNavigate(e, n.href)}
                   className="flex items-center gap-3 rounded-[5px] border border-slate-400/60 bg-white/65 px-3 py-2.5 dark:border-blue-400/30 dark:bg-slate-950/65"
                 >
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 flex-none" />
+                  <span className="h-2 w-2 rounded-full bg-green-500 flex-none" />
                   <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{fr ? n.fr : n.en}</span>
                   <span className="ml-auto font-mono text-[11px] text-slate-500 dark:text-slate-400">{`port ${String(i + 1).padStart(2, "0")}`}</span>
                 </a>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { usePalette } from "@/app/lib/palette";
 
 // ─── Données rack ───────────────────────────────────────────────────────────
 
@@ -96,22 +97,26 @@ export default function RackPopup({ lang }: RackPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useTheme();
   const clair = theme !== "dark";
+  const neige = usePalette() === "neige";
   // Mode clair : mêmes éléments, palette gris-bleu douce
-  const c = (s: string) =>
-    !clair
-      ? s
-      : s
-          .replaceAll("rgba(8,28,49,0.92)", "rgba(246,247,249,0.96)")
-          .replaceAll("rgba(2,10,20,0.5)", "rgba(110,125,142,0.32)")
-          .replaceAll("rgba(2,10,20,0.6)", "rgba(51,65,100,0.22)")
-          .replaceAll("rgba(4,14,26,0.5)", "rgba(228,233,238,0.8)")
-          .replaceAll("rgba(76,196,255,", "rgba(61,106,158,")
-          .replace(/#4cc4ff/g, "#3d6a9e")
-          .replace(/#5d89b6/g, "#6b7f95")
-          .replace(/#bfe3ff/g, "#2d4f7c")
-          .replace(/#e8f4ff/g, "#243447")
-          .replace(/#cfe6fb/g, "#33475c")
-          .replace(/#7fa8cc/g, "#5a6f86");
+  const c = (s: string) => {
+    if (!clair) return s;
+    const P = neige
+      ? { fond: "rgba(255,255,255,0.98)", ombre1: "rgba(31,26,46,0.18)", ombre2: "rgba(31,26,46,0.14)", ligne: "rgba(236,238,248,0.9)", acc: "rgba(170,0,3,", a1: "#aa0003", a2: "#8a8998", a3: "#5c1a1c", a4: "#1f1a2e", a5: "#3d3a4d", a6: "#6d6b77" }
+      : { fond: "rgba(238,232,246,0.97)", ombre1: "rgba(90,70,130,0.28)", ombre2: "rgba(70,50,110,0.22)", ligne: "rgba(224,216,238,0.85)", acc: "rgba(106,80,191,", a1: "#6a50bf", a2: "#85799a", a3: "#4a3d7a", a4: "#2a2540", a5: "#3e3558", a6: "#6a6088" };
+    return s
+      .replaceAll("rgba(8,28,49,0.92)", P.fond)
+      .replaceAll("rgba(2,10,20,0.5)", P.ombre1)
+      .replaceAll("rgba(2,10,20,0.6)", P.ombre2)
+      .replaceAll("rgba(4,14,26,0.5)", P.ligne)
+      .replaceAll("rgba(76,196,255,", P.acc)
+      .replace(/#4cc4ff/g, P.a1)
+      .replace(/#5d89b6/g, P.a2)
+      .replace(/#bfe3ff/g, P.a3)
+      .replace(/#e8f4ff/g, P.a4)
+      .replace(/#cfe6fb/g, P.a5)
+      .replace(/#7fa8cc/g, P.a6);
+  };
   const [openDrawer, setOpenDrawer] = useState<number>(0);
 
   return (
@@ -126,8 +131,8 @@ export default function RackPopup({ lang }: RackPopupProps) {
           aria-label={lang === "fr" ? "Ouvrir le rack infra" : "Open infra rack"}
           className="fixed right-0 top-1/2 -translate-y-1/2 z-[60] flex flex-col items-center gap-[7px] transition-all hover:pr-1"
           style={{
-            background: clair ? "rgba(246,247,249,0.94)" : "rgba(8,28,49,0.85)",
-            border: clair ? "1px solid rgba(71,98,135,0.28)" : "1px solid rgba(76,196,255,0.32)",
+            background: clair ? (neige ? "rgba(255,255,255,0.96)" : "rgba(228,221,238,0.94)") : "rgba(8,28,49,0.85)",
+            border: clair ? (neige ? "1px solid rgba(31,26,46,0.2)" : "1px solid rgba(110,90,160,0.3)") : "1px solid rgba(76,196,255,0.32)",
             borderRight: "none",
             borderRadius: "8px 0 0 8px",
             padding: "12px 9px",
@@ -138,11 +143,11 @@ export default function RackPopup({ lang }: RackPopupProps) {
         >
           <span
             className="w-[7px] h-[7px] rounded-full"
-            style={{ background: clair ? "#3d6a9e" : "#4cc4ff", boxShadow: clair ? "0 0 6px rgba(61,106,158,0.45)" : "0 0 8px #4cc4ff", animation: "infraPulse 1.8s ease-in-out infinite" }}
+            style={{ background: clair ? (neige ? "#aa0003" : "#7a5ab5") : "#4cc4ff", boxShadow: clair ? "0 0 6px rgba(61,106,158,0.45)" : "0 0 8px #4cc4ff", animation: "infraPulse 1.8s ease-in-out infinite" }}
           />
           <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
             {[0, 1, 2].map((k) => (
-              <span key={k} style={{ width: "15px", height: "3px", borderRadius: "1px", background: clair ? "#3d6a9e" : "#4cc4ff", opacity: 0.85 }} />
+              <span key={k} style={{ width: "15px", height: "3px", borderRadius: "1px", background: clair ? (neige ? "#aa0003" : "#7a5ab5") : "#4cc4ff", opacity: 0.85 }} />
             ))}
           </span>
           <span
@@ -150,7 +155,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
               fontFamily: "'Geist Mono', monospace",
               fontSize: "9.5px",
               letterSpacing: "0.2em",
-              color: clair ? "#2d4f7c" : "#bfe3ff",
+              color: clair ? (neige ? "#5c1a1c" : "#4a3d7a") : "#bfe3ff",
               textTransform: "uppercase",
               writingMode: "vertical-rl",
               transform: "rotate(180deg)",
@@ -158,7 +163,7 @@ export default function RackPopup({ lang }: RackPopupProps) {
           >
             Rack
           </span>
-          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "9px", color: clair ? "#6b7f95" : "#5d89b6" }}>
+          <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: "9px", color: clair ? (neige ? "#6d6b77" : "#7a6f94") : "#5d89b6" }}>
             {RACK_NODES.length}U
           </span>
         </button>

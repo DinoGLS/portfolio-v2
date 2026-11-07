@@ -207,7 +207,7 @@ export function getProjectBySlug(slug: string): Project | undefined {
 
 /** Styles des badges */
 export const BADGE_STYLES: Record<string, string> = {
-  emerald: "bg-emerald-500/15 text-blue-600 border-blue-500/30 dark:text-blue-300",
+  emerald: "bg-blue-600/15 dark:bg-emerald-500/15 text-blue-600 border-blue-500/30 dark:text-blue-300",
   violet:  "bg-violet-500/15 text-violet-600 border-violet-500/30 dark:text-violet-300",
   amber:   "bg-amber-500/15 text-amber-600 border-amber-500/30 dark:text-amber-300",
 };

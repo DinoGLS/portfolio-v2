@@ -148,7 +148,7 @@ export default function Home() {
                   {isActive && (
                     <span
                       className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400"
-                      style={{ boxShadow: "0 0 4px #60a5fa" }}
+                      style={{ boxShadow: "0 0 4px var(--glow-accent)" }}
                     />
                   )}
                 </Link>

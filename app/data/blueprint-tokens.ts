@@ -1,3 +1,4 @@
+import { usePalette } from "@/app/lib/palette";
 // ─── Tokens visuels « blueprint » (section Projets + Veille) ────────────────
 // Palette clair = plan papier, sombre = plan cyanotype indigo
 
@@ -32,20 +33,37 @@ export const BP_DARK: BlueprintTokens = {
 };
 
 export const BP_LIGHT: BlueprintTokens = {
-  pageBg: "radial-gradient(120% 95% at 50% 0%, #f2f5f8 0%, #e5eaf0 55%, #dae1e9 100%)",
-  gridLine: "rgba(71,98,135,0.10)",
-  text: "#243447",
-  sub: "#52667d",
-  faint: "#98a8bb",
-  accent: "#3d6a9e",
-  titleGrad: "linear-gradient(90deg,#2d4f7c,#4a6fa5)",
-  cardBg: "rgba(250,251,252,0.72)",
-  cardBorder: "rgba(71,98,135,0.22)",
-  chipBg: "rgba(71,98,135,0.07)",
-  chipText: "#3a516b",
-  chipBorder: "rgba(71,98,135,0.20)",
+  pageBg: "radial-gradient(120% 95% at 50% 0%, #efeaf6 0%, #e5def0 55%, #dbd2e8 100%)",
+  gridLine: "rgba(106,80,191,0.09)",
+  text: "#2a2540",
+  sub: "#5a5272",
+  faint: "#9a90b3",
+  accent: "#6a50bf",
+  titleGrad: "linear-gradient(90deg,#4a3d8a,#7a5ab5)",
+  cardBg: "rgba(246,243,250,0.72)",
+  cardBorder: "rgba(110,90,160,0.24)",
+  chipBg: "rgba(106,80,191,0.08)",
+  chipText: "#4a3d7a",
+  chipBorder: "rgba(106,80,191,0.22)",
+};
+
+export const BP_NEIGE: BlueprintTokens = {
+  pageBg: "radial-gradient(120% 95% at 50% 0%, #ffffff 0%, #f4f5fb 55%, #eceef8 100%)",
+  gridLine: "rgba(31,26,46,0.07)",
+  text: "#1f1a2e",
+  sub: "#5c5968",
+  faint: "#8a8998",
+  accent: "#aa0003",
+  titleGrad: "linear-gradient(90deg,#aa0003,#7a0002)",
+  cardBg: "rgba(255,255,255,0.82)",
+  cardBorder: "rgba(31,26,46,0.16)",
+  chipBg: "rgba(31,26,46,0.05)",
+  chipText: "#3d3a4d",
+  chipBorder: "rgba(31,26,46,0.18)",
 };
 
 export function useBlueprintTokens(isDark: boolean): BlueprintTokens {
-  return isDark ? BP_DARK : BP_LIGHT;
+  const palette = usePalette();
+  if (isDark) return BP_DARK;
+  return palette === "neige" ? BP_NEIGE : BP_LIGHT;
 }

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { useBlueprintTokens } from "@/app/data/blueprint-tokens";
+import { useCouleur } from "@/app/lib/palette";
 import RackPopup from "@/app/components/RackPopup";
 
 // ─── Données infra ──────────────────────────────────────────────────────────
@@ -149,6 +150,7 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
   const { lang } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const k = useCouleur();
   const bp = useBlueprintTokens(isDark);
   const [activeServer, setActiveServer] = useState<string>("dino");
   const termRef = useRef<HTMLDivElement>(null);
@@ -199,7 +201,7 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
               className="flex items-center gap-2.5 px-4 py-2.5 rounded-[5px] border font-mono text-xs font-semibold transition-all backdrop-blur-sm"
               style={
                 activeServer === s.id
-                  ? { background: `${s.color}18`, color: isDark ? "#e8f4ff" : s.color, borderColor: s.color }
+                  ? { background: `${k(s.color)}18`, color: isDark ? "#e8f4ff" : k(s.color), borderColor: k(s.color) }
                   : { background: bp.chipBg, color: bp.sub, borderColor: bp.chipBorder }
               }
             >
@@ -242,7 +244,7 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
               <div
                 className="flex items-center gap-2 px-4 py-2.5 border-b"
                 style={{
-                  background: isDark ? "rgba(10,15,30,0.9)" : "rgba(30,41,59,0.95)",
+                  background: isDark ? "rgba(10,15,30,0.9)" : "rgba(31,26,46,0.96)",
                   borderColor: bp.cardBorder,
                 }}
               >
@@ -264,7 +266,7 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
                 ref={termRef}
                 className="p-4 overflow-y-auto font-mono text-[0.75rem] leading-[1.65] no-scrollbar"
                 style={{
-                  background: isDark ? "rgba(8,12,24,0.95)" : "rgba(15,23,42,0.97)",
+                  background: isDark ? "rgba(8,12,24,0.95)" : "rgba(24,20,38,0.97)",
                   maxHeight: "340px",
                   minHeight: "280px",
                 }}
@@ -282,10 +284,10 @@ export default function InfraSection({ isMobile }: InfraSectionProps) {
 
                   let color = "#94a3b8"; // default slate-400
                   if (isCommand) color = "#10b981"; // green
-                  if (isSuccess) color = "#60a5fa"; // blue
+                  if (isSuccess) color = isDark ? "#60a5fa" : "#ff8a8d"; // bleu en sombre, rouge doux en clair
                   if (isPending) color = "#6b7280"; // gray
                   if (isWelcome) color = "#f59e0b"; // amber
-                  if (isLabel) color = "#818cf8"; // indigo
+                  if (isLabel) color = isDark ? "#818cf8" : "#d6d3df"; // indigo en sombre, gris clair en clair
                   if (isCursor) color = "#10b981"; // green cursor
 
                   return (

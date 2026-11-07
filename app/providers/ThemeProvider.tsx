@@ -82,18 +82,3 @@ export function useTheme(): ThemeContextValue {
   if (!ctx) throw new Error("useTheme doit être utilisé dans <ThemeProvider>.");
   return ctx;
 }
-
-// Script anti-flash : applique le thème AVANT le premier rendu (à coller dans <head>).
-export const THEME_INIT_SCRIPT = `
-(function(){
-  try {
-    var k = "${STORAGE_KEY}";
-    var s = localStorage.getItem(k);
-    var dark = s ? s === "dark"
-      : !window.matchMedia("(prefers-color-scheme: light)").matches;
-    var root = document.documentElement;
-    root.classList.toggle("dark", dark);
-    root.style.colorScheme = dark ? "dark" : "light";
-  } catch (e) {}
-})();
-`;

@@ -41,7 +41,7 @@ export default function LoadingSplash() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#eceef0] dark:bg-[#020617]"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#fafbfd] dark:bg-[#020617]"
       style={{
         opacity: fadingOut ? 0 : 1,
         transition: `opacity ${FADE_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`,

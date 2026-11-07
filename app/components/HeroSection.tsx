@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
+import { usePalette } from "@/app/lib/palette";
 
 export default function HeroSection() {
   const { lang } = useLanguage();
@@ -48,7 +49,7 @@ export default function HeroSection() {
       >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
         </span>
         {h.hero.available}
       </motion.div>
@@ -58,7 +59,7 @@ export default function HeroSection() {
         style={{
           backgroundImage: isDark
             ? "linear-gradient(to right, #60a5fa, #818cf8)"
-            : "linear-gradient(to right, #1d4ed8, #4338ca)",
+            : usePalette() === "aube" ? "linear-gradient(to right, #5b72b5, #8b6cc0)" : "linear-gradient(to right, #aa0003, #7a0002)",
         }}
         initial={{ opacity: 0, y: -20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

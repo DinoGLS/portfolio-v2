@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
+import { usePalette } from "@/app/lib/palette";
 
 interface ReseauSequenceProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
@@ -37,9 +38,12 @@ const PORTS: PortDef[] = [
 
 // Mode clair : mêmes teintes, plus foncées pour rester lisibles sur fond pâle
 const CLAIR: Record<string, string> = {
-  "#60a5fa": "#3f6fb5", "#38bdf8": "#3b86ab", "#818cf8": "#5b57b0", "#a78bfa": "#7a5ab5", "#22d3ee": "#2f8191", "#6366f1": "#4d4aa0",
+  "#60a5fa": "#7e9fd0", "#38bdf8": "#7fb1c9", "#818cf8": "#9391c9", "#a78bfa": "#aa97cd", "#22d3ee": "#7ab4be", "#6366f1": "#8b8ac2",
 };
 
+const CLAIR_NEIGE: Record<string, string> = {
+  "#60a5fa": "#aa0003", "#38bdf8": "#5c5968", "#818cf8": "#c43b3f", "#a78bfa": "#3d3a4d", "#22d3ee": "#d4565a", "#6366f1": "#8a1214",
+};
 const NS = "http://www.w3.org/2000/svg";
 const ECH = 120; // points par trajectoire
 let sequenceJouee = false;
@@ -62,6 +66,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
   const { lang } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const palette = usePalette();
   const fr = lang === "fr";
   const h = homeStrings[lang];
 
@@ -92,7 +97,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
     return () => window.removeEventListener("keydown", surTouche);
   }, [ouvert, changer]);
 
-  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #2f5c99, #5457b0)";
+  const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : palette === "aube" ? "linear-gradient(to right, #5b72b5, #8b6cc0)" : "linear-gradient(to right, #aa0003, #7a0002)";
   const textes = {
     horsLigne: fr ? "hors ligne" : "offline",
     negocie: fr ? "négociation…" : "negotiating…",
@@ -109,7 +114,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
     let cables: Cable[] = [];
     let fini = false;
     const at = (ms: number, fn: () => void) => { timers.push(window.setTimeout(fn, ms)); };
-    const cc = (c: string) => (isDark ? c : CLAIR[c] ?? c);
+    const cc = (c: string) => (isDark ? c : (palette === "aube" ? CLAIR : CLAIR_NEIGE)[c] ?? c);
 
     const nomTxt = swEl.querySelector<HTMLElement>("[data-nom]")!;
     const caret = swEl.querySelector<HTMLElement>("[data-caret]")!;
@@ -142,8 +147,8 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
           s.pulse.setAttribute("cx", String(p.x)); s.pulse.setAttribute("cy", String(p.y));
           s.halo.setAttribute("cx", String(p.x)); s.halo.setAttribute("cy", String(p.y));
           const o = Math.sin(Math.PI * t);
-          s.pulse.setAttribute("opacity", String(0.95 * o));
-          s.halo.setAttribute("opacity", String(0.35 * o));
+          s.pulse.setAttribute("opacity", String((isDark ? 0.95 : 0.8) * o));
+          s.halo.setAttribute("opacity", String((isDark ? 0.35 : 0.2) * o));
         }
       }
     };
@@ -185,11 +190,11 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
         const col = cc(p.c);
         const grp = mk("g", {}, g);
         // Ombre et lueur sans filtre : traits superposés (bien moins coûteux qu'un flou SVG)
-        const ombre = mk("path", { d: p.d, class: "cab", stroke: "#000", "stroke-width": 6, "stroke-opacity": isDark ? 0.3 : 0.1, transform: "translate(0,3)" }, grp);
-        const lueur2 = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 13, "stroke-opacity": isDark ? 0.07 : 0.05 }, grp);
-        const lueur = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 8, "stroke-opacity": isDark ? 0.14 : 0.1 }, grp);
-        const gaine = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 3.4 }, grp);
-        const reflet = mk("path", { d: p.d, class: "cab", stroke: "#fff", "stroke-width": 1, "stroke-opacity": 0.35, transform: "translate(0,-.9)" }, grp);
+        const ombre = mk("path", { d: p.d, class: "cab", stroke: "#000", "stroke-width": 6, "stroke-opacity": isDark ? 0.3 : 0.06, transform: "translate(0,3)" }, grp);
+        const lueur2 = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 13, "stroke-opacity": isDark ? 0.07 : 0.03 }, grp);
+        const lueur = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 8, "stroke-opacity": isDark ? 0.14 : 0.05 }, grp);
+        const gaine = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": isDark ? 3.4 : 2.8, "stroke-opacity": isDark ? 1 : 0.85 }, grp);
+        const reflet = mk("path", { d: p.d, class: "cab", stroke: "#fff", "stroke-width": 1, "stroke-opacity": isDark ? 0.35 : 0.5, transform: "translate(0,-.9)" }, grp);
         const all = [ombre, lueur2, lueur, gaine, reflet] as Mesure[];
         all.forEach((x) => {
           const L = x.getTotalLength();
@@ -203,7 +208,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
         const plugs: SVGRectElement[] = [];
         if (p.kind === "port") {
           const prise = (x: number, y: number, dir: number) => {
-            const r = mk("rect", { x: dir < 0 ? x - 9 : x, y: y - 4, width: 9, height: 8, rx: 1.5, fill: isDark ? "#cbd5e1" : "#94a3b8", stroke: "#475569", "stroke-width": 1, class: "plug" }, grp);
+            const r = mk("rect", { x: dir < 0 ? x - 9 : x, y: y - 4, width: 9, height: 8, rx: 1.5, fill: isDark ? "#cbd5e1" : "#c9d2de", stroke: isDark ? "#475569" : "#8d9bb0", "stroke-width": 1, class: "plug" }, grp);
             mk("rect", { x: dir < 0 ? x - 9 : x, y: y - 4, width: 9, height: 2, fill: "#fff", "fill-opacity": 0.5, class: "plug" }, grp);
             return r;
           };
@@ -237,7 +242,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       led.className = `led ${etat === "hors" ? "" : etat}`;
       em.textContent = etat === "green" ? textes.lien : etat === "amber" ? textes.negocie : textes.horsLigne;
       el.querySelectorAll<HTMLElement>(".jack").forEach((j, k) => j.classList.toggle("lit", etat === "green" && k !== 2));
-      el.style.setProperty("--glow", etat === "green" ? c + "22" : "transparent");
+      el.style.setProperty("--glow", etat === "green" ? c + (isDark ? "22" : "14") : "transparent");
     };
     PORTS.forEach((p, i) => ports[i]?.style.setProperty("--c", cc(p.c)));
 
@@ -245,7 +250,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       swEl.style.opacity = "1"; abEl.style.opacity = "1";
       nomTxt.textContent = NOM; caret.style.display = "none"; sub.style.opacity = "1";
       swJacks.forEach((j) => j.classList.add("lit"));
-      swEl.style.setProperty("--glow", "rgba(96,165,250,.22)");
+      swEl.style.setProperty("--glow", isDark ? "rgba(96,165,250,.22)" : "rgba(96,130,190,.08)");
       abBlocs.forEach((b) => { b.style.opacity = "1"; b.style.transform = "none"; });
       cables.forEach((c) => {
         c.all.forEach((x) => { x.style.strokeDashoffset = "0"; });
@@ -268,35 +273,35 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       abBlocs.forEach((b) => { b.style.opacity = "0"; b.style.transform = "translateY(.4cqw)"; });
       swJacks.forEach((j) => j.classList.remove("lit"));
 
-      at(100, () => { swEl.style.opacity = "1"; swEl.style.setProperty("--glow", "rgba(96,165,250,.22)"); });
-      swJacks.forEach((j, i) => at(450 + i * 70, () => j.classList.add("lit")));
-      at(900, () => {
+      at(100, () => { swEl.style.opacity = "1"; swEl.style.setProperty("--glow", isDark ? "rgba(96,165,250,.22)" : "rgba(96,130,190,.08)"); });
+      swJacks.forEach((j, i) => at(300 + i * 45, () => j.classList.add("lit")));
+      at(600, () => {
         let i = 0;
         const iv = window.setInterval(() => {
           nomTxt.textContent = NOM.slice(0, ++i);
-          if (i >= NOM.length) { clearInterval(iv); sub.style.opacity = "1"; at(500, () => { caret.style.display = "none"; }); }
-        }, 70);
+          if (i >= NOM.length) { clearInterval(iv); sub.style.opacity = "1"; at(300, () => { caret.style.display = "none"; }); }
+        }, 40);
         timers.push(iv);
       });
-      at(2300, () => tracer(cables[0], 600));
-      at(2800, () => { abEl.style.opacity = "1"; });
-      abBlocs.forEach((b, i) => at(3200 + i * 450, () => { b.style.opacity = "1"; b.style.transform = "none"; }));
-      at(3000, () => allumer(cables[0]));
+      at(1300, () => tracer(cables[0], 350));
+      at(1500, () => { abEl.style.opacity = "1"; });
+      abBlocs.forEach((b, i) => at(1800 + i * 200, () => { b.style.opacity = "1"; b.style.transform = "none"; }));
+      at(1700, () => allumer(cables[0]));
       PORTS.forEach((p, i) => {
         const el = ports[i], c = cables[i + 1];
         if (!el || !c) return;
-        const t = 4800 + i * 900;
+        const t = 2000 + i * 330;
         at(t, () => { el.style.opacity = "1"; setPortEtat(el, "amber", p.c); });
-        at(t + 250, () => {
+        at(t + 120, () => {
           c.plugs[0].style.opacity = "1";
-          tracer(c, 520, () => {
+          tracer(c, 340, () => {
             c.plugs[1].style.opacity = "1";
             setPortEtat(el, "green", p.c);
             allumer(c);
           });
         });
       });
-      at(4800 + PORTS.length * 900 + 800, () => { fini = true; sequenceJouee = true; });
+      at(2000 + PORTS.length * 330 + 600, () => { fini = true; sequenceJouee = true; });
     }
 
     // Redimensionnement : on recalcule les câbles et on affiche l'état final
@@ -326,7 +331,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       sceneEl.classList.remove("sq-joue");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDark, fr]);
+  }, [isDark, fr, palette]);
 
   const IDE = <><div className="ear l"><span className="vis" /></div><div className="ear r"><span className="vis" /></div><div className="shine" /></>;
 

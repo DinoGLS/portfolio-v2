@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ThemeProvider, THEME_INIT_SCRIPT } from "@/app/providers/ThemeProvider";
+import { ThemeProvider } from "@/app/providers/ThemeProvider";
+import { THEME_INIT_SCRIPT } from "@/app/lib/theme-init";
+import { PALETTE_INIT_SCRIPT } from "@/app/lib/palette-init";
 import { LanguageProvider } from "@/app/providers/LanguageProvider";
 import ControlsDock from "@/app/components/ControlsDock";
 import MatrixCanvas from "@/app/components/MatrixCanvas";
@@ -59,9 +61,9 @@ export default function RootLayout({
     // avant le 1er rendu si l'utilisateur préfère le clair.
     <html lang="fr" className="dark" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + ";" + PALETTE_INIT_SCRIPT }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#eceef0] dark:bg-[#020617]`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#fafbfd] dark:bg-[#020617]`}>
         <ThemeProvider>
           <LanguageProvider>
             <LoadingSplash />

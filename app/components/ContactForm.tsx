@@ -128,7 +128,7 @@ export default function ContactForm() {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center py-8 text-center"
           >
-            <CheckCircleIcon className="h-12 w-12 text-emerald-500 dark:text-emerald-400" />
+            <CheckCircleIcon className="h-12 w-12 text-green-500 dark:text-emerald-400" />
             <h3 className="mt-3 text-lg font-semibold text-slate-900 dark:text-slate-100">
               {t("contact.form.successTitle")}
             </h3>
@@ -241,7 +241,7 @@ export default function ContactForm() {
               type="submit"
               disabled={status === "sending"}
               className="inline-flex w-full items-center justify-center rounded-lg bg-emerald-500 px-4 py-2.5
-                         text-sm font-semibold text-slate-950 transition-colors hover:bg-emerald-400
+                         text-sm font-semibold text-white dark:text-slate-950 transition-colors hover:bg-emerald-400
                          disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
               {status === "sending" ? t("contact.form.sending") : t("contact.form.send")}

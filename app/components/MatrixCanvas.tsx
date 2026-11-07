@@ -3,11 +3,14 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useTheme } from "@/app/providers/ThemeProvider";
+import { usePalette } from "@/app/lib/palette";
 
 export default function MatrixCanvas() {
   const pathname = usePathname();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const palette = usePalette();
+  const neige = palette === "neige";
   const ref = useRef<HTMLCanvasElement>(null);
 
   // Désactivé sur les pages projet (canvas distrait du contenu)
@@ -81,7 +84,7 @@ export default function MatrixCanvas() {
 
       ctx.fillStyle = isDark
         ? "rgba(7, 12, 28, 0.07)"
-        : "rgba(236, 238, 240, 0.09)";
+        : (neige ? "rgba(250, 251, 253, 0.09)" : "rgba(233, 227, 240, 0.09)");
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${FONT_SZ}px monospace`;
@@ -95,12 +98,12 @@ export default function MatrixCanvas() {
 
         ctx.fillStyle = isDark
           ? `rgba(110, 190, 255, ${head})`
-          : `rgba(52, 84, 128, ${head * 0.8})`;
+          : neige ? `rgba(170, 0, 3, ${Math.min(head * 0.95, 1)})` : `rgba(112, 64, 200, ${Math.min(head * 1.1, 1)})`;
         ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x, yPos);
 
         ctx.fillStyle = isDark
           ? `rgba(50, 130, 210, ${bri * 0.5})`
-          : `rgba(62, 98, 142, ${bri * 0.34})`;
+          : neige ? `rgba(170, 0, 3, ${bri * 0.5})` : `rgba(124, 58, 237, ${bri * 0.62})`;
         for (let t = 1; t <= TRAIL; t++) {
           const ty = yPos - t * COL_W;
           if (ty > 0) ctx.fillText(chars[Math.floor(Math.random() * chars.length)], x, ty);
@@ -125,7 +128,7 @@ export default function MatrixCanvas() {
       document.removeEventListener("visibilitychange", onVisibility);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDark]);
+  }, [isDark, neige]);
 
   if (!active) return null;
 
@@ -138,7 +141,7 @@ export default function MatrixCanvas() {
         inset: 0,
         zIndex: 0,
         pointerEvents: "none",
-        opacity: isDark ? 0.42 : 0.28,
+        opacity: isDark ? 0.42 : 0.75,
       }}
     />
   );

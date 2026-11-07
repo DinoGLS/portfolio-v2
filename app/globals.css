@@ -10,13 +10,14 @@
    ────────────────────────────────────────────────────────────────────────── */
 :root {
   /* MODE CLAIR (valeurs par défaut) */
-  --background: #f1f2f4;
-  --foreground: #0b0b14;
+  --background: #e9e3f0;
+  --foreground: #1a1a24;
   --primary: #7c3aed;        /* violet néon (lisible aussi sur clair) */
   --secondary: #9333ea;
   --accent: #0891b2;         /* cyan assombri pour le contraste sur clair */
-  --metal: #e2e8f0;
-  --page-bg: #eceef0;
+  --metal: #ddd5e7;
+  --page-bg: #e9e3f0;
+  --glow-accent: #60a5fa;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -213,10 +214,14 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   --jk:#050b1a; --jkb:#2c3a5e; --mut:#8b9ab3; --ink:#e2e8f0; --lab:#5b6b8c;
   --abg1:#0b1430fa; --abg2:#070d20fa; --abr:#23325a; --abar:#0f1a38; --abarb:#1d2b50; --atxt:#cbd5e1; --amut:#7d8db0; --atag:#93c5fd; --atagb:rgba(96,165,250,.35); --tint:rgba(96,165,250,.025);
   --shadow:rgba(0,0,0,.55); }
-.sq.sq-clair { --rk1:#f6f7f9; --rk2:#eceff2; --rk3:#e3e8ee; --rkb:#c5cdd6; --ear1:#e4e9f0; --ear2:#d6dde7; --earb:#b9c3d0;
-  --jk:#f8f9fb; --jkb:#c5cdd6; --mut:#5b6b82; --ink:#0f172a; --lab:#7a889c;
-  --abg1:#fffffffa; --abg2:#f6f8fbfa; --abr:#c5cdd6; --abar:#e8edf4; --abarb:#d3dbe6; --atxt:#334155; --amut:#64748b; --atag:#3f5f9a; --atagb:rgba(63,95,154,.35); --tint:rgba(63,95,154,.03);
-  --shadow:rgba(51,65,100,.18); }
+.sq.sq-clair { --rk1:#ede8f3; --rk2:#e0d9ea; --rk3:#d5cde1; --rkb:#bfb5ce; --ear1:#d8d0e4; --ear2:#cbc1da; --earb:#b5a9c7;
+  --jk:#eee9f4; --jkb:#bfb5ce; --mut:#5d5671; --ink:#1a1a24; --lab:#85799a;
+  --abg1:#f1edf6fa; --abg2:#e6e0eefa; --abr:#bfb5ce; --abar:#ddd5e7; --abarb:#cbc1da; --atxt:#2c2a3a; --amut:#665e7c; --atag:#5b4a93; --atagb:rgba(91,74,147,.32); --tint:rgba(91,74,147,.025);
+  --shadow:rgba(60,40,90,.14); }
+.sq.sq-clair .led.green { background:#3fc48a; box-shadow:0 0 .4cqw rgba(63,196,138,.6); }
+.sq.sq-clair .labels b { background:#3fc48a; box-shadow:0 0 .3cqw rgba(63,196,138,.6); }
+.sq.sq-clair .jack.lit:after { box-shadow:none; }
+@media (hover:hover) { .sq.sq-clair a.rack:hover { border-color:#e0457f; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 .8cqw 1.6cqw var(--shadow), 0 0 1.6cqw rgba(255,42,109,.22); } }
 .sq-taille { container-type:inline-size; aspect-ratio:1000 / 600; width:min(1500px,100%,calc((100vh - 3rem) * 1.6667)); width:min(1500px,100%,calc((100dvh - 3rem) * 1.6667)); contain:layout; }
 .sq .abs { position:absolute; transform:translate(-50%,-50%); }
 .sq svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
@@ -275,9 +280,8 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   background:radial-gradient(closest-side, rgba(96,165,250,.20), rgba(96,165,250,.06) 55%, transparent 75%); animation:sq-respire 6s ease-in-out infinite; }
 .sq.sq-clair .sq-halo { background:radial-gradient(closest-side, rgba(79,110,180,.14), rgba(79,110,180,.04) 55%, transparent 75%); }
 @keyframes sq-respire { 0%,100% { opacity:.65; } 50% { opacity:1; } }
-.sq-voile { position:absolute; inset:0; z-index:30; background:rgba(3,6,16,.72); opacity:0; pointer-events:none; transition:opacity .3s; }
-.sq.sq-clair .sq-voile { background:rgba(226,232,240,.8); }
-.sq-ouvert .sq-voile { opacity:1; pointer-events:auto; cursor:zoom-out; }
+.sq-voile { position:absolute; inset:0; z-index:30; background:transparent; pointer-events:none; }
+.sq-ouvert .sq-voile { pointer-events:auto; }
 .sq .about { --k:1; }
 .sq .about h2 { font-size:calc(1.6cqw * var(--k)); }
 .sq .about p { font-size:calc(1.05cqw * var(--k)); }
@@ -295,3 +299,46 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .sq .comp ul { margin:0; padding:0; list-style:none; font-size:1cqw; line-height:1.5; color:var(--atxt); }
 .sq .comp li { margin-bottom:.35cqw; }
 @media (prefers-reduced-motion: reduce) { .sq-halo { animation:none; } .sq .about, .sq .plus, .sq-voile { transition:none; } }
+
+/* ── Mode clair : échelles Tailwind teintées lavande (Aube Synthétique) ──
+   Redéfinies seulement hors mode sombre : le mode sombre reste intact. */
+html[data-palette="aube"]:not(.dark) {
+  --glow-accent: #7a5ab5;
+  --color-emerald-300: #b9a8ec; --color-emerald-400: #8068d0; --color-emerald-500: #6a50bf; --color-emerald-600: #5a43a8;
+  --color-white: #f1edf6;
+  --color-slate-50: #f3f0f8; --color-slate-100: #ebe6f2; --color-slate-200: #ddd5e7; --color-slate-300: #c9bedb;
+  --color-slate-400: #9d92b3; --color-slate-500: #766b8f; --color-slate-600: #5d5471; --color-slate-700: #453d57;
+  --color-slate-800: #2c2a3a; --color-slate-900: #1a1a24; --color-slate-950: #0f0f18;
+  --color-blue-300: #b9a8ec; --color-blue-400: #9a86e0; --color-blue-500: #8068d0; --color-blue-600: #6a50bf;
+  --color-blue-700: #5a43a8; --color-blue-800: #46358a;
+  --color-sky-400: #9a86e0; --color-sky-500: #8068d0; --color-cyan-400: #8fa9e0; --color-cyan-500: #7391d4; --color-cyan-600: #5f79bb;
+}
+
+/* ── Palette « Neige & inferno » (test, ?palette=neige) : blanc neige, rouge vif, pervenche — style ecole.gls ── */
+html:not([data-palette="aube"]):not(.dark) {
+  --background: #fafbfd; --page-bg: #fafbfd; --foreground: #1f1a2e; --metal: #eceef8;
+  --color-white: #ffffff;
+  --color-slate-50: #f6f7fb; --color-slate-100: #eceef8; --color-slate-200: #dcdeee; --color-slate-300: #c4c6dc;
+  --color-slate-400: #9496ae; --color-slate-500: #6d6b77; --color-slate-600: #5c5968; --color-slate-700: #3d3a4d;
+  --color-slate-800: #2a2638; --color-slate-900: #1f1a2e; --color-slate-950: #14101f;
+  --color-blue-300: #f0a3a5; --color-blue-400: #d4565a; --color-blue-500: #c1292d; --color-blue-600: #aa0003;
+  --color-blue-700: #800002; --color-blue-800: #5e0002;
+  --color-sky-400: #d4565a; --color-sky-500: #c1292d; --color-cyan-400: #d4565a; --color-cyan-500: #c1292d; --color-cyan-600: #aa0003;
+  --primary: #aa0003; --secondary: #800002; --accent: #aa0003; --glow-accent: #aa0003;
+  --color-emerald-300: #f0a3a5; --color-emerald-400: #c1292d; --color-emerald-500: #aa0003; --color-emerald-600: #800002;
+  --color-violet-300: #9496ae; --color-violet-400: #6d6b77; --color-violet-500: #5c5968; --color-violet-600: #3d3a4d;
+  --color-purple-400: #6d6b77; --color-purple-500: #5c5968; --color-purple-600: #3d3a4d; --color-indigo-400: #6d6b77; --color-indigo-500: #5c5968; --color-indigo-600: #3d3a4d;
+}
+html:not([data-palette="aube"]):not(.dark) body { background-color: #fafbfd; }
+html:not([data-palette="aube"]) .sq.sq-clair { --rk1:#ffffff; --rk2:#f4f5fb; --rk3:#eceef8; --rkb:#c9cce3; --ear1:#eceef8; --ear2:#dfe2f1; --earb:#c1c5df;
+  --jk:#fafbfd; --jkb:#c9cce3; --mut:#5c5968; --ink:#1f1a2e; --lab:#8a8998;
+  --abg1:#ffffff; --abg2:#f7f8fc; --abr:#c9cce3; --abar:#eceef8; --abarb:#d6d9ec; --atxt:#312c3f; --amut:#696774; --atag:#aa0003; --atagb:rgba(170,0,3,.28); --tint:rgba(31,26,46,.02);
+  --shadow:rgba(31,26,46,.12); }
+html:not([data-palette="aube"]) .sq.sq-clair .led.green { background:#2eb872; box-shadow:0 0 .4cqw rgba(46,184,114,.55); }
+html:not([data-palette="aube"]) .sq.sq-clair .labels b { background:#2eb872; box-shadow:0 0 .3cqw rgba(46,184,114,.55); }
+@media (hover:hover) { html:not([data-palette="aube"]) .sq.sq-clair a.rack:hover { border-color:#aa0003; box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 .8cqw 1.6cqw var(--shadow), 0 0 1.6cqw rgba(170,0,3,.2); } }
+html:not([data-palette="aube"]) .sq.sq-clair .sq-halo { background:radial-gradient(closest-side, rgba(170,0,3,.06), rgba(170,0,3,.02) 55%, transparent 75%); }
+
+html[data-palette="aube"]:not(.dark) body { background-color: #e9e3f0; }
+
+.sq.sq-clair .caret { background: var(--atag); }

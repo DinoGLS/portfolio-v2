@@ -35,7 +35,7 @@ export default function ParcoursSection({ isMobile }: ParcoursProps) {
               top: "55px",
               scaleY: parcoursProgress,
               height: "calc(100% - 110px)",
-              boxShadow: "0 0 8px #60a5fa, 0 0 20px #60a5fa",
+              boxShadow: "0 0 8px var(--glow-accent), 0 0 20px var(--glow-accent)",
             }}
           />
           {h.parcours.items.map((item, i) => {
@@ -52,7 +52,7 @@ export default function ParcoursSection({ isMobile }: ParcoursProps) {
               >
                 <div
                   className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-blue-400 border-2 border-[#edf1fc] dark:border-[#020617] z-10"
-                  style={{ boxShadow: "0 0 6px #60a5fa, 0 0 14px #60a5fa" }}
+                  style={{ boxShadow: "0 0 6px var(--glow-accent), 0 0 14px var(--glow-accent)" }}
                 />
                 <div className={isLeft ? "text-right pr-6 py-1" : ""}>
                   {isLeft && (

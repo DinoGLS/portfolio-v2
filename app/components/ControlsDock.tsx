@@ -60,7 +60,7 @@ export default function ControlsDock() {
               return (
                 <button key={l} type="button" onClick={() => setLang(l)} aria-pressed={active}
                   className={`relative rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider transition-colors
-                    ${active ? "text-slate-950 dark:text-slate-950" : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"}`}
+                    ${active ? "text-white dark:text-slate-950" : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"}`}
                 >
                   {active && (
                     <motion.span layoutId="dock-lang-pill-mobile"
@@ -111,7 +111,7 @@ export default function ControlsDock() {
           return (
             <button key={l} type="button" onClick={() => setLang(l)} aria-pressed={active}
               className={`relative rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider transition-colors
-                ${active ? "text-slate-950 dark:text-slate-950" : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"}`}
+                ${active ? "text-white dark:text-slate-950" : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"}`}
             >
               {active && (
                 <motion.span layoutId="dock-lang-pill"

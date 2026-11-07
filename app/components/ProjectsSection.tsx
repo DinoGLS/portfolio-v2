@@ -8,6 +8,7 @@ import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { THEMES_DATA, BADGE_STYLES } from "@/app/data/projects";
 import { useBlueprintTokens } from "@/app/data/blueprint-tokens";
+import { useCouleur } from "@/app/lib/palette";
 
 interface ProjectsSectionProps {
   isMobile: boolean;
@@ -17,6 +18,7 @@ export default function ProjectsSection({ isMobile }: ProjectsSectionProps) {
   const { lang } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const k = useCouleur();
   const bp = useBlueprintTokens(isDark);
   const [activeTheme, setActiveTheme] = useState<string | null>(null);
 
@@ -79,16 +81,16 @@ export default function ProjectsSection({ isMobile }: ProjectsSectionProps) {
               style={
                 activeTheme === theme.id
                   ? {
-                      background: `${theme.color}22`,
-                      color: isDark ? "#e8f4ff" : theme.color,
-                      borderColor: theme.color,
+                      background: `${k(theme.color)}22`,
+                      color: isDark ? "#e8f4ff" : k(theme.color),
+                      borderColor: k(theme.color),
                     }
                   : { background: bp.chipBg, color: bp.sub, borderColor: bp.chipBorder }
               }
             >
               <span
                 className="w-2 h-2 rounded-[2px] flex-shrink-0 inline-block"
-                style={{ background: theme.color }}
+                style={{ background: k(theme.color) }}
               />
               {lang === "fr" ? theme.labelFr : theme.labelEn}
               <span
