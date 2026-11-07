@@ -28,7 +28,8 @@ export default function MatrixCanvas() {
     const TRAIL   = isMobile ? 2  : 4;
     const FONT_SZ = isMobile ? 11 : 13;
     // 30fps sur mobile (économie CPU pour le scroll), 60fps bureau
-    const FRAME_MS = isMobile ? 1000 / 30 : 0;
+    // Plafonné à 30 i/s partout : la pluie reste fluide et libère le processeur pour le reste de la page
+    const FRAME_MS = 1000 / 30;
 
     const resize = () => {
       canvas.width  = window.innerWidth;
@@ -73,7 +74,9 @@ export default function MatrixCanvas() {
 
       if (paused || scrollPaused) return;
       // Limiter le frame rate sur mobile
-      if (isMobile && time - lastDraw < FRAME_MS) return;
+      if (time - lastDraw < FRAME_MS - 1) return;
+      // Les vitesses sont réglées pour 60 i/s : on compense le pas de temps
+      const dt = lastDraw ? Math.min((time - lastDraw) / 16.67, 3) : 1;
       lastDraw = time;
 
       ctx.fillStyle = isDark
@@ -107,7 +110,7 @@ export default function MatrixCanvas() {
         if (yPos > canvas.height && Math.random() > 0.978) {
           drops[i] = Math.random() * -30 / COL_W;
         } else {
-          drops[i] += ws;
+          drops[i] += ws * dt;
         }
       }
     };
@@ -136,8 +139,6 @@ export default function MatrixCanvas() {
         zIndex: 0,
         pointerEvents: "none",
         opacity: isDark ? 0.42 : 0.28,
-        filter: "blur(1px)",
-        willChange: "transform",
       }}
     />
   );

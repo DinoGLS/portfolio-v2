@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 import { useTheme } from "@/app/providers/ThemeProvider";
 import { homeStrings } from "@/app/lib/i18n";
@@ -9,9 +9,12 @@ interface ReseauSequenceProps {
   onNavigate: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
 }
 
-// Accueil « Les deux » : le nom est le commutateur, « À propos » s'ouvre au milieu comme une fenêtre de terminal,
+// Accueil : le nom est le commutateur, « À propos » s'ouvre au milieu comme une fenêtre de terminal,
 // puis les sections arrivent comme des ports branchés un par un (voyant orange puis vert, câble, signal).
-// La séquence ne se joue qu'une fois par visite : ensuite l'état final s'affiche directement.
+// Un clic sur « À propos » l'agrandit. La séquence ne se joue qu'une fois par visite.
+//
+// Performance : aucun filtre SVG (flou, ombre portée) ; une seule boucle d'animation pour tous les signaux,
+// arrêtée quand la carte est hors écran ou l'onglet caché ; trajectoires pré-échantillonnées.
 
 interface PortDef {
   fr: string;
@@ -24,12 +27,12 @@ interface PortDef {
 }
 
 const PORTS: PortDef[] = [
-  { fr: "Projets", en: "Projects", href: "#projects", c: "#60a5fa", x: 15, y: 33, left: true },
-  { fr: "Infrastructure", en: "Infrastructure", href: "#infra", c: "#38bdf8", x: 13, y: 56, left: true },
-  { fr: "Parcours", en: "Background", href: "#parcours", c: "#818cf8", x: 12, y: 79, left: true },
-  { fr: "Veille cyber", en: "Cyber watch", href: "#veille", c: "#a78bfa", x: 85, y: 33, left: false },
-  { fr: "Compétences", en: "Skills", href: "#competences", c: "#22d3ee", x: 87, y: 56, left: false },
-  { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88, y: 79, left: false },
+  { fr: "Projets", en: "Projects", href: "#projects", c: "#60a5fa", x: 14.5, y: 31, left: true },
+  { fr: "Infrastructure", en: "Infrastructure", href: "#infra", c: "#38bdf8", x: 12.5, y: 56, left: true },
+  { fr: "Parcours", en: "Background", href: "#parcours", c: "#818cf8", x: 11.5, y: 81, left: true },
+  { fr: "Veille cyber", en: "Cyber watch", href: "#veille", c: "#a78bfa", x: 85.5, y: 31, left: false },
+  { fr: "Compétences", en: "Skills", href: "#competences", c: "#22d3ee", x: 87.5, y: 56, left: false },
+  { fr: "Synthèse", en: "Summary", href: "#synthese", c: "#6366f1", x: 88.5, y: 81, left: false },
 ];
 
 // Mode clair : mêmes teintes, plus foncées pour rester lisibles sur fond pâle
@@ -38,19 +41,22 @@ const CLAIR: Record<string, string> = {
 };
 
 const NS = "http://www.w3.org/2000/svg";
+const ECH = 120; // points par trajectoire
 let sequenceJouee = false;
 
+interface Pt { x: number; y: number }
+interface Signal { pts: Pt[]; pulse: SVGCircleElement; halo: SVGCircleElement; per: number; t0: number; on: boolean }
 interface Cable {
   all: SVGPathElement[];
-  gaine: SVGPathElement;
   plugs: SVGRectElement[];
-  pulse: SVGCircleElement;
-  halo: SVGCircleElement;
+  gaine: SVGPathElement;
+  pts: Pt[];
+  signals: Signal[];
   kind: "about" | "port";
   i: number;
   c: string;
-  raf?: number;
 }
+type Mesure = SVGPathElement & { _L: number };
 
 export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
   const { lang } = useLanguage();
@@ -65,6 +71,26 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
   const sw = useRef<HTMLDivElement>(null);
   const about = useRef<HTMLDivElement>(null);
   const portEls = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [ouvert, setOuvert] = useState(false);
+  const ouvertRef = useRef(false);
+  const rebuildEnAttente = useRef<(() => void) | null>(null);
+
+  const changer = useCallback((v: boolean) => {
+    ouvertRef.current = v;
+    setOuvert(v);
+    if (!v && rebuildEnAttente.current) {
+      const f = rebuildEnAttente.current;
+      rebuildEnAttente.current = null;
+      window.setTimeout(f, 380); // après la fin de la transition de fermeture
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!ouvert) return;
+    const surTouche = (e: KeyboardEvent) => { if (e.key === "Escape") changer(false); };
+    window.addEventListener("keydown", surTouche);
+    return () => window.removeEventListener("keydown", surTouche);
+  }, [ouvert, changer]);
 
   const degrade = isDark ? "linear-gradient(to right, #60a5fa, #818cf8)" : "linear-gradient(to right, #2f5c99, #5457b0)";
   const textes = {
@@ -104,6 +130,36 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       return e;
     };
 
+    // ── Signaux : une seule boucle pour tous, active seulement si la carte est visible ──
+    let enVue = true, boucle = 0;
+    const tick = (now: number) => {
+      boucle = requestAnimationFrame(tick);
+      for (const c of cables) {
+        for (const s of c.signals) {
+          if (!s.on || now < s.t0) continue;
+          const t = ((now - s.t0) % s.per) / s.per;
+          const p = s.pts[Math.min(ECH, Math.floor(t * ECH))];
+          s.pulse.setAttribute("cx", String(p.x)); s.pulse.setAttribute("cy", String(p.y));
+          s.halo.setAttribute("cx", String(p.x)); s.halo.setAttribute("cy", String(p.y));
+          const o = Math.sin(Math.PI * t);
+          s.pulse.setAttribute("opacity", String(0.95 * o));
+          s.halo.setAttribute("opacity", String(0.35 * o));
+        }
+      }
+    };
+    const majBoucle = () => {
+      const veut = enVue && !document.hidden;
+      if (veut && !boucle) boucle = requestAnimationFrame(tick);
+      else if (!veut && boucle) { cancelAnimationFrame(boucle); boucle = 0; }
+    };
+    const surVisibilite = () => majBoucle();
+    document.addEventListener("visibilitychange", surVisibilite);
+    let io: IntersectionObserver | undefined;
+    if (typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver((es) => { enVue = es[es.length - 1].isIntersecting; majBoucle(); }, { threshold: 0.05 });
+      io.observe(sceneEl);
+    }
+
     const build = (): Cable[] => {
       const s = pos(swEl), W = sceneEl.clientWidth, H = sceneEl.clientHeight, a = pos(abEl);
       svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
@@ -128,17 +184,22 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       return defs.map((p) => {
         const col = cc(p.c);
         const grp = mk("g", {}, g);
-        const ombre = mk("path", { d: p.d, class: "cab", stroke: "#000", "stroke-width": 6, "stroke-opacity": isDark ? 0.35 : 0.12, filter: "url(#sq-ombre)" }, grp);
-        const lueur = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 9, "stroke-opacity": isDark ? 0.22 : 0.14, filter: "url(#sq-lueur)" }, grp);
+        // Ombre et lueur sans filtre : traits superposés (bien moins coûteux qu'un flou SVG)
+        const ombre = mk("path", { d: p.d, class: "cab", stroke: "#000", "stroke-width": 6, "stroke-opacity": isDark ? 0.3 : 0.1, transform: "translate(0,3)" }, grp);
+        const lueur2 = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 13, "stroke-opacity": isDark ? 0.07 : 0.05 }, grp);
+        const lueur = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 8, "stroke-opacity": isDark ? 0.14 : 0.1 }, grp);
         const gaine = mk("path", { d: p.d, class: "cab", stroke: col, "stroke-width": 3.4 }, grp);
         const reflet = mk("path", { d: p.d, class: "cab", stroke: "#fff", "stroke-width": 1, "stroke-opacity": 0.35, transform: "translate(0,-.9)" }, grp);
-        const all = [ombre, lueur, gaine, reflet];
+        const all = [ombre, lueur2, lueur, gaine, reflet] as Mesure[];
         all.forEach((x) => {
           const L = x.getTotalLength();
           x.style.strokeDasharray = String(L);
           x.style.strokeDashoffset = String(L);
-          (x as unknown as { _L: number })._L = L;
+          x._L = L;
         });
+        const L = all[3]._L;
+        const pts: Pt[] = [];
+        for (let k = 0; k <= ECH; k++) { const q = gaine.getPointAtLength((L * k) / ECH); pts.push({ x: q.x, y: q.y }); }
         const plugs: SVGRectElement[] = [];
         if (p.kind === "port") {
           const prise = (x: number, y: number, dir: number) => {
@@ -148,9 +209,14 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
           };
           plugs.push(prise(p.sx, p.sy, p.left ? -1 : 1), prise(p.ex, p.ey, p.left ? 1 : -1));
         }
-        const pulse = mk("circle", { r: 3.2, fill: isDark ? "#fff" : col, opacity: 0 }, grp);
-        const halo = mk("circle", { r: 7, fill: col, opacity: 0, filter: "url(#sq-lueur)" }, grp);
-        return { all, gaine, plugs, pulse, halo, kind: p.kind, i: p.i, c: p.c };
+        // Deux signaux par câble, décalés d'une demi-période
+        const signals: Signal[] = [0, 0.5].map((dec) => {
+          const halo = mk("circle", { r: 8, fill: col, opacity: 0 }, grp) as SVGCircleElement;
+          const pulse = mk("circle", { r: 3.2, fill: isDark ? "#fff" : col, opacity: 0 }, grp) as SVGCircleElement;
+          const per = p.kind === "about" ? 1800 : 2600 + Math.max(p.i, 0) * 250;
+          return { pts, pulse, halo, per, t0: performance.now() - dec * per, on: false };
+        });
+        return { all, plugs, gaine, pts, signals, kind: p.kind, i: p.i, c: p.c };
       });
     };
 
@@ -158,25 +224,12 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       const t0 = performance.now();
       const f = (now: number) => {
         const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-        c.all.forEach((x) => { x.style.strokeDashoffset = String((x as unknown as { _L: number })._L * (1 - e)); });
+        c.all.forEach((x) => { x.style.strokeDashoffset = String((x as Mesure)._L * (1 - e)); });
         if (k < 1) rafs.push(requestAnimationFrame(f)); else fin?.();
       };
       rafs.push(requestAnimationFrame(f));
     };
-    const signal = (c: Cable, vitesse: number) => {
-      const L = c.gaine.getTotalLength(), t0 = performance.now() + vitesse * Math.random() * 0.4;
-      const f = (now: number) => {
-        c.raf = requestAnimationFrame(f);
-        if (now < t0) return;
-        const t = ((now - t0) % vitesse) / vitesse;
-        const pt = c.gaine.getPointAtLength(L * t);
-        [c.pulse, c.halo].forEach((x) => { x.setAttribute("cx", String(pt.x)); x.setAttribute("cy", String(pt.y)); });
-        const o = Math.sin(Math.PI * t);
-        c.pulse.setAttribute("opacity", String(0.95 * o));
-        c.halo.setAttribute("opacity", String(0.8 * o));
-      };
-      c.raf = requestAnimationFrame(f);
-    };
+    const allumer = (c: Cable) => { const t = performance.now(); c.signals.forEach((s, i) => { s.t0 = t - i * 0.5 * s.per; s.on = true; }); majBoucle(); };
 
     const setPortEtat = (el: HTMLAnchorElement, etat: "hors" | "amber" | "green", c: string) => {
       const led = el.querySelector<HTMLElement>("[data-led]")!;
@@ -186,8 +239,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       el.querySelectorAll<HTMLElement>(".jack").forEach((j, k) => j.classList.toggle("lit", etat === "green" && k !== 2));
       el.style.setProperty("--glow", etat === "green" ? c + "22" : "transparent");
     };
-    const couleurs = () => PORTS.forEach((p, i) => ports[i]?.style.setProperty("--c", cc(p.c)));
-    couleurs();
+    PORTS.forEach((p, i) => ports[i]?.style.setProperty("--c", cc(p.c)));
 
     const etatFinal = () => {
       swEl.style.opacity = "1"; abEl.style.opacity = "1";
@@ -199,7 +251,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
         c.all.forEach((x) => { x.style.strokeDashoffset = "0"; });
         c.plugs.forEach((p) => { p.style.opacity = "1"; });
         if (c.kind === "port") { const el = ports[c.i]; if (el) { el.style.opacity = "1"; setPortEtat(el, "green", c.c); } }
-        signal(c, c.kind === "about" ? 1800 : 2600 + Math.max(c.i, 0) * 250);
+        allumer(c);
       });
       fini = true;
     };
@@ -229,7 +281,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
       at(2300, () => tracer(cables[0], 600));
       at(2800, () => { abEl.style.opacity = "1"; });
       abBlocs.forEach((b, i) => at(3200 + i * 450, () => { b.style.opacity = "1"; b.style.transform = "none"; }));
-      at(3000, () => signal(cables[0], 1800));
+      at(3000, () => allumer(cables[0]));
       PORTS.forEach((p, i) => {
         const el = ports[i], c = cables[i + 1];
         if (!el || !c) return;
@@ -240,7 +292,7 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
           tracer(c, 520, () => {
             c.plugs[1].style.opacity = "1";
             setPortEtat(el, "green", p.c);
-            signal(c, 2600 + i * 250);
+            allumer(c);
           });
         });
       });
@@ -248,24 +300,29 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
     }
 
     // Redimensionnement : on recalcule les câbles et on affiche l'état final
+    // (si « À propos » est agrandi, on attend sa fermeture pour mesurer sa vraie place)
+    const refaire = () => { cables = build(); etatFinal(); };
     let rz: number | undefined;
     const ro = new ResizeObserver(() => {
       if (!fini) return;
       window.clearTimeout(rz);
       rz = window.setTimeout(() => {
-        cables.forEach((c) => c.raf && cancelAnimationFrame(c.raf));
-        cables = build();
-        etatFinal();
+        if (ouvertRef.current) { rebuildEnAttente.current = refaire; return; }
+        refaire();
       }, 150);
     });
     ro.observe(sceneEl);
+    majBoucle();
 
     return () => {
       timers.forEach((t) => { clearTimeout(t); clearInterval(t); });
       rafs.forEach((r) => cancelAnimationFrame(r));
-      cables.forEach((c) => c.raf && cancelAnimationFrame(c.raf));
+      if (boucle) cancelAnimationFrame(boucle);
       window.clearTimeout(rz);
+      document.removeEventListener("visibilitychange", surVisibilite);
+      io?.disconnect();
       ro.disconnect();
+      rebuildEnAttente.current = null;
       sceneEl.classList.remove("sq-joue");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -276,14 +333,12 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
   return (
     <div
       ref={scene}
-      className={`sq ${isDark ? "" : "sq-clair"} relative mx-auto [container-type:inline-size]`}
-      style={{ width: "min(1100px, 100%, calc((100dvh - 7rem) * 1.6667))", aspectRatio: "1000 / 600" }}
+      className={`sq sq-taille ${isDark ? "" : "sq-clair"} ${ouvert ? "sq-ouvert" : ""} relative mx-auto`}
     >
+      {/* Halo derrière le commutateur : donne de la profondeur à la carte */}
+      <div className="sq-halo" aria-hidden />
+
       <svg ref={svg} aria-hidden>
-        <defs>
-          <filter id="sq-ombre" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#000" floodOpacity=".6" /></filter>
-          <filter id="sq-lueur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" /></filter>
-        </defs>
         <g ref={gc} />
       </svg>
 
@@ -300,14 +355,48 @@ export default function ReseauSequence({ onNavigate }: ReseauSequenceProps) {
         <p data-sub className="sub" style={{ opacity: 0 }}>{textes.sous}</p>
       </div>
 
-      {/* À propos : fenêtre de terminal */}
-      <div ref={about} className="abs about" style={{ opacity: 0 }}>
-        <div className="bar"><i style={{ background: "#ef4444" }} /><i style={{ background: "#f59e0b" }} /><i style={{ background: "#22c55e" }} /><span>~/garlens/{fr ? "a-propos" : "about"}</span></div>
+      {/* Voile : assombrit la carte quand « À propos » est agrandi ; un clic dessus referme */}
+      <div className="sq-voile" onClick={() => changer(false)} aria-hidden />
+
+      {/* À propos : fenêtre de terminal, cliquable pour l'agrandir */}
+      <div
+        ref={about}
+        className="abs about"
+        style={{ opacity: 0 }}
+        role={ouvert ? "dialog" : "button"}
+        aria-label={fr ? "À propos de moi" : "About me"}
+        aria-expanded={ouvert}
+        tabIndex={ouvert ? -1 : 0}
+        onClick={() => { if (!ouvert) changer(true); }}
+        onKeyDown={(e) => { if (!ouvert && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); changer(true); } }}
+      >
+        <div className="bar">
+          <i style={{ background: "#ef4444" }} /><i style={{ background: "#f59e0b" }} /><i style={{ background: "#22c55e" }} />
+          <span>~/garlens/{fr ? "a-propos" : "about"}</span>
+          <button
+            type="button"
+            className="sq-agrandir"
+            aria-label={ouvert ? (fr ? "Fermer" : "Close") : (fr ? "Agrandir" : "Expand")}
+            onClick={(e) => { e.stopPropagation(); changer(!ouvert); }}
+          >
+            {ouvert ? "✕" : <>{fr ? "agrandir" : "expand"} ⤢</>}
+          </button>
+        </div>
         <div className="corps">
           <h2 data-bloc>{h.about.heading}</h2>
           <p data-bloc>{h.about.p1}</p>
           <p data-bloc>{h.about.p2}</p>
           <div data-bloc className="tags"><span>Proxmox</span><span>Docker</span><span>OPNsense</span><span>Linux</span></div>
+          <div className="plus" aria-hidden={!ouvert}>
+            <div className="plus-in">
+              {h.about.skills.map((b) => (
+                <div key={b.title} className="comp">
+                  <h3>{b.title}</h3>
+                  <ul>{b.items.map((it) => <li key={it}>{it}</li>)}</ul>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

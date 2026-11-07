@@ -91,7 +91,6 @@ export default function Home() {
     // « À propos » vit dans la scène épinglée de l'accueil : on vise la fin de la scène
     const scene = document.getElementById("hero");
     const dansScene = id === "about" && scene?.dataset.scene === "1";
-    if (dansScene) window.dispatchEvent(new CustomEvent("accueil-vue", { detail: "apropos" }));
     const target = dansScene
       ? scene!.getBoundingClientRect().top + window.scrollY
       : id === "top"
