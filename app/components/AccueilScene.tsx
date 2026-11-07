@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import HeroReseau from "@/app/components/HeroReseau";
 import AboutSection from "@/app/components/AboutSection";
+import ReseauSequence from "@/app/components/ReseauSequence";
 import Reveal from "@/app/components/Reveal";
 import { useLanguage } from "@/app/providers/LanguageProvider";
 
@@ -22,7 +23,7 @@ const COLONNES: Record<Vue, string> = {
 };
 
 // L'accueil = la carte réseau + À propos sur un seul plan, avec un interrupteur à trois positions.
-// Réseau : la carte seule. Les deux : côte à côte. À propos : la carte se réduit, le texte prend la place.
+// Réseau : la carte seule. Les deux : séquence animée (nom, À propos au milieu, ports branchés un par un). À propos : la carte se réduit, le texte prend la place.
 // Vue de départ : « Les deux » ; ?vue=reseau ou ?vue=apropos dans l'adresse pour forcer une autre vue.
 // Téléphone ou animations réduites : les deux blocs se suivent, sans interrupteur.
 export default function AccueilScene({ isMobile, onNavigate }: AccueilSceneProps) {
@@ -113,6 +114,11 @@ export default function AccueilScene({ isMobile, onNavigate }: AccueilSceneProps
         </div>
       </div>
 
+      {vue === "deux" ? (
+        <div className="w-full px-4 pt-12">
+          <ReseauSequence onNavigate={surNavigation} />
+        </div>
+      ) : (
       <div
         className="grid items-center w-full max-w-[96rem] mx-auto px-4"
         style={{
@@ -136,6 +142,7 @@ export default function AccueilScene({ isMobile, onNavigate }: AccueilSceneProps
           <AboutSection empile />
         </div>
       </div>
+      )}
     </div>
   );
 }
