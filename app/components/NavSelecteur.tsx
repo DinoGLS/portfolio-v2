@@ -15,7 +15,7 @@ interface NavSelecteurProps {
   cachee: boolean;
 }
 
-// Barre du haut : un seul bouton compact. Les flèches font défiler les sections une par une,
+// Barre du haut (téléphone seulement, l'ordinateur garde la barre de liens) : un seul bouton compact. Les flèches font défiler les sections une par une,
 // un clic sur le nom ouvre la liste complète pour choisir directement celle qu'on cherche.
 export default function NavSelecteur({ sections, actifId, onAller, cachee }: NavSelecteurProps) {
   const { lang } = useLanguage();
@@ -55,7 +55,7 @@ export default function NavSelecteur({ sections, actifId, onAller, cachee }: Nav
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 px-4 pt-4 flex justify-center pointer-events-none transition-transform duration-150 ${cachee ? "-translate-y-24" : ""}`}
+      className={`fixed top-0 left-0 right-0 z-50 px-4 pt-4 flex md:hidden justify-center pointer-events-none transition-transform duration-150 ${cachee ? "-translate-y-24" : ""}`}
       aria-label={fr ? "Navigation par section" : "Section navigation"}
       aria-hidden={cachee}
     >

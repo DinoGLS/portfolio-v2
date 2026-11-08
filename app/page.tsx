@@ -41,7 +41,7 @@ export default function Home() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // Toutes les sections de la page, dans l'ordre : elles alimentent le sélecteur de la barre du haut
+  // Toutes les sections de la page, dans l'ordre : elles alimentent le sélecteur de la barre du haut (téléphone)
   const fr = lang === "fr";
   const NAV_LINKS = [
     { label: fr ? "Accueil" : "Home", href: "#top" },
@@ -57,6 +57,11 @@ export default function Home() {
     { label: fr ? "Synthèse" : "Summary", href: "#synthese" },
     { label: "Contact", href: "#contact" },
   ].filter((l) => !(SANS_SYNTHESE && l.href === "#synthese"));
+
+  // Barre ordinateur : les 7 liens d'origine ; les autres sections se rattachent à l'un d'eux
+  const NAV_BUREAU = NAV_LINKS.filter((l) => ["#top", "#parcours", "#apprentissage", "#projects", "#competences", "#synthese", "#contact"].includes(l.href));
+  const RATTACHE_BUREAU: Record<string, string> = { cv: "apprentissage", certifications: "apprentissage", labs: "projects", veille: "projects", infra: "projects" };
+  const actifBureau = RATTACHE_BUREAU[activeSection] ?? activeSection;
 
   // ── Scroll actif — throttlé RAF ──────────────────────────────────────────
   useEffect(() => {
@@ -125,6 +130,57 @@ export default function Home() {
   return (
     <>
       {/* ── NAVBAR ── */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 px-4 md:px-8 pt-4 hidden md:flex justify-center transition-transform duration-150 ${navCachee ? "-translate-y-24 pointer-events-none" : ""}`}
+        aria-hidden={navCachee}
+      >
+        <div className="flex items-center justify-center md:justify-between w-full max-w-4xl px-3 md:px-5 py-2 rounded-full border backdrop-blur-md shadow-lg border-slate-200/70 bg-white/90 dark:border-blue-500/25 dark:bg-slate-900/90">
+          {/* Brand */}
+          <a
+            href="#"
+            onClick={(e) => scrollToSection(e, "#top")}
+            className="hidden md:inline-flex font-mono text-sm font-bold text-blue-700 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 select-none whitespace-nowrap"
+          >
+            <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"<"}</span>Dino
+            <span className="text-blue-700/50 dark:text-blue-500/50 text-xs">{"/>"}</span>
+          </a>
+          <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar">
+            {NAV_BUREAU.map((link) => {
+              const id = link.href.replace("#", "");
+              const isActive = actifBureau === id;
+              // Pas de `transition` sur ces liens : le survol et le changement de
+              // section actif doivent être instantanés, sans effet qui traîne.
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    if (!link.href.startsWith("/")) {
+                      scrollToSection(e, link.href);
+                    }
+                  }}
+                  className={`relative px-2 md:px-4 py-1.5 rounded-full text-xs md:text-sm font-mono tracking-wide whitespace-nowrap
+                    ${
+                      isActive
+                        ? "text-blue-700 bg-blue-500/10 border border-blue-500/30 dark:text-blue-300"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 border border-transparent dark:text-slate-300 dark:hover:text-blue-300 dark:hover:bg-blue-500/10"
+                    }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span
+                      className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-400"
+                      style={{ boxShadow: "0 0 4px var(--glow-accent)" }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+
+      {/* Téléphone : un seul bouton qui défile les sections */}
       <NavSelecteur
         sections={NAV_LINKS.map((l) => ({ id: l.href.replace("#", ""), label: l.label, href: l.href }))}
         actifId={activeSection}
